@@ -4,8 +4,8 @@
 
 const character = document.querySelector("#cinna");
 const message = document.querySelector("#message");
-
 const room = document.querySelector(".room");
+
 const menuButtons = document.querySelectorAll(".menu-button");
 
 const happinessBar = document.querySelector("#happiness-bar");
@@ -18,6 +18,17 @@ const foodItems = document.querySelectorAll(".food-item");
 
 const bathTray = document.querySelector("#bath-tray");
 const bathItems = document.querySelectorAll(".bath-item");
+
+const sleepTray = document.querySelector("#sleep-tray");
+const sleepButton = document.querySelector("#sleep-button");
+
+
+// ===========================
+// ESTADO DO SONO
+// ===========================
+
+let isSleeping = false;
+let sleepInterval = null;
 
 
 // ===========================
@@ -34,15 +45,16 @@ const idleSequence = [0, 1, 2, 1];
 
 let idleStep = 0;
 
-
-// pré-carrega sprites
 idleFrames.forEach((src) => {
   const image = new Image();
   image.src = src;
 });
 
-
 setInterval(() => {
+
+  // futuramente colocaremos sprite próprio dormindo
+  if (isSleeping) return;
+
   idleStep =
     (idleStep + 1) % idleSequence.length;
 
@@ -67,7 +79,6 @@ const petMessages = [
   "♡ +3 felicidade"
 ];
 
-
 const idleMessages = [
   "Cinna está esperando você ♡",
   "Cinna está olhando pra você 👀",
@@ -75,7 +86,6 @@ const idleMessages = [
   "Que tal um docinho? 🍰",
   "☁️ ♡ ☁️"
 ];
-
 
 function randomMessage(list) {
 
@@ -106,7 +116,6 @@ function loadStatus(
   }
 
   return Number(savedValue);
-
 }
 
 
@@ -195,10 +204,11 @@ updateStatusBars();
 
 
 // ===========================
-// DIMINUI STATUS
+// DIMINUIÇÃO DOS STATUS
 // ===========================
 
-// ainda está rápido só para teste
+// Ainda está rápido para teste.
+// Depois vamos colocar tempos reais.
 
 function decreaseStatus() {
 
@@ -212,18 +222,24 @@ function decreaseStatus() {
       cinnaStatus.hunger - 2
     );
 
-  cinnaStatus.energy =
-    limitStatus(
-      cinnaStatus.energy - 1
-    );
-
   cinnaStatus.hygiene =
     limitStatus(
       cinnaStatus.hygiene - 2
     );
 
-  saveStatus();
 
+  // Energia não cai enquanto dorme
+  if (!isSleeping) {
+
+    cinnaStatus.energy =
+      limitStatus(
+        cinnaStatus.energy - 1
+      );
+
+  }
+
+
+  saveStatus();
   updateStatusBars();
 
 }
@@ -249,6 +265,17 @@ let pets =
 
 function petCinna() {
 
+  // Não acorda o pobre menino
+  // clicando nele enquanto dorme KKKK
+  if (isSleeping) {
+
+    message.textContent =
+      "Shhh... Cinna está dormindo 😴";
+
+    return;
+  }
+
+
   pets++;
 
   localStorage.setItem(
@@ -256,19 +283,22 @@ function petCinna() {
     pets
   );
 
+
   cinnaStatus.happiness =
     limitStatus(
       cinnaStatus.happiness + 3
     );
 
-  saveStatus();
 
+  saveStatus();
   updateStatusBars();
+
 
   message.textContent =
     randomMessage(
       petMessages
     );
+
 
   character.animate(
     [
@@ -300,6 +330,152 @@ character.addEventListener(
 
 
 // ===========================
+// SISTEMA DE SONO
+// ===========================
+
+function updateSleepButton() {
+
+  if (!sleepButton) return;
+
+  const icon =
+    sleepButton.querySelector("span");
+
+  const label =
+    sleepButton.querySelector("small");
+
+
+  if (isSleeping) {
+
+    icon.textContent = "☀️";
+    label.textContent = "Acordar";
+
+  } else {
+
+    icon.textContent = "😴";
+    label.textContent = "Dormir";
+
+  }
+
+}
+
+
+function startSleeping() {
+
+  // Se já estiver com energia cheia
+  if (cinnaStatus.energy >= 100) {
+
+    message.textContent =
+      "Cinna já está cheio de energia! ⚡";
+
+    return;
+
+  }
+
+
+  isSleeping = true;
+
+  room.classList.add(
+    "sleeping"
+  );
+
+  updateSleepButton();
+
+
+  message.textContent =
+    "Boa noite, Cinna... 😴💤";
+
+
+  // Para garantir que não sejam criados
+  // vários timers ao mesmo tempo
+  clearInterval(
+    sleepInterval
+  );
+
+
+  sleepInterval =
+    setInterval(() => {
+
+      cinnaStatus.energy =
+        limitStatus(
+          cinnaStatus.energy + 5
+        );
+
+
+      saveStatus();
+      updateStatusBars();
+
+
+      if (
+        cinnaStatus.energy >= 100
+      ) {
+
+        stopSleeping(true);
+
+      }
+
+    }, 5000);
+
+}
+
+
+function stopSleeping(
+  fullyRested = false
+) {
+
+  isSleeping = false;
+
+  clearInterval(
+    sleepInterval
+  );
+
+  sleepInterval = null;
+
+
+  room.classList.remove(
+    "sleeping"
+  );
+
+  updateSleepButton();
+
+
+  if (fullyRested) {
+
+    message.textContent =
+      "Cinna acordou descansado! ☀️⚡";
+
+  } else {
+
+    message.textContent =
+      "Bom dia, Cinna! ☀️";
+
+  }
+
+}
+
+
+if (sleepButton) {
+
+  sleepButton.addEventListener(
+    "click",
+    () => {
+
+      if (isSleeping) {
+
+        stopSleeping();
+
+      } else {
+
+        startSleeping();
+
+      }
+
+    }
+  );
+
+}
+
+
+// ===========================
 // CÔMODO INICIAL
 // ===========================
 
@@ -322,6 +498,18 @@ menuButtons.forEach(
           button.dataset.room;
 
 
+        // Se sair do quarto,
+        // acorda automaticamente
+        if (
+          isSleeping &&
+          selectedRoom !== "bedroom"
+        ) {
+
+          stopSleeping();
+
+        }
+
+
         menuButtons.forEach(
           (btn) => {
 
@@ -342,7 +530,9 @@ menuButtons.forEach(
           selectedRoom;
 
 
-        // comida
+        // =====================
+        // BANDEJAS
+        // =====================
 
         if (foodTray) {
 
@@ -353,8 +543,6 @@ menuButtons.forEach(
         }
 
 
-        // banho
-
         if (bathTray) {
 
           bathTray.hidden =
@@ -364,7 +552,18 @@ menuButtons.forEach(
         }
 
 
-        // mensagens
+        if (sleepTray) {
+
+          sleepTray.hidden =
+            selectedRoom !==
+            "bedroom";
+
+        }
+
+
+        // =====================
+        // MENSAGENS
+        // =====================
 
         if (
           selectedRoom === "home"
@@ -403,8 +602,17 @@ menuButtons.forEach(
           "bedroom"
         ) {
 
-          message.textContent =
-            "Cinna está ficando com soninho... 🌙";
+          if (isSleeping) {
+
+            message.textContent =
+              "Zzz... 😴💤";
+
+          } else {
+
+            message.textContent =
+              "Cinna está ficando com soninho... 🌙";
+
+          }
 
         }
 
@@ -463,7 +671,6 @@ foodItems.forEach(
 
 
         saveStatus();
-
         updateStatusBars();
 
 
@@ -553,7 +760,6 @@ bathItems.forEach(
 
 
         saveStatus();
-
         updateStatusBars();
 
 
@@ -619,7 +825,8 @@ setInterval(
 
 
     if (
-      currentRoom === "home"
+      currentRoom === "home" &&
+      !isSleeping
     ) {
 
       message.textContent =
@@ -632,3 +839,6 @@ setInterval(
   },
   12000
 );
+
+
+

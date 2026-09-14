@@ -80,3 +80,48 @@ character.addEventListener("click", petCinna);
 setInterval(() => {
   message.textContent = randomMessage(idleMessages);
 }, 12000);
+
+// ===========================
+// STATUS DO CINNA
+// ===========================
+
+const happinessBar = document.querySelector("#happiness-bar");
+const hungerBar = document.querySelector("#hunger-bar");
+const energyBar = document.querySelector("#energy-bar");
+
+const cinnaStatus = {
+  happiness: Number(localStorage.getItem("cinnaHappiness")) || 90,
+  hunger: Number(localStorage.getItem("cinnaHunger")) || 80,
+  energy: Number(localStorage.getItem("cinnaEnergy")) || 100
+};
+
+function limitStatus(value) {
+  return Math.max(0, Math.min(100, value));
+}
+
+function saveStatus() {
+  localStorage.setItem("cinnaHappiness", cinnaStatus.happiness);
+  localStorage.setItem("cinnaHunger", cinnaStatus.hunger);
+  localStorage.setItem("cinnaEnergy", cinnaStatus.energy);
+}
+
+function updateStatusBars() {
+  happinessBar.style.width = `${cinnaStatus.happiness}%`;
+  hungerBar.style.width = `${cinnaStatus.hunger}%`;
+  energyBar.style.width = `${cinnaStatus.energy}%`;
+}
+
+function decreaseStatus() {
+  cinnaStatus.happiness = limitStatus(cinnaStatus.happiness - 1);
+  cinnaStatus.hunger = limitStatus(cinnaStatus.hunger - 2);
+  cinnaStatus.energy = limitStatus(cinnaStatus.energy - 1);
+
+  saveStatus();
+  updateStatusBars();
+}
+
+// Mostra os valores salvos assim que o jogo abre
+updateStatusBars();
+
+// TEMPORÁRIO: diminui a cada 10 segundos para testarmos
+setInterval(decreaseStatus, 10000);

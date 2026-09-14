@@ -38,10 +38,11 @@ let sleepInterval = null;
 const idleFrames = [
   "assets/sprites/cinna-idle-1.PNG",
   "assets/sprites/cinna-idle-2.PNG",
-  "assets/sprites/cinna-idle-3.PNG"
+  "assets/sprites/cinna-idle-3.PNG",
+  "assets/sprites/cinna-idle-4.PNG"
 ];
 
-const idleSequence = [0, 1, 2, 1];
+const idleSequence = [0, 1, 2, 1, 0, 1, 2, 1, 3, 1];
 
 let idleStep = 0;
 

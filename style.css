@@ -142,3 +142,60 @@ h1 {
     transform: translateY(-12px) scale(1.04);
   }
 }
+
+.game-menu {
+  width: 92%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+
+  margin-top: 18px;
+  margin-bottom: 12px;
+}
+
+.menu-button {
+  min-width: 0;
+  border: none;
+  border-radius: 16px;
+
+  padding: 8px 3px;
+
+  background: rgba(255, 255, 255, 0.8);
+  color: #587386;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  font-family: inherit;
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    background 0.2s ease;
+}
+
+.menu-button span {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.menu-button small {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.menu-button.active {
+  background: #ffffff;
+  color: #5795bd;
+
+  box-shadow:
+    0 4px 10px rgba(71, 126, 158, 0.14);
+}
+
+.menu-button:active {
+  transform: scale(0.92);
+}

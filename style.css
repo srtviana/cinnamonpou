@@ -199,3 +199,48 @@ h1 {
 .menu-button:active {
   transform: scale(0.92);
 }
+
+
+.room[data-room="kitchen"] {
+  background:
+    linear-gradient(
+      to bottom,
+      #fff4dc 0%,
+      #fffaf0 68%,
+      #efd3ae 68%,
+      #dfba8b 100%
+    );
+}
+
+.room[data-room="bathroom"] {
+  background:
+    linear-gradient(
+      to bottom,
+      #d9f7f3 0%,
+      #effffc 68%,
+      #bde4df 68%,
+      #9fd1ca 100%
+    );
+}
+
+.room[data-room="bedroom"] {
+  background:
+    linear-gradient(
+      to bottom,
+      #dcdcff 0%,
+      #eeeefe 68%,
+      #cabfe5 68%,
+      #afa1ce 100%
+    );
+}
+
+.room[data-room="games"] {
+  background:
+    linear-gradient(
+      to bottom,
+      #f4e6ff 0%,
+      #fff3fc 68%,
+      #e8c9dd 68%,
+      #d7adca 100%
+    );
+}

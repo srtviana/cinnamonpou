@@ -57,6 +57,10 @@ setInterval(() => {
 
 function petCinna() {
   pets++;
+  cinnaStatus.happiness = limitStatus(cinnaStatus.happiness + 3);
+
+saveStatus();
+updateStatusBars();
 
   localStorage.setItem("cinnaPets", pets);
 

@@ -48,7 +48,12 @@ setInterval(() => {
   const frame = idleSequence[idleStep];
 
   character.src = idleFrames[frame];
-}, 600);
+
+  character.style.transform =
+    idleStep % 2 === 0
+      ? "translateY(0px)"
+      : "translateY(-12px)";
+}, 500);
 
 function petCinna() {
   pets++;

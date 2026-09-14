@@ -120,7 +120,7 @@ h1 {
 
   cursor: pointer;
 
-  animation: breathe 2s ease-in-out infinite;
+  animation: breathe 1.8s ease-in-out infinite;
 }
 #message {
   margin-top: 20px;
@@ -139,9 +139,10 @@ h1 {
   }
 
   50% {
-    transform: translateY(-12px) scale(1.04);
+    transform: translateY(-6px) scale(1.015);
   }
 }
+
 
 .game-menu {
   width: 92%;

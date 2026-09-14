@@ -1,55 +1,53 @@
+// ======================================================
+// CINNAMONPOU
+// ======================================================
+
+
 // ===========================
-// ELEMENTOS PRINCIPAIS
+// ELEMENTOS
 // ===========================
 
 const character = document.querySelector("#cinna");
 const message = document.querySelector("#message");
 const room = document.querySelector(".room");
 
-const menuButtons =
-  document.querySelectorAll(".menu-button");
+const menuButtons = document.querySelectorAll(".menu-button");
 
-const happinessBar =
-  document.querySelector("#happiness-bar");
+const happinessBar = document.querySelector("#happiness-bar");
+const hungerBar = document.querySelector("#hunger-bar");
+const energyBar = document.querySelector("#energy-bar");
+const hygieneBar = document.querySelector("#hygiene-bar");
 
-const hungerBar =
-  document.querySelector("#hunger-bar");
+const foodTray = document.querySelector("#food-tray");
+const foodItems = document.querySelectorAll(".food-item");
 
-const energyBar =
-  document.querySelector("#energy-bar");
+const bathTray = document.querySelector("#bath-tray");
+const bathItems = document.querySelectorAll(".bath-item");
 
-const hygieneBar =
-  document.querySelector("#hygiene-bar");
-
-const foodTray =
-  document.querySelector("#food-tray");
-
-const foodItems =
-  document.querySelectorAll(".food-item");
-
-const bathTray =
-  document.querySelector("#bath-tray");
-
-const bathItems =
-  document.querySelectorAll(".bath-item");
-
-const sleepTray =
-  document.querySelector("#sleep-tray");
-
-const sleepButton =
-  document.querySelector("#sleep-button");
+const sleepTray = document.querySelector("#sleep-tray");
+const sleepButton = document.querySelector("#sleep-button");
 
 
 // ===========================
-// SONO
+// ESTADOS
 // ===========================
 
 let isSleeping = false;
+let isPlayingAction = false;
+
 let sleepInterval = null;
+
+let animationStep = 0;
+let lastMood = "idle";
+
+
+// ======================================================
+// SPRITES
+// ======================================================
 
 
 // ===========================
-// SPRITES NEUTROS
+// IDLE NORMAL
 // ===========================
 
 const idleFrames = [
@@ -61,7 +59,7 @@ const idleFrames = [
 
 
 // ===========================
-// SPRITES TRISTES
+// TRISTE
 // ===========================
 
 const sadFrames = [
@@ -73,7 +71,7 @@ const sadFrames = [
 
 
 // ===========================
-// SPRITE DORMINDO
+// DORMINDO
 // ===========================
 
 const sleepFrame =
@@ -81,11 +79,69 @@ const sleepFrame =
 
 
 // ===========================
-// SEQUÊNCIAS DE ANIMAÇÃO
+// BANHO
 // ===========================
 
-// O frame 4 é a piscada.
-// Ele aparece de vez em quando para ficar natural.
+const bathFrames = [
+  "assets/sprites/cinna-banho-1.PNG",
+  "assets/sprites/cinna-banho-2.PNG",
+  "assets/sprites/cinna-banho-3.PNG",
+  "assets/sprites/cinna-banho-4.PNG"
+];
+
+
+// ===========================
+// BOLO
+// ===========================
+
+const cakeFrames = [
+  "assets/sprites/cinna-bolo-1.PNG",
+  "assets/sprites/cinna-bolo-2.PNG",
+  "assets/sprites/cinna-bolo-3.PNG",
+  "assets/sprites/cinna-bolo-4.PNG"
+];
+
+
+// ===========================
+// LEITE
+// ===========================
+
+// Pelos prints existem 2 frames.
+// Fazemos 1 → 2 → 1 → 2.
+
+const milkFrames = [
+  "assets/sprites/cinna-leite-1.PNG",
+  "assets/sprites/cinna-leite-2.PNG"
+];
+
+
+// ===========================
+// MAÇÃ
+// ===========================
+
+const appleFrames = [
+  "assets/sprites/cinna-maca-1.PNG",
+  "assets/sprites/cinna-maca-2.PNG",
+  "assets/sprites/cinna-maca-3.PNG",
+  "assets/sprites/cinna-maca-4.PNG"
+];
+
+
+// ===========================
+// MORANGO
+// ===========================
+
+const strawberryFrames = [
+  "assets/sprites/cinna-morango-1.PNG",
+  "assets/sprites/cinna-morango-2.PNG",
+  "assets/sprites/cinna-morango-3.PNG",
+  "assets/sprites/cinna-morango-4.PNG"
+];
+
+
+// ======================================================
+// SEQUÊNCIAS IDLE
+// ======================================================
 
 const idleSequence = [
   0, 1, 2, 1,
@@ -99,29 +155,31 @@ const sadSequence = [
   0, 3, 0, 1
 ];
 
-let animationStep = 0;
-let lastMood = "idle";
 
+// ======================================================
+// PRÉ-CARREGAMENTO
+// ======================================================
 
-// ===========================
-// PRÉ-CARREGAMENTO DOS SPRITES
-// ===========================
-
-[
+const allSprites = [
   ...idleFrames,
   ...sadFrames,
-  sleepFrame
-].forEach((src) => {
+  sleepFrame,
+  ...bathFrames,
+  ...cakeFrames,
+  ...milkFrames,
+  ...appleFrames,
+  ...strawberryFrames
+];
 
+allSprites.forEach((src) => {
   const image = new Image();
   image.src = src;
-
 });
 
 
-// ===========================
+// ======================================================
 // FRASES
-// ===========================
+// ======================================================
 
 const petMessages = [
   "Cinna gostou do carinho ♡",
@@ -152,30 +210,26 @@ function randomMessage(list) {
 }
 
 
-// ===========================
-// CARREGAR STATUS
-// ===========================
+// ======================================================
+// STATUS
+// ======================================================
 
 function loadStatus(
   key,
   defaultValue
 ) {
 
-  const savedValue =
+  const saved =
     localStorage.getItem(key);
 
-  if (savedValue === null) {
+  if (saved === null) {
     return defaultValue;
   }
 
-  return Number(savedValue);
+  return Number(saved);
 
 }
 
-
-// ===========================
-// STATUS DO CINNA
-// ===========================
 
 const cinnaStatus = {
 
@@ -206,10 +260,6 @@ const cinnaStatus = {
 };
 
 
-// ===========================
-// LIMITADOR
-// ===========================
-
 function limitStatus(value) {
 
   return Math.max(
@@ -219,10 +269,6 @@ function limitStatus(value) {
 
 }
 
-
-// ===========================
-// SALVAR STATUS
-// ===========================
 
 function saveStatus() {
 
@@ -249,10 +295,6 @@ function saveStatus() {
 }
 
 
-// ===========================
-// ATUALIZAR BARRAS
-// ===========================
-
 function updateStatusBars() {
 
   happinessBar.style.width =
@@ -270,12 +312,9 @@ function updateStatusBars() {
 }
 
 
-// ===========================
-// ESTADO EMOCIONAL
-// ===========================
-
-// Se QUALQUER necessidade estiver
-// abaixo de 45, ele fica triste.
+// ======================================================
+// HUMOR
+// ======================================================
 
 function hasLowNeeds() {
 
@@ -300,17 +339,15 @@ function getCurrentMood() {
 }
 
 
-// ===========================
-// ATUALIZAR SPRITE
-// ===========================
+// ======================================================
+// SPRITE NORMAL / TRISTE
+// ======================================================
 
 function updateCharacterSprite(
   resetStep = false
 ) {
 
-  // Enquanto dorme,
-  // nenhuma animação substitui
-  // cinna-dormindo.PNG.
+  // Dormir tem prioridade.
   if (isSleeping) {
 
     character.src =
@@ -318,6 +355,12 @@ function updateCharacterSprite(
 
     return;
 
+  }
+
+
+  // Uma ação também tem prioridade.
+  if (isPlayingAction) {
+    return;
   }
 
 
@@ -336,60 +379,57 @@ function updateCharacterSprite(
   }
 
 
-  let activeFrames;
-  let activeSequence;
+  let frames;
+  let sequence;
 
 
   if (mood === "sad") {
 
-    activeFrames =
+    frames =
       sadFrames;
 
-    activeSequence =
+    sequence =
       sadSequence;
 
   } else {
 
-    activeFrames =
+    frames =
       idleFrames;
 
-    activeSequence =
+    sequence =
       idleSequence;
 
   }
 
 
   const frameIndex =
-    activeSequence[
-      animationStep
-    ];
+    sequence[animationStep];
 
 
   character.src =
-    activeFrames[
-      frameIndex
-    ];
+    frames[frameIndex];
 
 }
 
 
-// ===========================
+// ======================================================
 // INICIALIZAÇÃO
-// ===========================
+// ======================================================
 
 updateStatusBars();
 updateCharacterSprite(true);
 
 
-// ===========================
-// LOOP DA ANIMAÇÃO
-// ===========================
+// ======================================================
+// IDLE ANIMADO
+// ======================================================
 
 setInterval(() => {
 
-  // Enquanto ele dorme,
-  // mantém somente a imagem de dormir.
-  if (isSleeping) {
+  if (
+    isSleeping ||
+    isPlayingAction
+  ) {
     return;
   }
 
@@ -426,12 +466,148 @@ setInterval(() => {
 }, 350);
 
 
+// ======================================================
+// FUNÇÕES DE AÇÃO
+// ======================================================
+
+function wait(ms) {
+
+  return new Promise(
+    (resolve) =>
+      setTimeout(resolve, ms)
+  );
+
+}
+
+
+// Bloqueia botões enquanto uma animação toca.
+
+function lockControls(locked) {
+
+  foodItems.forEach((button) => {
+    button.disabled = locked;
+  });
+
+
+  bathItems.forEach((button) => {
+    button.disabled = locked;
+  });
+
+
+  menuButtons.forEach((button) => {
+    button.disabled = locked;
+  });
+
+
+  if (sleepButton) {
+    sleepButton.disabled = locked;
+  }
+
+}
+
+
 // ===========================
-// DIMINUIÇÃO DAS NECESSIDADES
+// ANIMAÇÃO DE AÇÃO
 // ===========================
 
+async function playActionAnimation(
+  frames,
+  afterAction
+) {
+
+  if (
+    isPlayingAction ||
+    isSleeping
+  ) {
+    return;
+  }
+
+
+  isPlayingAction = true;
+
+  lockControls(true);
+
+  character.classList.add(
+    "action-playing"
+  );
+
+
+  // Se só existirem dois frames,
+  // fazemos 1 → 2 → 1 → 2.
+
+  let sequence;
+
+
+  if (frames.length === 2) {
+
+    sequence = [
+      0,
+      1,
+      0,
+      1
+    ];
+
+  } else {
+
+    sequence =
+      frames.map(
+        (_, index) =>
+          index
+      );
+
+  }
+
+
+  // Toca os frames.
+
+  for (
+    const index of sequence
+  ) {
+
+    character.src =
+      frames[index];
+
+    await wait(250);
+
+  }
+
+
+  // Segura um pouquinho
+  // o último frame.
+
+  await wait(120);
+
+
+  // Executa o efeito da ação.
+  if (afterAction) {
+
+    afterAction();
+
+  }
+
+
+  isPlayingAction = false;
+
+  lockControls(false);
+
+  character.classList.remove(
+    "action-playing"
+  );
+
+
+  // Decide automaticamente
+  // se volta neutro ou triste.
+
+  updateCharacterSprite(true);
+
+}
+
+
+// ======================================================
+// DIMINUIÇÃO DAS NECESSIDADES
+// ======================================================
+
 // Ainda está rápido para testes.
-// Depois podemos colocar tempos reais.
 
 function decreaseStatus() {
 
@@ -453,7 +629,6 @@ function decreaseStatus() {
     );
 
 
-  // Energia não diminui dormindo.
   if (!isSleeping) {
 
     cinnaStatus.energy =
@@ -465,7 +640,9 @@ function decreaseStatus() {
 
 
   saveStatus();
+
   updateStatusBars();
+
   updateCharacterSprite();
 
 }
@@ -477,9 +654,9 @@ setInterval(
 );
 
 
-// ===========================
+// ======================================================
 // CARINHO
-// ===========================
+// ======================================================
 
 let pets =
   Number(
@@ -501,6 +678,11 @@ function petCinna() {
   }
 
 
+  if (isPlayingAction) {
+    return;
+  }
+
+
   pets++;
 
 
@@ -517,7 +699,9 @@ function petCinna() {
 
 
   saveStatus();
+
   updateStatusBars();
+
   updateCharacterSprite();
 
 
@@ -559,9 +743,9 @@ character.addEventListener(
 );
 
 
-// ===========================
-// BOTÃO DORMIR / ACORDAR
-// ===========================
+// ======================================================
+// SONO
+// ======================================================
 
 function updateSleepButton() {
 
@@ -604,10 +788,15 @@ function updateSleepButton() {
 
 
 // ===========================
-// COMEÇAR A DORMIR
+// DORMIR
 // ===========================
 
 function startSleeping() {
+
+  if (isPlayingAction) {
+    return;
+  }
+
 
   if (
     cinnaStatus.energy >= 100
@@ -624,8 +813,6 @@ function startSleeping() {
   isSleeping = true;
 
 
-  // Troca imediatamente
-  // para o sprite dormindo.
   character.src =
     sleepFrame;
 
@@ -657,11 +844,10 @@ function startSleeping() {
 
 
       saveStatus();
+
       updateStatusBars();
 
 
-      // Chegou a 100%?
-      // Acorda automaticamente.
       if (
         cinnaStatus.energy >= 100
       ) {
@@ -702,9 +888,6 @@ function stopSleeping(
   updateSleepButton();
 
 
-  // Ao acordar,
-  // decide automaticamente
-  // entre neutro e triste.
   updateCharacterSprite(true);
 
 
@@ -729,6 +912,11 @@ if (sleepButton) {
     "click",
     () => {
 
+      if (isPlayingAction) {
+        return;
+      }
+
+
       if (isSleeping) {
 
         stopSleeping();
@@ -745,17 +933,17 @@ if (sleepButton) {
 }
 
 
-// ===========================
+// ======================================================
 // CÔMODO INICIAL
-// ===========================
+// ======================================================
 
 room.dataset.room =
   "home";
 
 
-// ===========================
-// TROCA DE CÔMODOS
-// ===========================
+// ======================================================
+// MENU
+// ======================================================
 
 menuButtons.forEach(
   (button) => {
@@ -764,16 +952,21 @@ menuButtons.forEach(
       "click",
       () => {
 
+        if (isPlayingAction) {
+          return;
+        }
+
+
         const selectedRoom =
           button.dataset.room;
 
 
-        // Saiu do quarto
-        // enquanto dormia?
+        // Se mudar de quarto
+        // enquanto dorme, acorda.
+
         if (
           isSleeping &&
-          selectedRoom !==
-            "bedroom"
+          selectedRoom !== "bedroom"
         ) {
 
           stopSleeping();
@@ -781,7 +974,6 @@ menuButtons.forEach(
         }
 
 
-        // tira seleção anterior
         menuButtons.forEach(
           (btn) => {
 
@@ -793,7 +985,6 @@ menuButtons.forEach(
         );
 
 
-        // seleciona atual
         button.classList.add(
           "active"
         );
@@ -803,9 +994,9 @@ menuButtons.forEach(
           selectedRoom;
 
 
-        // =====================
+        // ===================
         // BANDEJAS
-        // =====================
+        // ===================
 
         if (foodTray) {
 
@@ -834,13 +1025,12 @@ menuButtons.forEach(
         }
 
 
-        // =====================
+        // ===================
         // MENSAGENS
-        // =====================
+        // ===================
 
         if (
-          selectedRoom ===
-          "home"
+          selectedRoom === "home"
         ) {
 
           message.textContent =
@@ -908,16 +1098,65 @@ menuButtons.forEach(
 );
 
 
-// ===========================
+// ======================================================
+// ESCOLHER ANIMAÇÃO DA COMIDA
+// ======================================================
+
+function getFoodFrames(
+  foodName
+) {
+
+  if (
+    foodName === "Morango"
+  ) {
+    return strawberryFrames;
+  }
+
+
+  if (
+    foodName === "Maçã"
+  ) {
+    return appleFrames;
+  }
+
+
+  if (
+    foodName === "Leite"
+  ) {
+    return milkFrames;
+  }
+
+
+  if (
+    foodName === "Bolo"
+  ) {
+    return cakeFrames;
+  }
+
+
+  return idleFrames;
+
+}
+
+
+// ======================================================
 // COMIDA
-// ===========================
+// ======================================================
 
 foodItems.forEach(
   (food) => {
 
     food.addEventListener(
       "click",
-      () => {
+      async () => {
+
+        if (
+          isPlayingAction ||
+          isSleeping
+        ) {
+          return;
+        }
+
 
         const foodName =
           food.dataset.food;
@@ -929,31 +1168,12 @@ foodItems.forEach(
           );
 
 
-        const before =
-          cinnaStatus.hunger;
+        // Se já estiver cheio,
+        // nem inicia a animação.
 
-
-        cinnaStatus.hunger =
-          limitStatus(
-            cinnaStatus.hunger +
-            foodValue
-          );
-
-
-        const gained =
-          cinnaStatus.hunger -
-          before;
-
-
-        saveStatus();
-        updateStatusBars();
-
-        // Se sair do estado triste,
-        // muda imediatamente.
-        updateCharacterSprite(true);
-
-
-        if (gained === 0) {
+        if (
+          cinnaStatus.hunger >= 100
+        ) {
 
           message.textContent =
             "Cinna já está de barriguinha cheia ♡";
@@ -963,35 +1183,44 @@ foodItems.forEach(
         }
 
 
+        const frames =
+          getFoodFrames(
+            foodName
+          );
+
+
         message.textContent =
-          `${foodName} delicioso! +${gained}% 🍽️`;
+          `Cinna está comendo ${foodName.toLowerCase()}... ♡`;
 
 
-        character.animate(
-          [
-            {
-              transform:
-                "scale(1)"
-            },
+        await playActionAnimation(
+          frames,
+          () => {
 
-            {
-              transform:
-                "scale(1.1)"
-            },
+            const before =
+              cinnaStatus.hunger;
 
-            {
-              transform:
-                "scale(0.97)"
-            },
 
-            {
-              transform:
-                "scale(1)"
-            }
-          ],
-          {
-            duration: 450,
-            easing: "ease-out"
+            cinnaStatus.hunger =
+              limitStatus(
+                cinnaStatus.hunger +
+                foodValue
+              );
+
+
+            const gained =
+              cinnaStatus.hunger -
+              before;
+
+
+            saveStatus();
+
+            updateStatusBars();
+
+
+            message.textContent =
+              `${foodName} delicioso! +${gained}% 🍽️`;
+
           }
         );
 
@@ -1002,16 +1231,24 @@ foodItems.forEach(
 );
 
 
-// ===========================
-// BANHO / HIGIENE
-// ===========================
+// ======================================================
+// BANHO
+// ======================================================
 
 bathItems.forEach(
   (item) => {
 
     item.addEventListener(
       "click",
-      () => {
+      async () => {
+
+        if (
+          isPlayingAction ||
+          isSleeping
+        ) {
+          return;
+        }
+
 
         const careName =
           item.dataset.care;
@@ -1023,28 +1260,9 @@ bathItems.forEach(
           );
 
 
-        const before =
-          cinnaStatus.hygiene;
-
-
-        cinnaStatus.hygiene =
-          limitStatus(
-            cinnaStatus.hygiene +
-            careValue
-          );
-
-
-        const gained =
-          cinnaStatus.hygiene -
-          before;
-
-
-        saveStatus();
-        updateStatusBars();
-        updateCharacterSprite(true);
-
-
-        if (gained === 0) {
+        if (
+          cinnaStatus.hygiene >= 100
+        ) {
 
           message.textContent =
             "Cinna já está limpinho! 🫧";
@@ -1055,34 +1273,37 @@ bathItems.forEach(
 
 
         message.textContent =
-          `${careName}! +${gained}% higiene 🫧`;
+          "Hora de ficar limpinho! 🫧";
 
 
-        character.animate(
-          [
-            {
-              transform:
-                "rotate(0deg)"
-            },
+        await playActionAnimation(
+          bathFrames,
+          () => {
 
-            {
-              transform:
-                "rotate(-3deg)"
-            },
+            const before =
+              cinnaStatus.hygiene;
 
-            {
-              transform:
-                "rotate(3deg)"
-            },
 
-            {
-              transform:
-                "rotate(0deg)"
-            }
-          ],
-          {
-            duration: 450,
-            easing: "ease-out"
+            cinnaStatus.hygiene =
+              limitStatus(
+                cinnaStatus.hygiene +
+                careValue
+              );
+
+
+            const gained =
+              cinnaStatus.hygiene -
+              before;
+
+
+            saveStatus();
+
+            updateStatusBars();
+
+
+            message.textContent =
+              `${careName}! +${gained}% higiene 🫧`;
+
           }
         );
 
@@ -1093,9 +1314,9 @@ bathItems.forEach(
 );
 
 
-// ===========================
+// ======================================================
 // FALAS ALEATÓRIAS
-// ===========================
+// ======================================================
 
 setInterval(
   () => {
@@ -1107,7 +1328,8 @@ setInterval(
 
     if (
       currentRoom === "home" &&
-      !isSleeping
+      !isSleeping &&
+      !isPlayingAction
     ) {
 
       message.textContent =

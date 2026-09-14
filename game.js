@@ -32,9 +32,10 @@ let sleepInterval = null;
 
 
 // ===========================
-// SPRITES / IDLE
+// SPRITES
 // ===========================
 
+// neutro
 const idleFrames = [
   "assets/sprites/cinna-idle-1.PNG",
   "assets/sprites/cinna-idle-2.PNG",
@@ -42,34 +43,37 @@ const idleFrames = [
   "assets/sprites/cinna-idle-4.PNG"
 ];
 
+// triste
+const sadFrames = [
+  "assets/sprites/cinna-triste-1.PNG",
+  "assets/sprites/cinna-triste-2.PNG",
+  "assets/sprites/cinna-triste-3.PNG",
+  "assets/sprites/cinna-triste-4.PNG"
+];
+
+// sequência neutra com piscada
 const idleSequence = [
   0, 1, 2, 1,
   0, 1, 2, 1,
   0, 3, 0, 1
 ];
 
-let idleStep = 0;
+// sequência triste com piscada
+const sadSequence = [
+  0, 1, 2, 1,
+  0, 1, 2, 1,
+  0, 3, 0, 1
+];
 
-idleFrames.forEach((src) => {
+let idleStep = 0;
+let lastMood = "idle";
+
+
+// pré-carrega sprites
+[...idleFrames, ...sadFrames].forEach((src) => {
   const image = new Image();
   image.src = src;
 });
-
-setInterval(() => {
-
-  // futuramente colocaremos sprite próprio dormindo
-  if (isSleeping) return;
-
-  idleStep =
-    (idleStep + 1) % idleSequence.length;
-
-  const frame =
-    idleSequence[idleStep];
-
-  character.src =
-    idleFrames[frame];
-
-}, 350);
 
 
 // ===========================
@@ -93,14 +97,8 @@ const idleMessages = [
 ];
 
 function randomMessage(list) {
-
-  const index =
-    Math.floor(
-      Math.random() * list.length
-    );
-
+  const index = Math.floor(Math.random() * list.length);
   return list[index];
-
 }
 
 
@@ -108,13 +106,8 @@ function randomMessage(list) {
 // STATUS
 // ===========================
 
-function loadStatus(
-  key,
-  defaultValue
-) {
-
-  const savedValue =
-    localStorage.getItem(key);
+function loadStatus(key, defaultValue) {
+  const savedValue = localStorage.getItem(key);
 
   if (savedValue === null) {
     return defaultValue;
@@ -123,215 +116,164 @@ function loadStatus(
   return Number(savedValue);
 }
 
-
 const cinnaStatus = {
-
-  happiness:
-    loadStatus(
-      "cinnaHappiness",
-      90
-    ),
-
-  hunger:
-    loadStatus(
-      "cinnaHunger",
-      80
-    ),
-
-  energy:
-    loadStatus(
-      "cinnaEnergy",
-      100
-    ),
-
-  hygiene:
-    loadStatus(
-      "cinnaHygiene",
-      90
-    )
-
+  happiness: loadStatus("cinnaHappiness", 90),
+  hunger: loadStatus("cinnaHunger", 80),
+  energy: loadStatus("cinnaEnergy", 100),
+  hygiene: loadStatus("cinnaHygiene", 90)
 };
 
-
 function limitStatus(value) {
-
-  return Math.max(
-    0,
-    Math.min(100, value)
-  );
-
+  return Math.max(0, Math.min(100, value));
 }
-
 
 function saveStatus() {
-
-  localStorage.setItem(
-    "cinnaHappiness",
-    cinnaStatus.happiness
-  );
-
-  localStorage.setItem(
-    "cinnaHunger",
-    cinnaStatus.hunger
-  );
-
-  localStorage.setItem(
-    "cinnaEnergy",
-    cinnaStatus.energy
-  );
-
-  localStorage.setItem(
-    "cinnaHygiene",
-    cinnaStatus.hygiene
-  );
-
+  localStorage.setItem("cinnaHappiness", cinnaStatus.happiness);
+  localStorage.setItem("cinnaHunger", cinnaStatus.hunger);
+  localStorage.setItem("cinnaEnergy", cinnaStatus.energy);
+  localStorage.setItem("cinnaHygiene", cinnaStatus.hygiene);
 }
-
 
 function updateStatusBars() {
-
-  happinessBar.style.width =
-    `${cinnaStatus.happiness}%`;
-
-  hungerBar.style.width =
-    `${cinnaStatus.hunger}%`;
-
-  energyBar.style.width =
-    `${cinnaStatus.energy}%`;
-
-  hygieneBar.style.width =
-    `${cinnaStatus.hygiene}%`;
-
+  happinessBar.style.width = `${cinnaStatus.happiness}%`;
+  hungerBar.style.width = `${cinnaStatus.hunger}%`;
+  energyBar.style.width = `${cinnaStatus.energy}%`;
+  hygieneBar.style.width = `${cinnaStatus.hygiene}%`;
 }
 
 
+// ===========================
+// MODO TRISTE
+// ===========================
+
+function hasLowNeeds() {
+  return (
+    cinnaStatus.happiness < 45 ||
+    cinnaStatus.hunger < 45 ||
+    cinnaStatus.energy < 45 ||
+    cinnaStatus.hygiene < 45
+  );
+}
+
+function getCurrentMood() {
+  if (hasLowNeeds()) {
+    return "sad";
+  }
+
+  return "idle";
+}
+
+function updateCharacterSprite(resetStep = false) {
+  if (isSleeping) return;
+
+  const mood = getCurrentMood();
+
+  if (resetStep || mood !== lastMood) {
+    idleStep = 0;
+    lastMood = mood;
+  }
+
+  let activeFrames;
+  let activeSequence;
+
+  if (mood === "sad") {
+    activeFrames = sadFrames;
+    activeSequence = sadSequence;
+  } else {
+    activeFrames = idleFrames;
+    activeSequence = idleSequence;
+  }
+
+  const frameIndex = activeSequence[idleStep];
+  character.src = activeFrames[frameIndex];
+}
+
+
+// mostra sprite certo logo ao abrir
 updateStatusBars();
+updateCharacterSprite(true);
+
+
+// loop da animação
+setInterval(() => {
+  if (isSleeping) return;
+
+  const mood = getCurrentMood();
+
+  if (mood !== lastMood) {
+    idleStep = 0;
+    lastMood = mood;
+  } else {
+    const sequenceLength =
+      mood === "sad"
+        ? sadSequence.length
+        : idleSequence.length;
+
+    idleStep = (idleStep + 1) % sequenceLength;
+  }
+
+  updateCharacterSprite();
+}, 350);
 
 
 // ===========================
 // DIMINUIÇÃO DOS STATUS
 // ===========================
 
-// Ainda está rápido para teste.
-// Depois vamos colocar tempos reais.
-
 function decreaseStatus() {
+  cinnaStatus.happiness = limitStatus(cinnaStatus.happiness - 1);
+  cinnaStatus.hunger = limitStatus(cinnaStatus.hunger - 2);
+  cinnaStatus.hygiene = limitStatus(cinnaStatus.hygiene - 2);
 
-  cinnaStatus.happiness =
-    limitStatus(
-      cinnaStatus.happiness - 1
-    );
-
-  cinnaStatus.hunger =
-    limitStatus(
-      cinnaStatus.hunger - 2
-    );
-
-  cinnaStatus.hygiene =
-    limitStatus(
-      cinnaStatus.hygiene - 2
-    );
-
-
-  // Energia não cai enquanto dorme
   if (!isSleeping) {
-
-    cinnaStatus.energy =
-      limitStatus(
-        cinnaStatus.energy - 1
-      );
-
+    cinnaStatus.energy = limitStatus(cinnaStatus.energy - 1);
   }
-
 
   saveStatus();
   updateStatusBars();
-
+  updateCharacterSprite();
 }
 
-
-setInterval(
-  decreaseStatus,
-  10000
-);
+setInterval(decreaseStatus, 10000);
 
 
 // ===========================
 // CARINHO
 // ===========================
 
-let pets =
-  Number(
-    localStorage.getItem(
-      "cinnaPets"
-    )
-  ) || 0;
-
+let pets = Number(localStorage.getItem("cinnaPets")) || 0;
 
 function petCinna() {
-
-  // Não acorda o pobre menino
-  // clicando nele enquanto dorme KKKK
   if (isSleeping) {
-
-    message.textContent =
-      "Shhh... Cinna está dormindo 😴";
-
+    message.textContent = "Shhh... Cinna está dormindo 😴";
     return;
   }
 
-
   pets++;
+  localStorage.setItem("cinnaPets", pets);
 
-  localStorage.setItem(
-    "cinnaPets",
-    pets
-  );
-
-
-  cinnaStatus.happiness =
-    limitStatus(
-      cinnaStatus.happiness + 3
-    );
-
+  cinnaStatus.happiness = limitStatus(cinnaStatus.happiness + 3);
 
   saveStatus();
   updateStatusBars();
+  updateCharacterSprite();
 
-
-  message.textContent =
-    randomMessage(
-      petMessages
-    );
-
+  message.textContent = randomMessage(petMessages);
 
   character.animate(
     [
-      {
-        transform: "scale(1)"
-      },
-
-      {
-        transform: "scale(1.08)"
-      },
-
-      {
-        transform: "scale(1)"
-      }
+      { transform: "scale(1)" },
+      { transform: "scale(1.08)" },
+      { transform: "scale(1)" }
     ],
     {
       duration: 300,
       easing: "ease-out"
     }
   );
-
 }
 
-
-character.addEventListener(
-  "click",
-  petCinna
-);
+character.addEventListener("click", petCinna);
 
 
 // ===========================
@@ -339,144 +281,73 @@ character.addEventListener(
 // ===========================
 
 function updateSleepButton() {
-
   if (!sleepButton) return;
 
-  const icon =
-    sleepButton.querySelector("span");
-
-  const label =
-    sleepButton.querySelector("small");
-
+  const icon = sleepButton.querySelector("span");
+  const label = sleepButton.querySelector("small");
 
   if (isSleeping) {
-
     icon.textContent = "☀️";
     label.textContent = "Acordar";
-
   } else {
-
     icon.textContent = "😴";
     label.textContent = "Dormir";
-
   }
-
 }
 
-
 function startSleeping() {
-
-  // Se já estiver com energia cheia
   if (cinnaStatus.energy >= 100) {
-
-    message.textContent =
-      "Cinna já está cheio de energia! ⚡";
-
+    message.textContent = "Cinna já está cheio de energia! ⚡";
     return;
-
   }
-
 
   isSleeping = true;
 
-  room.classList.add(
-    "sleeping"
-  );
-
+  room.classList.add("sleeping");
   updateSleepButton();
 
+  message.textContent = "Boa noite, Cinna... 😴💤";
 
-  message.textContent =
-    "Boa noite, Cinna... 😴💤";
+  clearInterval(sleepInterval);
 
+  sleepInterval = setInterval(() => {
+    cinnaStatus.energy = limitStatus(cinnaStatus.energy + 5);
 
-  // Para garantir que não sejam criados
-  // vários timers ao mesmo tempo
-  clearInterval(
-    sleepInterval
-  );
+    saveStatus();
+    updateStatusBars();
 
-
-  sleepInterval =
-    setInterval(() => {
-
-      cinnaStatus.energy =
-        limitStatus(
-          cinnaStatus.energy + 5
-        );
-
-
-      saveStatus();
-      updateStatusBars();
-
-
-      if (
-        cinnaStatus.energy >= 100
-      ) {
-
-        stopSleeping(true);
-
-      }
-
-    }, 5000);
-
+    if (cinnaStatus.energy >= 100) {
+      stopSleeping(true);
+    }
+  }, 5000);
 }
 
-
-function stopSleeping(
-  fullyRested = false
-) {
-
+function stopSleeping(fullyRested = false) {
   isSleeping = false;
 
-  clearInterval(
-    sleepInterval
-  );
-
+  clearInterval(sleepInterval);
   sleepInterval = null;
 
-
-  room.classList.remove(
-    "sleeping"
-  );
-
+  room.classList.remove("sleeping");
   updateSleepButton();
 
+  updateCharacterSprite(true);
 
   if (fullyRested) {
-
-    message.textContent =
-      "Cinna acordou descansado! ☀️⚡";
-
+    message.textContent = "Cinna acordou descansado! ☀️⚡";
   } else {
-
-    message.textContent =
-      "Bom dia, Cinna! ☀️";
-
+    message.textContent = "Bom dia, Cinna! ☀️";
   }
-
 }
 
-
 if (sleepButton) {
-
-  sleepButton.addEventListener(
-    "click",
-    () => {
-
-      if (isSleeping) {
-
-        stopSleeping();
-
-      } else {
-
-        startSleeping();
-
-      }
-
+  sleepButton.addEventListener("click", () => {
+    if (isSleeping) {
+      stopSleeping();
+    } else {
+      startSleeping();
     }
-  );
-
+  });
 }
 
 
@@ -484,366 +355,161 @@ if (sleepButton) {
 // CÔMODO INICIAL
 // ===========================
 
-room.dataset.room =
-  "home";
+room.dataset.room = "home";
 
 
 // ===========================
 // MENU DE CÔMODOS
 // ===========================
 
-menuButtons.forEach(
-  (button) => {
+menuButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const selectedRoom = button.dataset.room;
 
-    button.addEventListener(
-      "click",
-      () => {
+    if (isSleeping && selectedRoom !== "bedroom") {
+      stopSleeping();
+    }
 
-        const selectedRoom =
-          button.dataset.room;
+    menuButtons.forEach((btn) => {
+      btn.classList.remove("active");
+    });
 
+    button.classList.add("active");
 
-        // Se sair do quarto,
-        // acorda automaticamente
-        if (
-          isSleeping &&
-          selectedRoom !== "bedroom"
-        ) {
+    room.dataset.room = selectedRoom;
 
-          stopSleeping();
+    if (foodTray) {
+      foodTray.hidden = selectedRoom !== "kitchen";
+    }
 
-        }
+    if (bathTray) {
+      bathTray.hidden = selectedRoom !== "bathroom";
+    }
 
+    if (sleepTray) {
+      sleepTray.hidden = selectedRoom !== "bedroom";
+    }
 
-        menuButtons.forEach(
-          (btn) => {
+    if (selectedRoom === "home") {
+      message.textContent = "Cinna está esperando você ♡";
+    }
 
-            btn.classList.remove(
-              "active"
-            );
+    if (selectedRoom === "kitchen") {
+      message.textContent = "O que vamos comer? 🍰";
+    }
 
-          }
-        );
+    if (selectedRoom === "bathroom") {
+      message.textContent = "Hora do banho! 🫧";
+    }
 
-
-        button.classList.add(
-          "active"
-        );
-
-
-        room.dataset.room =
-          selectedRoom;
-
-
-        // =====================
-        // BANDEJAS
-        // =====================
-
-        if (foodTray) {
-
-          foodTray.hidden =
-            selectedRoom !==
-            "kitchen";
-
-        }
-
-
-        if (bathTray) {
-
-          bathTray.hidden =
-            selectedRoom !==
-            "bathroom";
-
-        }
-
-
-        if (sleepTray) {
-
-          sleepTray.hidden =
-            selectedRoom !==
-            "bedroom";
-
-        }
-
-
-        // =====================
-        // MENSAGENS
-        // =====================
-
-        if (
-          selectedRoom === "home"
-        ) {
-
-          message.textContent =
-            "Cinna está esperando você ♡";
-
-        }
-
-
-        if (
-          selectedRoom ===
-          "kitchen"
-        ) {
-
-          message.textContent =
-            "O que vamos comer? 🍰";
-
-        }
-
-
-        if (
-          selectedRoom ===
-          "bathroom"
-        ) {
-
-          message.textContent =
-            "Hora do banho! 🫧";
-
-        }
-
-
-        if (
-          selectedRoom ===
-          "bedroom"
-        ) {
-
-          if (isSleeping) {
-
-            message.textContent =
-              "Zzz... 😴💤";
-
-          } else {
-
-            message.textContent =
-              "Cinna está ficando com soninho... 🌙";
-
-          }
-
-        }
-
-
-        if (
-          selectedRoom ===
-          "games"
-        ) {
-
-          message.textContent =
-            "Vamos brincar? 🎮";
-
-        }
-
+    if (selectedRoom === "bedroom") {
+      if (isSleeping) {
+        message.textContent = "Zzz... 😴💤";
+      } else {
+        message.textContent = "Cinna está ficando com soninho... 🌙";
       }
-    );
+    }
 
-  }
-);
+    if (selectedRoom === "games") {
+      message.textContent = "Vamos brincar? 🎮";
+    }
+  });
+});
 
 
 // ===========================
 // COMIDA
 // ===========================
 
-foodItems.forEach(
-  (food) => {
+foodItems.forEach((food) => {
+  food.addEventListener("click", () => {
+    const foodName = food.dataset.food;
+    const foodValue = Number(food.dataset.value);
 
-    food.addEventListener(
-      "click",
-      () => {
+    const before = cinnaStatus.hunger;
 
-        const foodName =
-          food.dataset.food;
+    cinnaStatus.hunger = limitStatus(cinnaStatus.hunger + foodValue);
 
-        const foodValue =
-          Number(
-            food.dataset.value
-          );
+    const gained = cinnaStatus.hunger - before;
 
+    saveStatus();
+    updateStatusBars();
+    updateCharacterSprite(true);
 
-        const before =
-          cinnaStatus.hunger;
+    if (gained === 0) {
+      message.textContent = "Cinna já está de barriguinha cheia ♡";
+      return;
+    }
 
+    message.textContent = `${foodName} delicioso! +${gained}% 🍽️`;
 
-        cinnaStatus.hunger =
-          limitStatus(
-            cinnaStatus.hunger +
-            foodValue
-          );
-
-
-        const gained =
-          cinnaStatus.hunger -
-          before;
-
-
-        saveStatus();
-        updateStatusBars();
-
-
-        if (gained === 0) {
-
-          message.textContent =
-            "Cinna já está de barriguinha cheia ♡";
-
-          return;
-
-        }
-
-
-        message.textContent =
-          `${foodName} delicioso! +${gained}% 🍽️`;
-
-
-        character.animate(
-          [
-            {
-              transform:
-                "scale(1)"
-            },
-
-            {
-              transform:
-                "scale(1.1)"
-            },
-
-            {
-              transform:
-                "scale(0.97)"
-            },
-
-            {
-              transform:
-                "scale(1)"
-            }
-          ],
-          {
-            duration: 450,
-            easing: "ease-out"
-          }
-        );
-
+    character.animate(
+      [
+        { transform: "scale(1)" },
+        { transform: "scale(1.1)" },
+        { transform: "scale(0.97)" },
+        { transform: "scale(1)" }
+      ],
+      {
+        duration: 450,
+        easing: "ease-out"
       }
     );
-
-  }
-);
+  });
+});
 
 
 // ===========================
 // BANHO / HIGIENE
 // ===========================
 
-bathItems.forEach(
-  (item) => {
+bathItems.forEach((item) => {
+  item.addEventListener("click", () => {
+    const careName = item.dataset.care;
+    const careValue = Number(item.dataset.value);
 
-    item.addEventListener(
-      "click",
-      () => {
+    const before = cinnaStatus.hygiene;
 
-        const careName =
-          item.dataset.care;
+    cinnaStatus.hygiene = limitStatus(cinnaStatus.hygiene + careValue);
 
-        const careValue =
-          Number(
-            item.dataset.value
-          );
+    const gained = cinnaStatus.hygiene - before;
 
+    saveStatus();
+    updateStatusBars();
+    updateCharacterSprite(true);
 
-        const before =
-          cinnaStatus.hygiene;
+    if (gained === 0) {
+      message.textContent = "Cinna já está limpinho! 🫧";
+      return;
+    }
 
+    message.textContent = `${careName}! +${gained}% higiene 🫧`;
 
-        cinnaStatus.hygiene =
-          limitStatus(
-            cinnaStatus.hygiene +
-            careValue
-          );
-
-
-        const gained =
-          cinnaStatus.hygiene -
-          before;
-
-
-        saveStatus();
-        updateStatusBars();
-
-
-        if (gained === 0) {
-
-          message.textContent =
-            "Cinna já está limpinho! 🫧";
-
-          return;
-
-        }
-
-
-        message.textContent =
-          `${careName}! +${gained}% higiene 🫧`;
-
-
-        character.animate(
-          [
-            {
-              transform:
-                "rotate(0deg)"
-            },
-
-            {
-              transform:
-                "rotate(-3deg)"
-            },
-
-            {
-              transform:
-                "rotate(3deg)"
-            },
-
-            {
-              transform:
-                "rotate(0deg)"
-            }
-          ],
-          {
-            duration: 450,
-            easing: "ease-out"
-          }
-        );
-
+    character.animate(
+      [
+        { transform: "rotate(0deg)" },
+        { transform: "rotate(-3deg)" },
+        { transform: "rotate(3deg)" },
+        { transform: "rotate(0deg)" }
+      ],
+      {
+        duration: 450,
+        easing: "ease-out"
       }
     );
-
-  }
-);
+  });
+});
 
 
 // ===========================
 // FALAS ALEATÓRIAS
 // ===========================
 
-setInterval(
-  () => {
+setInterval(() => {
+  const currentRoom = room.dataset.room || "home";
 
-    const currentRoom =
-      room.dataset.room ||
-      "home";
-
-
-    if (
-      currentRoom === "home" &&
-      !isSleeping
-    ) {
-
-      message.textContent =
-        randomMessage(
-          idleMessages
-        );
-
-    }
-
-  },
-  12000
-);
-
-
+  if (currentRoom === "home" && !isSleeping) {
+    message.textContent = randomMessage(idleMessages);
+  }
+}, 12000);
 

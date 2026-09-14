@@ -82,6 +82,6 @@ h1 {
   }
 
   50% {
-    transform: translateY(-8px) scale(1.03);
+    transform: translateY(-12px) scale(1.04);
   }
 }

@@ -1,0 +1,83 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100dvh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #dff4ff;
+  color: #4d6a7a;
+  display: flex;
+  justify-content: center;
+}
+
+.game {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  text-align: center;
+  padding: 24px 16px 18px;
+  font-size: 28px;
+  color: #629bc0;
+}
+
+.room {
+  flex: 1;
+  margin: 0 16px 20px;
+  border-radius: 30px;
+  background:
+    linear-gradient(
+      to bottom,
+      #bde9ff 0%,
+      #eaf9ff 68%,
+      #f7e6cf 68%,
+      #e9cfae 100%
+    );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  border: 3px solid rgba(255, 255, 255, 0.7);
+}
+
+.character {
+  width: 180px;
+  height: 180px;
+  display: grid;
+  place-items: center;
+  font-size: 110px;
+  user-select: none;
+  cursor: pointer;
+
+  animation: breathe 2.2s ease-in-out infinite;
+}
+
+#message {
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 5px 15px rgba(84, 143, 177, 0.12);
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-8px) scale(1.03);
+  }
+}

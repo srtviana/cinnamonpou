@@ -419,3 +419,9 @@ h1 {
 .room.sleeping .character {
   animation-duration: 3.5s;
 }
+
+
+/* Pausa a animação de respiração durante ações */
+.character.action-playing {
+  animation: none;
+}

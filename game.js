@@ -42,7 +42,11 @@ const idleFrames = [
   "assets/sprites/cinna-idle-4.PNG"
 ];
 
-const idleSequence = [0, 1, 2, 1, 0, 1, 2, 1, 3, 1];
+const idleSequence = [
+  0, 1, 2, 1,
+  0, 1, 2, 1,
+  0, 3, 0, 1
+];
 
 let idleStep = 0;
 
@@ -65,7 +69,7 @@ setInterval(() => {
   character.src =
     idleFrames[frame];
 
-}, 500);
+}, 350);
 
 
 // ===========================

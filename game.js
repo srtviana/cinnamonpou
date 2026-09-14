@@ -129,3 +129,48 @@ updateStatusBars();
 
 // TEMPORÁRIO: diminui a cada 10 segundos para testarmos
 setInterval(decreaseStatus, 10000);
+
+
+// ===========================
+// MENU DE CÔMODOS
+// ===========================
+
+const room = document.querySelector(".room");
+const menuButtons = document.querySelectorAll(".menu-button");
+
+menuButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const selectedRoom = button.dataset.room;
+
+    // tira o destaque do botão anterior
+    menuButtons.forEach((btn) => {
+      btn.classList.remove("active");
+    });
+
+    // destaca o botão atual
+    button.classList.add("active");
+
+    // informa qual cômodo está aberto
+    room.dataset.room = selectedRoom;
+
+    if (selectedRoom === "home") {
+      message.textContent = "Cinna está esperando você ♡";
+    }
+
+    if (selectedRoom === "kitchen") {
+      message.textContent = "O que vamos comer? 🍰";
+    }
+
+    if (selectedRoom === "bathroom") {
+      message.textContent = "Hora do banho! 🫧";
+    }
+
+    if (selectedRoom === "bedroom") {
+      message.textContent = "Cinna está ficando com soninho... 🌙";
+    }
+
+    if (selectedRoom === "games") {
+      message.textContent = "Vamos brincar? 🎮";
+    }
+  });
+});

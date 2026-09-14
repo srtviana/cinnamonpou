@@ -11,13 +11,17 @@ const menuButtons = document.querySelectorAll(".menu-button");
 const happinessBar = document.querySelector("#happiness-bar");
 const hungerBar = document.querySelector("#hunger-bar");
 const energyBar = document.querySelector("#energy-bar");
+const hygieneBar = document.querySelector("#hygiene-bar");
 
 const foodTray = document.querySelector("#food-tray");
 const foodItems = document.querySelectorAll(".food-item");
 
+const bathTray = document.querySelector("#bath-tray");
+const bathItems = document.querySelectorAll(".bath-item");
+
 
 // ===========================
-// SPRITES / ANIMAÇÃO IDLE
+// SPRITES / IDLE
 // ===========================
 
 const idleFrames = [
@@ -26,31 +30,33 @@ const idleFrames = [
   "assets/sprites/cinna-idle-3.PNG"
 ];
 
-// Faz 1 → 2 → 3 → 2 → 1
 const idleSequence = [0, 1, 2, 1];
 
 let idleStep = 0;
 
 
-// Pré-carrega as imagens
+// pré-carrega sprites
 idleFrames.forEach((src) => {
   const image = new Image();
   image.src = src;
 });
 
 
-// Troca os frames
 setInterval(() => {
-  idleStep = (idleStep + 1) % idleSequence.length;
+  idleStep =
+    (idleStep + 1) % idleSequence.length;
 
-  const frame = idleSequence[idleStep];
+  const frame =
+    idleSequence[idleStep];
 
-  character.src = idleFrames[frame];
+  character.src =
+    idleFrames[frame];
+
 }, 500);
 
 
 // ===========================
-// FRASES DO CINNA
+// FRASES
 // ===========================
 
 const petMessages = [
@@ -60,6 +66,7 @@ const petMessages = [
   "Mais carinho!! ☁️",
   "♡ +3 felicidade"
 ];
+
 
 const idleMessages = [
   "Cinna está esperando você ♡",
@@ -71,9 +78,14 @@ const idleMessages = [
 
 
 function randomMessage(list) {
-  const index = Math.floor(Math.random() * list.length);
+
+  const index =
+    Math.floor(
+      Math.random() * list.length
+    );
 
   return list[index];
+
 }
 
 
@@ -81,32 +93,64 @@ function randomMessage(list) {
 // STATUS
 // ===========================
 
-// Essa função evita que um status salvo como 0
-// volte automaticamente para o valor inicial.
-function loadStatus(key, defaultValue) {
-  const savedValue = localStorage.getItem(key);
+function loadStatus(
+  key,
+  defaultValue
+) {
+
+  const savedValue =
+    localStorage.getItem(key);
 
   if (savedValue === null) {
     return defaultValue;
   }
 
   return Number(savedValue);
+
 }
 
 
 const cinnaStatus = {
-  happiness: loadStatus("cinnaHappiness", 90),
-  hunger: loadStatus("cinnaHunger", 80),
-  energy: loadStatus("cinnaEnergy", 100)
+
+  happiness:
+    loadStatus(
+      "cinnaHappiness",
+      90
+    ),
+
+  hunger:
+    loadStatus(
+      "cinnaHunger",
+      80
+    ),
+
+  energy:
+    loadStatus(
+      "cinnaEnergy",
+      100
+    ),
+
+  hygiene:
+    loadStatus(
+      "cinnaHygiene",
+      90
+    )
+
 };
 
 
 function limitStatus(value) {
-  return Math.max(0, Math.min(100, value));
+
+  return Math.max(
+    0,
+    Math.min(100, value)
+  );
+
 }
 
 
 function saveStatus() {
+
   localStorage.setItem(
     "cinnaHappiness",
     cinnaStatus.happiness
@@ -121,10 +165,17 @@ function saveStatus() {
     "cinnaEnergy",
     cinnaStatus.energy
   );
+
+  localStorage.setItem(
+    "cinnaHygiene",
+    cinnaStatus.hygiene
+  );
+
 }
 
 
 function updateStatusBars() {
+
   happinessBar.style.width =
     `${cinnaStatus.happiness}%`;
 
@@ -133,34 +184,55 @@ function updateStatusBars() {
 
   energyBar.style.width =
     `${cinnaStatus.energy}%`;
+
+  hygieneBar.style.width =
+    `${cinnaStatus.hygiene}%`;
+
 }
 
 
-// Mostra os valores assim que abre o jogo
 updateStatusBars();
 
 
-// TEMPORÁRIO PARA TESTES
-// Depois aumentamos bastante esse tempo.
+// ===========================
+// DIMINUI STATUS
+// ===========================
+
+// ainda está rápido só para teste
+
 function decreaseStatus() {
-  cinnaStatus.happiness = limitStatus(
-    cinnaStatus.happiness - 1
-  );
 
-  cinnaStatus.hunger = limitStatus(
-    cinnaStatus.hunger - 2
-  );
+  cinnaStatus.happiness =
+    limitStatus(
+      cinnaStatus.happiness - 1
+    );
 
-  cinnaStatus.energy = limitStatus(
-    cinnaStatus.energy - 1
-  );
+  cinnaStatus.hunger =
+    limitStatus(
+      cinnaStatus.hunger - 2
+    );
+
+  cinnaStatus.energy =
+    limitStatus(
+      cinnaStatus.energy - 1
+    );
+
+  cinnaStatus.hygiene =
+    limitStatus(
+      cinnaStatus.hygiene - 2
+    );
 
   saveStatus();
+
   updateStatusBars();
+
 }
 
 
-setInterval(decreaseStatus, 10000);
+setInterval(
+  decreaseStatus,
+  10000
+);
 
 
 // ===========================
@@ -168,10 +240,15 @@ setInterval(decreaseStatus, 10000);
 // ===========================
 
 let pets =
-  Number(localStorage.getItem("cinnaPets")) || 0;
+  Number(
+    localStorage.getItem(
+      "cinnaPets"
+    )
+  ) || 0;
 
 
 function petCinna() {
+
   pets++;
 
   localStorage.setItem(
@@ -179,16 +256,19 @@ function petCinna() {
     pets
   );
 
-  // aumenta felicidade
-  cinnaStatus.happiness = limitStatus(
-    cinnaStatus.happiness + 3
-  );
+  cinnaStatus.happiness =
+    limitStatus(
+      cinnaStatus.happiness + 3
+    );
 
   saveStatus();
+
   updateStatusBars();
 
   message.textContent =
-    randomMessage(petMessages);
+    randomMessage(
+      petMessages
+    );
 
   character.animate(
     [
@@ -209,6 +289,7 @@ function petCinna() {
       easing: "ease-out"
     }
   );
+
 }
 
 
@@ -222,180 +303,332 @@ character.addEventListener(
 // CÔMODO INICIAL
 // ===========================
 
-room.dataset.room = "home";
+room.dataset.room =
+  "home";
 
 
 // ===========================
 // MENU DE CÔMODOS
 // ===========================
 
-menuButtons.forEach((button) => {
+menuButtons.forEach(
+  (button) => {
 
-  button.addEventListener("click", () => {
+    button.addEventListener(
+      "click",
+      () => {
 
-    const selectedRoom =
-      button.dataset.room;
-
-
-    // Remove seleção antiga
-    menuButtons.forEach((btn) => {
-      btn.classList.remove("active");
-    });
+        const selectedRoom =
+          button.dataset.room;
 
 
-    // Seleciona botão atual
-    button.classList.add("active");
+        menuButtons.forEach(
+          (btn) => {
+
+            btn.classList.remove(
+              "active"
+            );
+
+          }
+        );
 
 
-    // Salva cômodo atual
-    room.dataset.room = selectedRoom;
+        button.classList.add(
+          "active"
+        );
 
 
-    // =====================
-    // BANDEJA DE COMIDA
-    // =====================
-
-    if (foodTray) {
-      foodTray.hidden =
-        selectedRoom !== "kitchen";
-    }
+        room.dataset.room =
+          selectedRoom;
 
 
-    // =====================
-    // MENSAGENS
-    // =====================
+        // comida
 
-    if (selectedRoom === "home") {
-      message.textContent =
-        "Cinna está esperando você ♡";
-    }
+        if (foodTray) {
 
+          foodTray.hidden =
+            selectedRoom !==
+            "kitchen";
 
-    if (selectedRoom === "kitchen") {
-      message.textContent =
-        "O que vamos comer? 🍰";
-    }
+        }
 
 
-    if (selectedRoom === "bathroom") {
-      message.textContent =
-        "Hora do banho! 🫧";
-    }
+        // banho
+
+        if (bathTray) {
+
+          bathTray.hidden =
+            selectedRoom !==
+            "bathroom";
+
+        }
 
 
-    if (selectedRoom === "bedroom") {
-      message.textContent =
-        "Cinna está ficando com soninho... 🌙";
-    }
+        // mensagens
+
+        if (
+          selectedRoom === "home"
+        ) {
+
+          message.textContent =
+            "Cinna está esperando você ♡";
+
+        }
 
 
-    if (selectedRoom === "games") {
-      message.textContent =
-        "Vamos brincar? 🎮";
-    }
+        if (
+          selectedRoom ===
+          "kitchen"
+        ) {
 
-  });
+          message.textContent =
+            "O que vamos comer? 🍰";
 
-});
+        }
+
+
+        if (
+          selectedRoom ===
+          "bathroom"
+        ) {
+
+          message.textContent =
+            "Hora do banho! 🫧";
+
+        }
+
+
+        if (
+          selectedRoom ===
+          "bedroom"
+        ) {
+
+          message.textContent =
+            "Cinna está ficando com soninho... 🌙";
+
+        }
+
+
+        if (
+          selectedRoom ===
+          "games"
+        ) {
+
+          message.textContent =
+            "Vamos brincar? 🎮";
+
+        }
+
+      }
+    );
+
+  }
+);
 
 
 // ===========================
 // COMIDA
 // ===========================
 
-foodItems.forEach((food) => {
+foodItems.forEach(
+  (food) => {
 
-  food.addEventListener("click", () => {
+    food.addEventListener(
+      "click",
+      () => {
 
-    const foodName =
-      food.dataset.food;
+        const foodName =
+          food.dataset.food;
 
-    const foodValue =
-      Number(food.dataset.value);
-
-
-    // Valor antes de comer
-    const before =
-      cinnaStatus.hunger;
-
-
-    // Aumenta saciedade
-    cinnaStatus.hunger = limitStatus(
-      cinnaStatus.hunger + foodValue
-    );
+        const foodValue =
+          Number(
+            food.dataset.value
+          );
 
 
-    // Descobre quanto realmente aumentou
-    const gained =
-      cinnaStatus.hunger - before;
+        const before =
+          cinnaStatus.hunger;
 
 
-    saveStatus();
-    updateStatusBars();
+        cinnaStatus.hunger =
+          limitStatus(
+            cinnaStatus.hunger +
+            foodValue
+          );
 
 
-    // Se já estiver cheio
-    if (gained === 0) {
-
-      message.textContent =
-        "Cinna já está de barriguinha cheia ♡";
-
-      return;
-    }
+        const gained =
+          cinnaStatus.hunger -
+          before;
 
 
-    // Mensagem após comer
-    message.textContent =
-      `${foodName} delicioso! +${gained}% 🍽️`;
+        saveStatus();
+
+        updateStatusBars();
 
 
-    // Pequena reação
-    character.animate(
-      [
-        {
-          transform: "scale(1)"
-        },
+        if (gained === 0) {
 
-        {
-          transform: "scale(1.1)"
-        },
+          message.textContent =
+            "Cinna já está de barriguinha cheia ♡";
 
-        {
-          transform: "scale(0.97)"
-        },
+          return;
 
-        {
-          transform: "scale(1)"
         }
-      ],
-      {
-        duration: 450,
-        easing: "ease-out"
+
+
+        message.textContent =
+          `${foodName} delicioso! +${gained}% 🍽️`;
+
+
+        character.animate(
+          [
+            {
+              transform:
+                "scale(1)"
+            },
+
+            {
+              transform:
+                "scale(1.1)"
+            },
+
+            {
+              transform:
+                "scale(0.97)"
+            },
+
+            {
+              transform:
+                "scale(1)"
+            }
+          ],
+          {
+            duration: 450,
+            easing: "ease-out"
+          }
+        );
+
       }
     );
 
-  });
+  }
+);
 
-});
+
+// ===========================
+// BANHO / HIGIENE
+// ===========================
+
+bathItems.forEach(
+  (item) => {
+
+    item.addEventListener(
+      "click",
+      () => {
+
+        const careName =
+          item.dataset.care;
+
+        const careValue =
+          Number(
+            item.dataset.value
+          );
+
+
+        const before =
+          cinnaStatus.hygiene;
+
+
+        cinnaStatus.hygiene =
+          limitStatus(
+            cinnaStatus.hygiene +
+            careValue
+          );
+
+
+        const gained =
+          cinnaStatus.hygiene -
+          before;
+
+
+        saveStatus();
+
+        updateStatusBars();
+
+
+        if (gained === 0) {
+
+          message.textContent =
+            "Cinna já está limpinho! 🫧";
+
+          return;
+
+        }
+
+
+        message.textContent =
+          `${careName}! +${gained}% higiene 🫧`;
+
+
+        character.animate(
+          [
+            {
+              transform:
+                "rotate(0deg)"
+            },
+
+            {
+              transform:
+                "rotate(-3deg)"
+            },
+
+            {
+              transform:
+                "rotate(3deg)"
+            },
+
+            {
+              transform:
+                "rotate(0deg)"
+            }
+          ],
+          {
+            duration: 450,
+            easing: "ease-out"
+          }
+        );
+
+      }
+    );
+
+  }
+);
 
 
 // ===========================
 // FALAS ALEATÓRIAS
 // ===========================
 
-// Só fala sozinho quando estiver
-// na tela inicial.
-setInterval(() => {
+setInterval(
+  () => {
 
-  const currentRoom =
-    room.dataset.room || "home";
+    const currentRoom =
+      room.dataset.room ||
+      "home";
 
 
-  if (currentRoom === "home") {
+    if (
+      currentRoom === "home"
+    ) {
 
-    message.textContent =
-      randomMessage(idleMessages);
+      message.textContent =
+        randomMessage(
+          idleMessages
+        );
 
-  }
+    }
 
-}, 12000);
+  },
+  12000
+);

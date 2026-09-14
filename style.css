@@ -299,3 +299,62 @@ h1 {
 .food-item:active {
   transform: scale(0.88);
 }
+
+
+#hygiene-bar {
+  background: #86d9b7;
+}
+
+.bath-tray {
+  width: 88%;
+  margin-top: 14px;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+
+  padding: 10px;
+
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 20px;
+}
+
+.bath-tray[hidden] {
+  display: none;
+}
+
+.bath-item {
+  min-width: 0;
+  border: none;
+  border-radius: 16px;
+
+  padding: 8px 4px;
+
+  background: rgba(255, 255, 255, 0.9);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+
+  font-family: inherit;
+  color: #587386;
+
+  cursor: pointer;
+
+  transition: transform 0.15s ease;
+}
+
+.bath-item span {
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.bath-item small {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.bath-item:active {
+  transform: scale(0.88);
+}

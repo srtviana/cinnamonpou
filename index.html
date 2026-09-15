@@ -1,328 +1,159 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ᑕIᑎᑎᗩᗰOᑎᖇOᒪᒪ ☁️</title>
-
-  <link
-    rel="stylesheet"
-    href="style.css?v=6"
-  >
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-
   <main class="game">
-
     <h1>ᑕIᑎᑎᗩᗰOᑎᖇOᒪᒪ ☁️</h1>
 
-
-    <!-- ========================= -->
-    <!-- STATUS -->
-    <!-- ========================= -->
-
-    <div class="status-panel">
-
+    <section class="status-panel">
       <div class="status">
-        <span class="status-icon">❤️</span>
-
+        <span class="status-icon">💗</span>
         <div class="status-info">
           <span>Felicidade</span>
-
           <div class="status-bar">
-            <div
-              class="status-fill"
-              id="happiness-bar"
-              style="width: 90%;"
-            ></div>
+            <div class="status-fill happiness-fill" id="happiness-bar"></div>
           </div>
         </div>
       </div>
-
 
       <div class="status">
         <span class="status-icon">🍰</span>
-
         <div class="status-info">
           <span>Comida</span>
-
           <div class="status-bar">
-            <div
-              class="status-fill"
-              id="hunger-bar"
-              style="width: 80%;"
-            ></div>
+            <div class="status-fill hunger-fill" id="hunger-bar"></div>
           </div>
         </div>
       </div>
-
 
       <div class="status">
         <span class="status-icon">⚡</span>
-
         <div class="status-info">
           <span>Energia</span>
-
           <div class="status-bar">
-            <div
-              class="status-fill"
-              id="energy-bar"
-              style="width: 100%;"
-            ></div>
+            <div class="status-fill energy-fill" id="energy-bar"></div>
           </div>
         </div>
       </div>
-
 
       <div class="status">
         <span class="status-icon">🫧</span>
-
         <div class="status-info">
           <span>Higiene</span>
-
           <div class="status-bar">
-            <div
-              class="status-fill"
-              id="hygiene-bar"
-              style="width: 90%;"
-            ></div>
+            <div class="status-fill hygiene-fill" id="hygiene-bar"></div>
           </div>
         </div>
       </div>
+    </section>
 
-    </div>
+    <section class="room room-home" id="room">
+      <div class="effects-layer" id="effects-layer"></div>
 
-
-    <!-- ========================= -->
-    <!-- CÔMODO -->
-    <!-- ========================= -->
-
-    <section
-      class="room"
-      data-room="home"
-    >
-
-      <!--
-        Wrapper do Cinna.
-        A effect-layer fica ATRÁS dele.
-      -->
-
-      <div class="cinna-wrap">
-
-        <div
-          id="effect-layer"
-          class="effect-layer"
-        ></div>
-
+      <div class="character-wrap">
         <img
           id="cinna"
           class="character"
           src="assets/sprites/cinna-idle-1.PNG"
           alt="Cinna"
-        >
+        />
 
+        <img
+          id="dirt-overlay"
+          class="dirt-overlay"
+          src="assets/sprites/sujeira-1.PNG"
+          alt="Sujeira"
+          hidden
+        />
       </div>
 
-
-      <!-- ========================= -->
-      <!-- MENU -->
-      <!-- ========================= -->
-
       <nav class="game-menu">
-
-        <button
-          class="menu-button active"
-          data-room="home"
-        >
+        <button class="menu-button active" data-room="home">
           <span>🏠</span>
           <small>Início</small>
         </button>
 
-
-        <button
-          class="menu-button"
-          data-room="kitchen"
-        >
+        <button class="menu-button" data-room="kitchen">
           <span>🍰</span>
           <small>Comida</small>
         </button>
 
-
-        <button
-          class="menu-button"
-          data-room="bathroom"
-        >
-          <span>🧼</span>
+        <button class="menu-button" data-room="bathroom">
+          <span>🫧</span>
           <small>Banho</small>
         </button>
 
-
-        <button
-          class="menu-button"
-          data-room="bedroom"
-        >
-          <span>🌙</span>
-          <small>Dormir</small>
-        </button>
-
-
-        <button
-          class="menu-button"
-          data-room="games"
-        >
-          <span>🎮</span>
-          <small>Jogos</small>
-        </button>
-
-      </nav>
-
-
-      <!-- ========================= -->
-      <!-- COMIDAS -->
-      <!-- ========================= -->
-
-      <div
-        id="food-tray"
-        class="food-tray"
-        hidden
-      >
-
-        <button
-          class="food-item"
-          data-food="Morango"
-          data-value="25"
-        >
-          <span>🍓</span>
-          <small>+25%</small>
-        </button>
-
-
-        <button
-          class="food-item"
-          data-food="Maçã"
-          data-value="35"
-        >
-          <span>🍎</span>
-          <small>+35%</small>
-        </button>
-
-
-        <button
-          class="food-item"
-          data-food="Leite"
-          data-value="30"
-        >
-          <span>🥛</span>
-          <small>+30%</small>
-        </button>
-
-
-        <button
-          class="food-item"
-          data-food="Bolo"
-          data-value="50"
-        >
-          <span>🍰</span>
-          <small>+50%</small>
-        </button>
-
-      </div>
-
-
-      <!-- ========================= -->
-      <!-- BANHO -->
-      <!-- ========================= -->
-
-      <div
-        id="bath-tray"
-        class="bath-tray"
-        hidden
-      >
-
-        <button
-          class="bath-item"
-          data-care="Esponja"
-          data-value="25"
-        >
-          <span>🧽</span>
-          <small>+25%</small>
-        </button>
-
-
-        <button
-          class="bath-item"
-          data-care="Sabonete"
-          data-value="35"
-        >
-          <span>🧼</span>
-          <small>+35%</small>
-        </button>
-
-
-        <button
-          class="bath-item"
-          data-care="Shampoo"
-          data-value="40"
-        >
-          <span>🧴</span>
-          <small>+40%</small>
-        </button>
-
-
-        <button
-          class="bath-item"
-          data-care="Enxágue"
-          data-value="20"
-        >
-          <span>🚿</span>
-          <small>+20%</small>
-        </button>
-
-      </div>
-
-
-      <!-- ========================= -->
-      <!-- SONO -->
-      <!-- ========================= -->
-
-      <div
-        id="sleep-tray"
-        class="sleep-tray"
-        hidden
-      >
-
-        <button
-          id="sleep-button"
-          class="sleep-button"
-        >
+        <button class="menu-button" data-room="bedroom">
           <span>💡</span>
           <small>Dormir</small>
         </button>
 
+        <button class="menu-button" data-room="games">
+          <span>🎮</span>
+          <small>Jogos</small>
+        </button>
+      </nav>
+
+      <div id="food-tray" class="action-tray" hidden>
+        <button class="action-button food-item" data-food="Morango" data-value="25" data-sequence="morango">
+          <span>🍓</span>
+          <small>Morango</small>
+        </button>
+
+        <button class="action-button food-item" data-food="Maçã" data-value="35" data-sequence="maca">
+          <span>🍎</span>
+          <small>Maçã</small>
+        </button>
+
+        <button class="action-button food-item" data-food="Leite" data-value="30" data-sequence="leite">
+          <span>🥛</span>
+          <small>Leite</small>
+        </button>
+
+        <button class="action-button food-item" data-food="Bolo" data-value="50" data-sequence="bolo">
+          <span>🍰</span>
+          <small>Bolo</small>
+        </button>
       </div>
 
+      <div id="bath-tray" class="action-tray" hidden>
+        <button class="action-button bath-item" data-care="Esponja" data-value="25">
+          <span>🧽</span>
+          <small>Esponja</small>
+        </button>
 
-      <!-- ========================= -->
-      <!-- MENSAGEM -->
-      <!-- ========================= -->
+        <button class="action-button bath-item" data-care="Sabonete" data-value="35">
+          <span>🧼</span>
+          <small>Sabonete</small>
+        </button>
 
-      <p id="message">
-        Cinna está esperando você ♡
-      </p>
+        <button class="action-button bath-item" data-care="Shampoo" data-value="40">
+          <span>🧴</span>
+          <small>Shampoo</small>
+        </button>
 
+        <button class="action-button bath-item" data-care="Enxágue" data-value="20">
+          <span>🚿</span>
+          <small>Enxágue</small>
+        </button>
+      </div>
+
+      <div id="sleep-tray" class="action-tray" hidden>
+        <button id="sleep-action" class="action-button sleep-button">
+          <span>😴</span>
+          <small>Dormir</small>
+        </button>
+      </div>
+
+      <p id="message">Cinna está esperando você ♡</p>
     </section>
-
   </main>
 
-
-  <script src="game.js?v=6"></script>
-
+  <script src="game.js"></script>
 </body>
 </html>

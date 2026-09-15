@@ -1,184 +1,328 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>CinnamonPou</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link
+    rel="stylesheet"
+    href="style.css?v=6"
+  >
 </head>
 
 <body>
 
   <main class="game">
-    <h1>ᑕIᑎᑎᗩᗰOᑎᖇOᒪᒪ ☁️</h1>
-<div class="status-panel">
 
-  <div class="status">
-    <span class="status-icon">❤️</span>
+    <h1>CinnamonPou ☁️</h1>
 
-    <div class="status-info">
-      <span>Felicidade</span>
 
-      <div class="status-bar">
-        <div
-          class="status-fill"
-          id="happiness-bar"
-          style="width: 90%;"
-        ></div>
+    <!-- ========================= -->
+    <!-- STATUS -->
+    <!-- ========================= -->
+
+    <div class="status-panel">
+
+      <div class="status">
+        <span class="status-icon">❤️</span>
+
+        <div class="status-info">
+          <span>Felicidade</span>
+
+          <div class="status-bar">
+            <div
+              class="status-fill"
+              id="happiness-bar"
+              style="width: 90%;"
+            ></div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
 
-  <div class="status">
-    <span class="status-icon">🍰</span>
+      <div class="status">
+        <span class="status-icon">🍰</span>
 
-    <div class="status-info">
-      <span>Comida</span>
+        <div class="status-info">
+          <span>Comida</span>
 
-      <div class="status-bar">
-        <div
-          class="status-fill"
-          id="hunger-bar"
-          style="width: 80%;"
-        ></div>
+          <div class="status-bar">
+            <div
+              class="status-fill"
+              id="hunger-bar"
+              style="width: 80%;"
+            ></div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
 
-  <div class="status">
-    <span class="status-icon">⚡</span>
+      <div class="status">
+        <span class="status-icon">⚡</span>
 
-    <div class="status-info">
-      <span>Energia</span>
+        <div class="status-info">
+          <span>Energia</span>
 
-      <div class="status-bar">
-        <div
-          class="status-fill"
-          id="energy-bar"
-          style="width: 100%;"
-        ></div>
+          <div class="status-bar">
+            <div
+              class="status-fill"
+              id="energy-bar"
+              style="width: 100%;"
+            ></div>
+          </div>
+        </div>
       </div>
+
+
+      <div class="status">
+        <span class="status-icon">🫧</span>
+
+        <div class="status-info">
+          <span>Higiene</span>
+
+          <div class="status-bar">
+            <div
+              class="status-fill"
+              id="hygiene-bar"
+              style="width: 90%;"
+            ></div>
+          </div>
+        </div>
+      </div>
+
     </div>
-  </div>
 
-<div class="status">
-  <span class="status-icon">🫧</span>
 
-  <div class="status-info">
-    <span>Higiene</span>
+    <!-- ========================= -->
+    <!-- CÔMODO -->
+    <!-- ========================= -->
 
-    <div class="status-bar">
-      <div
-        class="status-fill"
-        id="hygiene-bar"
-        style="width: 90%;"
-      ></div>
-    </div>
-  </div>
-</div>
-  
-</div>
-    <section class="room">
-      <img
-  id="cinna"
-  class="character"
-  src="assets/sprites/cinna-idle-1.PNG"
-  alt="Cinna"
->
+    <section
+      class="room"
+      data-room="home"
+    >
+
+      <!--
+        Wrapper do Cinna.
+        A effect-layer fica ATRÁS dele.
+      -->
+
+      <div class="cinna-wrap">
+
+        <div
+          id="effect-layer"
+          class="effect-layer"
+        ></div>
+
+        <img
+          id="cinna"
+          class="character"
+          src="assets/sprites/cinna-idle-1.PNG"
+          alt="Cinna"
+        >
+
+      </div>
+
+
+      <!-- ========================= -->
+      <!-- MENU -->
+      <!-- ========================= -->
+
       <nav class="game-menu">
 
-  <button class="menu-button active" data-room="home">
-    <span>🏠</span>
-    <small>Início</small>
-  </button>
+        <button
+          class="menu-button active"
+          data-room="home"
+        >
+          <span>🏠</span>
+          <small>Início</small>
+        </button>
 
-  <button class="menu-button" data-room="kitchen">
-    <span>🍰</span>
-    <small>Comida</small>
-  </button>
 
-  <button class="menu-button" data-room="bathroom">
-    <span>🧼</span>
-    <small>Banho</small>
-  </button>
+        <button
+          class="menu-button"
+          data-room="kitchen"
+        >
+          <span>🍰</span>
+          <small>Comida</small>
+        </button>
 
-  <button class="menu-button" data-room="bedroom">
-    <span>🌙</span>
-    <small>Dormir</small>
-  </button>
 
-  <button class="menu-button" data-room="games">
-    <span>🎮</span>
-    <small>Jogos</small>
-  </button>
+        <button
+          class="menu-button"
+          data-room="bathroom"
+        >
+          <span>🧼</span>
+          <small>Banho</small>
+        </button>
 
-</nav>
 
-      <div id="food-tray" class="food-tray" hidden>
+        <button
+          class="menu-button"
+          data-room="bedroom"
+        >
+          <span>🌙</span>
+          <small>Dormir</small>
+        </button>
 
-  <button class="food-item" data-food="Morango" data-value="25">
-    <span>🍓</span>
-    <small>+25%</small>
-  </button>
 
-  <button class="food-item" data-food="Maçã" data-value="35">
-    <span>🍎</span>
-    <small>+35%</small>
-  </button>
+        <button
+          class="menu-button"
+          data-room="games"
+        >
+          <span>🎮</span>
+          <small>Jogos</small>
+        </button>
 
-  <button class="food-item" data-food="Leite" data-value="30">
-    <span>🥛</span>
-    <small>+30%</small>
-  </button>
+      </nav>
 
-  <button class="food-item" data-food="Bolo" data-value="50">
-    <span>🍰</span>
-    <small>+50%</small>
-  </button>
 
-</div>
+      <!-- ========================= -->
+      <!-- COMIDAS -->
+      <!-- ========================= -->
 
-<div id="bath-tray" class="bath-tray" hidden>
+      <div
+        id="food-tray"
+        class="food-tray"
+        hidden
+      >
 
-  <button class="bath-item" data-care="Esponja" data-value="25">
-    <span>🧽</span>
-    <small>+25%</small>
-  </button>
+        <button
+          class="food-item"
+          data-food="Morango"
+          data-value="25"
+        >
+          <span>🍓</span>
+          <small>+25%</small>
+        </button>
 
-  <button class="bath-item" data-care="Sabonete" data-value="35">
-    <span>🧼</span>
-    <small>+35%</small>
-  </button>
 
-  <button class="bath-item" data-care="Shampoo" data-value="40">
-    <span>🧴</span>
-    <small>+40%</small>
-  </button>
+        <button
+          class="food-item"
+          data-food="Maçã"
+          data-value="35"
+        >
+          <span>🍎</span>
+          <small>+35%</small>
+        </button>
 
-  <button class="bath-item" data-care="Enxágue" data-value="20">
-    <span>🚿</span>
-    <small>+20%</small>
-  </button>
 
-</div>
+        <button
+          class="food-item"
+          data-food="Leite"
+          data-value="30"
+        >
+          <span>🥛</span>
+          <small>+30%</small>
+        </button>
 
-<div id="sleep-tray" class="sleep-tray" hidden>
 
-  <button id="sleep-button" class="sleep-button">
-    <span>💡</span>
-    <small>Dormir</small>
-  </button>
+        <button
+          class="food-item"
+          data-food="Bolo"
+          data-value="50"
+        >
+          <span>🍰</span>
+          <small>+50%</small>
+        </button>
 
-</div>
-      
-      <p id="message">Cinna está esperando você ♡</p>
+      </div>
+
+
+      <!-- ========================= -->
+      <!-- BANHO -->
+      <!-- ========================= -->
+
+      <div
+        id="bath-tray"
+        class="bath-tray"
+        hidden
+      >
+
+        <button
+          class="bath-item"
+          data-care="Esponja"
+          data-value="25"
+        >
+          <span>🧽</span>
+          <small>+25%</small>
+        </button>
+
+
+        <button
+          class="bath-item"
+          data-care="Sabonete"
+          data-value="35"
+        >
+          <span>🧼</span>
+          <small>+35%</small>
+        </button>
+
+
+        <button
+          class="bath-item"
+          data-care="Shampoo"
+          data-value="40"
+        >
+          <span>🧴</span>
+          <small>+40%</small>
+        </button>
+
+
+        <button
+          class="bath-item"
+          data-care="Enxágue"
+          data-value="20"
+        >
+          <span>🚿</span>
+          <small>+20%</small>
+        </button>
+
+      </div>
+
+
+      <!-- ========================= -->
+      <!-- SONO -->
+      <!-- ========================= -->
+
+      <div
+        id="sleep-tray"
+        class="sleep-tray"
+        hidden
+      >
+
+        <button
+          id="sleep-button"
+          class="sleep-button"
+        >
+          <span>😴</span>
+          <small>Dormir</small>
+        </button>
+
+      </div>
+
+
+      <!-- ========================= -->
+      <!-- MENSAGEM -->
+      <!-- ========================= -->
+
+      <p id="message">
+        Cinna está esperando você ♡
+      </p>
+
     </section>
+
   </main>
 
-  <script src="game.js"></script>
+
+  <script src="game.js?v=6"></script>
+
 </body>
 </html>

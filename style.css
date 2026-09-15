@@ -377,19 +377,15 @@ os próprios sprites fazem o movimento.
 /* ========================= */
 
 .dirt-overlay {
-  width: 320px;
-
+  width: 255px;
   height: auto;
-
-  max-width: 85%;
 
   object-fit: contain;
 
   position: absolute;
 
   left: 50%;
-
-  top: 50%;
+  top: 54%;
 
   transform:
     translate(
@@ -404,6 +400,8 @@ os próprios sprites fazem o movimento.
   user-select: none;
 
   -webkit-user-drag: none;
+
+  opacity: 0.92;
 }
 
 
@@ -1131,10 +1129,13 @@ os próprios sprites fazem o movimento.
   }
 
 
-  .character,
-  .dirt-overlay {
-    width: 285px;
-  }
+.character {
+  width: 285px;
+}
+
+.dirt-overlay {
+  width: 225px;
+}
 
 
   .room {

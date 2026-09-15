@@ -4,91 +4,176 @@
   padding: 0;
 }
 
+
 body {
   min-height: 100dvh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
   background: #dff4ff;
   color: #4d6a7a;
+
   display: flex;
   justify-content: center;
 }
 
+
 .game {
   width: 100%;
   max-width: 430px;
+
   min-height: 100dvh;
+
   display: flex;
   flex-direction: column;
 }
 
+
 h1 {
   text-align: center;
-  padding: 24px 16px 18px;
+
+  padding:
+    24px
+    16px
+    18px;
+
   font-size: 28px;
+
   color: #629bc0;
 }
+
+
+/* ========================= */
+/* STATUS */
+/* ========================= */
+
 .status-panel {
   display: flex;
   flex-direction: column;
+
   gap: 10px;
-  padding: 0 18px 16px;
+
+  padding:
+    0
+    18px
+    16px;
 }
+
 
 .status {
   display: flex;
   align-items: center;
+
   gap: 10px;
 }
 
+
 .status-icon {
   width: 34px;
+
   font-size: 24px;
+
   text-align: center;
 }
+
 
 .status-info {
   flex: 1;
 }
 
+
 .status-info > span {
   display: block;
+
   margin-bottom: 4px;
+
   font-size: 13px;
   font-weight: 700;
+
   color: #5f8298;
 }
+
 
 .status-bar {
   width: 100%;
   height: 12px;
-  background: rgba(255, 255, 255, 0.75);
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.75
+    );
+
   border-radius: 999px;
+
   overflow: hidden;
-  box-shadow: inset 0 1px 3px rgba(70, 120, 150, 0.12);
+
+  box-shadow:
+    inset
+    0
+    1px
+    3px
+    rgba(
+      70,
+      120,
+      150,
+      0.12
+    );
 }
+
 
 .status-fill {
   height: 100%;
+
   border-radius: 999px;
-  transition: width 0.4s ease;
+
+  transition:
+    width
+    0.4s
+    ease;
 }
+
 
 #happiness-bar {
   background: #ff9eb5;
 }
 
+
 #hunger-bar {
   background: #f6c76e;
 }
+
 
 #energy-bar {
   background: #7fd5df;
 }
 
+
+#hygiene-bar {
+  background: #86d9b7;
+}
+
+
+/* ========================= */
+/* QUARTO */
+/* ========================= */
+
 .room {
   flex: 1;
-  margin: 0 16px 20px;
+
+  margin:
+    0
+    16px
+    20px;
+
   border-radius: 30px;
+
   background:
     linear-gradient(
       to bottom,
@@ -97,110 +182,461 @@ h1 {
       #f7e6cf 68%,
       #e9cfae 100%
     );
+
   display: flex;
   flex-direction: column;
+
   align-items: center;
   justify-content: center;
+
   overflow: hidden;
+
   position: relative;
-  border: 3px solid rgba(255, 255, 255, 0.7);
+
+  border:
+    3px
+    solid
+    rgba(
+      255,
+      255,
+      255,
+      0.7
+    );
 }
+
+
+/* ========================= */
+/* CINNA + EFEITOS */
+/* ========================= */
+
+.cinna-wrap {
+  width: 100%;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  isolation: isolate;
+}
+
 
 .character {
   width: 320px;
   height: auto;
+
   max-width: 85%;
+
   object-fit: contain;
 
   display: block;
 
+  position: relative;
+
+  z-index: 2;
+
   user-select: none;
   -webkit-user-select: none;
+
   -webkit-user-drag: none;
 
   cursor: pointer;
 
-  animation: breathe 1.8s ease-in-out infinite;
-}
-#message {
-  margin-top: 20px;
-  background: rgba(255, 255, 255, 0.85);
-  padding: 12px 20px;
-  border-radius: 999px;
-  font-size: 15px;
-  font-weight: 600;
-  box-shadow: 0 5px 15px rgba(84, 143, 177, 0.12);
+  animation:
+    breathe
+    1.8s
+    ease-in-out
+    infinite;
 }
 
+
 @keyframes breathe {
+
   0%,
   100% {
-    transform: translateY(0) scale(1);
+    transform:
+      translateY(0)
+      scale(1);
   }
 
   50% {
-    transform: translateY(-6px) scale(1.015);
+    transform:
+      translateY(-6px)
+      scale(1.015);
   }
+
 }
 
 
+/*
+  Durante comida e banho,
+  o JS controla os frames.
+*/
+
+.character.action-playing {
+  animation: none;
+}
+
+
+/* ========================= */
+/* CAMADA DE EFEITOS */
+/* ========================= */
+
+.effect-layer {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 1;
+
+  pointer-events: none;
+
+  overflow: visible;
+}
+
+
+.effect {
+  position: absolute;
+
+  pointer-events: none;
+
+  user-select: none;
+  -webkit-user-drag: none;
+
+  object-fit: contain;
+}
+
+
+/* ========================= */
+/* CORAÇÃO */
+/* ========================= */
+
+.effect-heart {
+  width: var(--effect-size, 38px);
+
+  left: var(--effect-left, 50%);
+  bottom: var(--effect-bottom, 28%);
+
+  animation:
+    float-heart
+    var(--effect-duration, 1.35s)
+    ease-out
+    forwards;
+}
+
+
+@keyframes float-heart {
+
+  0% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(0)
+      scale(0.45)
+      rotate(-8deg);
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  45% {
+    transform:
+      translateX(
+        calc(
+          -50% +
+          var(--effect-drift, 0px)
+        )
+      )
+      translateY(-45px)
+      scale(1);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateX(
+        calc(
+          -50% +
+          var(--effect-drift, 0px)
+        )
+      )
+      translateY(-145px)
+      scale(1.15)
+      rotate(8deg);
+  }
+
+}
+
+
+/* ========================= */
+/* BOLHAS */
+/* ========================= */
+
+.effect-bubble {
+  width: var(--effect-size, 30px);
+
+  left: var(--effect-left, 50%);
+  bottom: var(--effect-bottom, 10%);
+
+  animation:
+    float-bubble
+    var(--effect-duration, 1.7s)
+    ease-out
+    forwards;
+}
+
+
+@keyframes float-bubble {
+
+  0% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(0)
+      scale(0.4);
+  }
+
+  15% {
+    opacity: 0.95;
+  }
+
+  50% {
+    transform:
+      translateX(
+        calc(
+          -50% +
+          var(--effect-drift, 0px)
+        )
+      )
+      translateY(-65px)
+      scale(0.9);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateX(
+        calc(
+          -50% +
+          var(--effect-drift, 0px)
+        )
+      )
+      translateY(-175px)
+      scale(1.2);
+  }
+
+}
+
+
+/* ========================= */
+/* ZZZ */
+/* ========================= */
+
+.effect-zzz {
+  width: var(--effect-size, 52px);
+
+  left: var(--effect-left, 69%);
+  bottom: var(--effect-bottom, 62%);
+
+  animation:
+    float-zzz
+    var(--effect-duration, 2s)
+    ease-out
+    forwards;
+}
+
+
+@keyframes float-zzz {
+
+  0% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(0)
+      scale(0.55);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateX(
+        calc(
+          -50% +
+          24px
+        )
+      )
+      translateY(-90px)
+      scale(1);
+  }
+
+}
+
+
+/* ========================= */
+/* MENSAGEM */
+/* ========================= */
+
+#message {
+  margin-top: 20px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.85
+    );
+
+  padding:
+    12px
+    20px;
+
+  border-radius: 999px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  box-shadow:
+    0
+    5px
+    15px
+    rgba(
+      84,
+      143,
+      177,
+      0.12
+    );
+}
+
+
+/* ========================= */
+/* MENU */
+/* ========================= */
+
 .game-menu {
   width: 92%;
+
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+
+  grid-template-columns:
+    repeat(
+      5,
+      1fr
+    );
+
   gap: 6px;
 
   margin-top: 18px;
   margin-bottom: 12px;
 }
 
+
 .menu-button {
   min-width: 0;
+
   border: none;
+
   border-radius: 16px;
 
-  padding: 8px 3px;
+  padding:
+    8px
+    3px;
 
-  background: rgba(255, 255, 255, 0.8);
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.8
+    );
+
   color: #587386;
 
   display: flex;
   flex-direction: column;
+
   align-items: center;
   justify-content: center;
 
   gap: 3px;
 
   font-family: inherit;
+
   cursor: pointer;
 
   transition:
-    transform 0.15s ease,
-    background 0.2s ease;
+    transform
+    0.15s
+    ease,
+    background
+    0.2s
+    ease;
 }
+
 
 .menu-button span {
   font-size: 22px;
   line-height: 1;
 }
 
+
 .menu-button small {
   font-size: 10px;
   font-weight: 700;
 }
 
+
 .menu-button.active {
   background: #ffffff;
+
   color: #5795bd;
 
   box-shadow:
-    0 4px 10px rgba(71, 126, 158, 0.14);
+    0
+    4px
+    10px
+    rgba(
+      71,
+      126,
+      158,
+      0.14
+    );
 }
+
 
 .menu-button:active {
-  transform: scale(0.92);
+  transform:
+    scale(0.92);
 }
 
+
+.menu-button:disabled,
+.food-item:disabled,
+.bath-item:disabled,
+.sleep-button:disabled {
+  pointer-events: none;
+}
+
+
+/* ========================= */
+/* COZINHA */
+/* ========================= */
 
 .room[data-room="kitchen"] {
   background:
@@ -213,6 +649,11 @@ h1 {
     );
 }
 
+
+/* ========================= */
+/* BANHEIRO */
+/* ========================= */
+
 .room[data-room="bathroom"] {
   background:
     linear-gradient(
@@ -224,6 +665,11 @@ h1 {
     );
 }
 
+
+/* ========================= */
+/* QUARTO */
+/* ========================= */
+
 .room[data-room="bedroom"] {
   background:
     linear-gradient(
@@ -234,6 +680,11 @@ h1 {
       #afa1ce 100%
     );
 }
+
+
+/* ========================= */
+/* JOGOS */
+/* ========================= */
 
 .room[data-room="games"] {
   background:
@@ -247,121 +698,207 @@ h1 {
 }
 
 
+/* ========================= */
+/* COMIDA */
+/* ========================= */
+
 .food-tray {
   width: 88%;
+
   margin-top: 14px;
 
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+
+  grid-template-columns:
+    repeat(
+      4,
+      1fr
+    );
+
   gap: 8px;
 
   padding: 10px;
 
-  background: rgba(255, 255, 255, 0.35);
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.35
+    );
+
   border-radius: 20px;
 }
+
 
 .food-tray[hidden] {
   display: none;
 }
 
+
 .food-item {
   min-width: 0;
+
   border: none;
+
   border-radius: 16px;
 
-  padding: 8px 4px;
+  padding:
+    8px
+    4px;
 
-  background: rgba(255, 255, 255, 0.9);
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.9
+    );
 
   display: flex;
   flex-direction: column;
+
   align-items: center;
+
   gap: 3px;
 
   font-family: inherit;
+
   color: #587386;
 
   cursor: pointer;
 
-  transition: transform 0.15s ease;
+  transition:
+    transform
+    0.15s
+    ease;
 }
+
 
 .food-item span {
   font-size: 28px;
+
   line-height: 1.2;
 }
 
+
 .food-item small {
   font-size: 10px;
+
   font-weight: 700;
 }
 
+
 .food-item:active {
-  transform: scale(0.88);
+  transform:
+    scale(0.88);
 }
 
 
-#hygiene-bar {
-  background: #86d9b7;
-}
+/* ========================= */
+/* BANHO */
+/* ========================= */
 
 .bath-tray {
   width: 88%;
+
   margin-top: 14px;
 
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+
+  grid-template-columns:
+    repeat(
+      4,
+      1fr
+    );
+
   gap: 8px;
 
   padding: 10px;
 
-  background: rgba(255, 255, 255, 0.35);
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.35
+    );
+
   border-radius: 20px;
 }
+
 
 .bath-tray[hidden] {
   display: none;
 }
 
+
 .bath-item {
   min-width: 0;
+
   border: none;
+
   border-radius: 16px;
 
-  padding: 8px 4px;
+  padding:
+    8px
+    4px;
 
-  background: rgba(255, 255, 255, 0.9);
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.9
+    );
 
   display: flex;
   flex-direction: column;
+
   align-items: center;
+
   gap: 3px;
 
   font-family: inherit;
+
   color: #587386;
 
   cursor: pointer;
 
-  transition: transform 0.15s ease;
+  transition:
+    transform
+    0.15s
+    ease;
 }
+
 
 .bath-item span {
   font-size: 28px;
+
   line-height: 1.2;
 }
 
+
 .bath-item small {
   font-size: 10px;
+
   font-weight: 700;
 }
 
+
 .bath-item:active {
-  transform: scale(0.88);
+  transform:
+    scale(0.88);
 }
+
+
+/* ========================= */
+/* SONO */
+/* ========================= */
 
 .sleep-tray {
   width: 88%;
+
   margin-top: 14px;
 
   display: flex;
@@ -369,59 +906,88 @@ h1 {
 
   padding: 10px;
 
-  background: rgba(255, 255, 255, 0.25);
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.25
+    );
+
   border-radius: 20px;
 }
+
 
 .sleep-tray[hidden] {
   display: none;
 }
 
+
 .sleep-button {
   width: 120px;
+
   border: none;
+
   border-radius: 18px;
 
   padding: 10px;
 
-  background: rgba(255, 255, 255, 0.9);
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.9
+    );
+
   color: #587386;
 
   display: flex;
   flex-direction: column;
+
   align-items: center;
+
   gap: 4px;
 
   font-family: inherit;
+
   cursor: pointer;
 
-  transition: transform 0.15s ease;
+  transition:
+    transform
+    0.15s
+    ease;
 }
+
 
 .sleep-button span {
   font-size: 30px;
 }
 
+
 .sleep-button small {
   font-size: 11px;
+
   font-weight: 700;
 }
 
+
 .sleep-button:active {
-  transform: scale(0.9);
+  transform:
+    scale(0.9);
 }
 
-/* Quando estiver dormindo */
+
+/* Quarto fica mais escuro durante o sono */
+
 .room.sleeping {
-  filter: brightness(0.72);
+  filter:
+    brightness(0.76);
 }
+
+
+/* O sprite de dormir não precisa respirar */
 
 .room.sleeping .character {
-  animation-duration: 3.5s;
-}
-
-
-/* Pausa a animação de respiração durante ações */
-.character.action-playing {
   animation: none;
 }

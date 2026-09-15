@@ -4,51 +4,80 @@
 
 
 // ===========================
-// ELEMENTOS
+// ELEMENTOS PRINCIPAIS
 // ===========================
 
-const character = document.querySelector("#cinna");
-const message = document.querySelector("#message");
-const room = document.querySelector(".room");
+const character =
+  document.querySelector("#cinna");
 
-const menuButtons = document.querySelectorAll(".menu-button");
+const message =
+  document.querySelector("#message");
 
-const happinessBar = document.querySelector("#happiness-bar");
-const hungerBar = document.querySelector("#hunger-bar");
-const energyBar = document.querySelector("#energy-bar");
-const hygieneBar = document.querySelector("#hygiene-bar");
+const room =
+  document.querySelector(".room");
 
-const foodTray = document.querySelector("#food-tray");
-const foodItems = document.querySelectorAll(".food-item");
-
-const bathTray = document.querySelector("#bath-tray");
-const bathItems = document.querySelectorAll(".bath-item");
-
-const sleepTray = document.querySelector("#sleep-tray");
-const sleepButton = document.querySelector("#sleep-button");
+const effectLayer =
+  document.querySelector("#effect-layer");
 
 
-// ===========================
+const menuButtons =
+  document.querySelectorAll(".menu-button");
+
+
+const happinessBar =
+  document.querySelector("#happiness-bar");
+
+const hungerBar =
+  document.querySelector("#hunger-bar");
+
+const energyBar =
+  document.querySelector("#energy-bar");
+
+const hygieneBar =
+  document.querySelector("#hygiene-bar");
+
+
+const foodTray =
+  document.querySelector("#food-tray");
+
+const foodItems =
+  document.querySelectorAll(".food-item");
+
+
+const bathTray =
+  document.querySelector("#bath-tray");
+
+const bathItems =
+  document.querySelectorAll(".bath-item");
+
+
+const sleepTray =
+  document.querySelector("#sleep-tray");
+
+const sleepButton =
+  document.querySelector("#sleep-button");
+
+
+// ======================================================
 // ESTADOS
-// ===========================
+// ======================================================
 
 let isSleeping = false;
+
 let isPlayingAction = false;
 
 let sleepInterval = null;
 
+let sleepEffectInterval = null;
+
 let animationStep = 0;
+
 let lastMood = "idle";
 
 
 // ======================================================
-// SPRITES
+// SPRITES NORMAIS
 // ======================================================
-
-
-// ===========================
-// IDLE NORMAL
-// ===========================
 
 const idleFrames = [
   "assets/sprites/cinna-idle-1.PNG",
@@ -58,9 +87,9 @@ const idleFrames = [
 ];
 
 
-// ===========================
-// TRISTE
-// ===========================
+// ======================================================
+// SPRITES TRISTES
+// ======================================================
 
 const sadFrames = [
   "assets/sprites/cinna-triste-1.PNG",
@@ -70,17 +99,17 @@ const sadFrames = [
 ];
 
 
-// ===========================
+// ======================================================
 // DORMINDO
-// ===========================
+// ======================================================
 
 const sleepFrame =
   "assets/sprites/cinna-dormindo.PNG";
 
 
-// ===========================
+// ======================================================
 // BANHO
-// ===========================
+// ======================================================
 
 const bathFrames = [
   "assets/sprites/cinna-banho-1.PNG",
@@ -90,9 +119,9 @@ const bathFrames = [
 ];
 
 
-// ===========================
+// ======================================================
 // BOLO
-// ===========================
+// ======================================================
 
 const cakeFrames = [
   "assets/sprites/cinna-bolo-1.PNG",
@@ -102,12 +131,13 @@ const cakeFrames = [
 ];
 
 
-// ===========================
+// ======================================================
 // LEITE
-// ===========================
+// ======================================================
 
-// Pelos prints existem 2 frames.
-// Fazemos 1 → 2 → 1 → 2.
+// Atualmente temos dois frames.
+// O ciclo fica:
+// 1 → 2 → 1 → 2
 
 const milkFrames = [
   "assets/sprites/cinna-leite-1.PNG",
@@ -115,9 +145,9 @@ const milkFrames = [
 ];
 
 
-// ===========================
+// ======================================================
 // MAÇÃ
-// ===========================
+// ======================================================
 
 const appleFrames = [
   "assets/sprites/cinna-maca-1.PNG",
@@ -127,9 +157,9 @@ const appleFrames = [
 ];
 
 
-// ===========================
+// ======================================================
 // MORANGO
-// ===========================
+// ======================================================
 
 const strawberryFrames = [
   "assets/sprites/cinna-morango-1.PNG",
@@ -137,6 +167,20 @@ const strawberryFrames = [
   "assets/sprites/cinna-morango-3.PNG",
   "assets/sprites/cinna-morango-4.PNG"
 ];
+
+
+// ======================================================
+// EFEITOS
+// ======================================================
+
+const heartImage =
+  "assets/sprites/coracao.PNG";
+
+const bubbleImage =
+  "assets/sprites/bolha.PNG";
+
+const zzzImage =
+  "assets/sprites/zzz.PNG";
 
 
 // ======================================================
@@ -148,6 +192,7 @@ const idleSequence = [
   0, 1, 2, 1,
   0, 3, 0, 1
 ];
+
 
 const sadSequence = [
   0, 1, 2, 1,
@@ -163,18 +208,33 @@ const sadSequence = [
 const allSprites = [
   ...idleFrames,
   ...sadFrames,
+
   sleepFrame,
+
   ...bathFrames,
+
   ...cakeFrames,
   ...milkFrames,
   ...appleFrames,
-  ...strawberryFrames
+  ...strawberryFrames,
+
+  heartImage,
+  bubbleImage,
+  zzzImage
 ];
 
-allSprites.forEach((src) => {
-  const image = new Image();
-  image.src = src;
-});
+
+allSprites.forEach(
+  (src) => {
+
+    const image =
+      new Image();
+
+    image.src =
+      src;
+
+  }
+);
 
 
 // ======================================================
@@ -189,6 +249,7 @@ const petMessages = [
   "♡ +3 felicidade"
 ];
 
+
 const idleMessages = [
   "Cinna está esperando você ♡",
   "Cinna está olhando pra você 👀",
@@ -202,10 +263,353 @@ function randomMessage(list) {
 
   const index =
     Math.floor(
-      Math.random() * list.length
+      Math.random() *
+      list.length
     );
 
   return list[index];
+
+}
+
+
+// ======================================================
+// UTILIDADES
+// ======================================================
+
+function randomBetween(
+  min,
+  max
+) {
+
+  return (
+    Math.random() *
+    (max - min) +
+    min
+  );
+
+}
+
+
+function wait(ms) {
+
+  return new Promise(
+    (resolve) =>
+      setTimeout(
+        resolve,
+        ms
+      )
+  );
+
+}
+
+
+// ======================================================
+// EFEITOS VISUAIS
+// ======================================================
+
+function createEffect(type) {
+
+  if (!effectLayer) {
+    return;
+  }
+
+
+  const effect =
+    document.createElement(
+      "img"
+    );
+
+
+  effect.classList.add(
+    "effect"
+  );
+
+
+  if (
+    type === "heart"
+  ) {
+
+    effect.src =
+      heartImage;
+
+    effect.classList.add(
+      "effect-heart"
+    );
+
+
+    effect.style.setProperty(
+      "--effect-left",
+      `${randomBetween(
+        30,
+        70
+      )}%`
+    );
+
+
+    effect.style.setProperty(
+      "--effect-bottom",
+      `${randomBetween(
+        24,
+        42
+      )}%`
+    );
+
+
+    effect.style.setProperty(
+      "--effect-size",
+      `${randomBetween(
+        28,
+        46
+      )}px`
+    );
+
+
+    effect.style.setProperty(
+      "--effect-drift",
+      `${randomBetween(
+        -45,
+        45
+      )}px`
+    );
+
+
+    effect.style.setProperty(
+      "--effect-duration",
+      `${randomBetween(
+        1.1,
+        1.55
+      )}s`
+    );
+
+  }
+
+
+  if (
+    type === "bubble"
+  ) {
+
+    effect.src =
+      bubbleImage;
+
+    effect.classList.add(
+      "effect-bubble"
+    );
+
+
+    effect.style.setProperty(
+      "--effect-left",
+      `${randomBetween(
+        15,
+        85
+      )}%`
+    );
+
+
+    effect.style.setProperty(
+      "--effect-bottom",
+      `${randomBetween(
+        4,
+        32
+      )}%`
+    );
+
+
+    effect.style.setProperty(
+      "--effect-size",
+      `${randomBetween(
+        18,
+        46
+      )}px`
+    );
+
+
+    effect.style.setProperty(
+      "--effect-drift",
+      `${randomBetween(
+        -55,
+        55
+      )}px`
+    );
+
+
+    effect.style.setProperty(
+      "--effect-duration",
+      `${randomBetween(
+        1.3,
+        2
+      )}s`
+    );
+
+  }
+
+
+  if (
+    type === "zzz"
+  ) {
+
+    effect.src =
+      zzzImage;
+
+    effect.classList.add(
+      "effect-zzz"
+    );
+
+
+    effect.style.setProperty(
+      "--effect-left",
+      `${randomBetween(
+        65,
+        75
+      )}%`
+    );
+
+
+    effect.style.setProperty(
+      "--effect-bottom",
+      `${randomBetween(
+        55,
+        70
+      )}%`
+    );
+
+
+    effect.style.setProperty(
+      "--effect-size",
+      `${randomBetween(
+        36,
+        58
+      )}px`
+    );
+
+
+    effect.style.setProperty(
+      "--effect-duration",
+      `${randomBetween(
+        1.7,
+        2.2
+      )}s`
+    );
+
+  }
+
+
+  effectLayer.appendChild(
+    effect
+  );
+
+
+  effect.addEventListener(
+    "animationend",
+    () => {
+
+      effect.remove();
+
+    }
+  );
+
+}
+
+
+// ===========================
+// CORAÇÕES
+// ===========================
+
+function spawnHeart() {
+
+  createEffect(
+    "heart"
+  );
+
+}
+
+
+// ===========================
+// BOLHAS
+// ===========================
+
+function spawnBubbles(
+  amount = 5
+) {
+
+  for (
+    let i = 0;
+    i < amount;
+    i++
+  ) {
+
+    setTimeout(
+      () => {
+
+        createEffect(
+          "bubble"
+        );
+
+      },
+      i * 110
+    );
+
+  }
+
+}
+
+
+// ===========================
+// ZZZ
+// ===========================
+
+function spawnZzz() {
+
+  createEffect(
+    "zzz"
+  );
+
+}
+
+
+function startSleepEffects() {
+
+  stopSleepEffects();
+
+
+  // Primeiro aparece imediatamente.
+
+  spawnZzz();
+
+
+  sleepEffectInterval =
+    setInterval(
+      () => {
+
+        if (
+          isSleeping
+        ) {
+
+          spawnZzz();
+
+        }
+
+      },
+      1100
+    );
+
+}
+
+
+function stopSleepEffects() {
+
+  if (
+    sleepEffectInterval
+  ) {
+
+    clearInterval(
+      sleepEffectInterval
+    );
+
+
+    sleepEffectInterval =
+      null;
+
+  }
 
 }
 
@@ -220,13 +624,23 @@ function loadStatus(
 ) {
 
   const saved =
-    localStorage.getItem(key);
+    localStorage.getItem(
+      key
+    );
 
-  if (saved === null) {
+
+  if (
+    saved === null
+  ) {
+
     return defaultValue;
+
   }
 
-  return Number(saved);
+
+  return Number(
+    saved
+  );
 
 }
 
@@ -264,7 +678,10 @@ function limitStatus(value) {
 
   return Math.max(
     0,
-    Math.min(100, value)
+    Math.min(
+      100,
+      value
+    )
   );
 
 }
@@ -277,15 +694,18 @@ function saveStatus() {
     cinnaStatus.happiness
   );
 
+
   localStorage.setItem(
     "cinnaHunger",
     cinnaStatus.hunger
   );
 
+
   localStorage.setItem(
     "cinnaEnergy",
     cinnaStatus.energy
   );
+
 
   localStorage.setItem(
     "cinnaHygiene",
@@ -300,11 +720,14 @@ function updateStatusBars() {
   happinessBar.style.width =
     `${cinnaStatus.happiness}%`;
 
+
   hungerBar.style.width =
     `${cinnaStatus.hunger}%`;
 
+
   energyBar.style.width =
     `${cinnaStatus.energy}%`;
+
 
   hygieneBar.style.width =
     `${cinnaStatus.hygiene}%`;
@@ -319,10 +742,15 @@ function updateStatusBars() {
 function hasLowNeeds() {
 
   return (
+
     cinnaStatus.happiness < 45 ||
+
     cinnaStatus.hunger < 45 ||
+
     cinnaStatus.energy < 45 ||
+
     cinnaStatus.hygiene < 45
+
   );
 
 }
@@ -330,9 +758,14 @@ function hasLowNeeds() {
 
 function getCurrentMood() {
 
-  if (hasLowNeeds()) {
+  if (
+    hasLowNeeds()
+  ) {
+
     return "sad";
+
   }
+
 
   return "idle";
 
@@ -347,8 +780,9 @@ function updateCharacterSprite(
   resetStep = false
 ) {
 
-  // Dormir tem prioridade.
-  if (isSleeping) {
+  if (
+    isSleeping
+  ) {
 
     character.src =
       sleepFrame;
@@ -358,9 +792,12 @@ function updateCharacterSprite(
   }
 
 
-  // Uma ação também tem prioridade.
-  if (isPlayingAction) {
+  if (
+    isPlayingAction
+  ) {
+
     return;
+
   }
 
 
@@ -374,16 +811,20 @@ function updateCharacterSprite(
   ) {
 
     animationStep = 0;
+
     lastMood = mood;
 
   }
 
 
   let frames;
+
   let sequence;
 
 
-  if (mood === "sad") {
+  if (
+    mood === "sad"
+  ) {
 
     frames =
       sadFrames;
@@ -403,11 +844,15 @@ function updateCharacterSprite(
 
 
   const frameIndex =
-    sequence[animationStep];
+    sequence[
+      animationStep
+    ];
 
 
   character.src =
-    frames[frameIndex];
+    frames[
+      frameIndex
+    ];
 
 }
 
@@ -417,98 +862,118 @@ function updateCharacterSprite(
 // ======================================================
 
 updateStatusBars();
-updateCharacterSprite(true);
+
+updateCharacterSprite(
+  true
+);
 
 
 // ======================================================
-// IDLE ANIMADO
+// LOOP DO IDLE
 // ======================================================
 
-setInterval(() => {
+setInterval(
+  () => {
 
-  if (
-    isSleeping ||
-    isPlayingAction
-  ) {
-    return;
-  }
+    if (
+      isSleeping ||
+      isPlayingAction
+    ) {
 
+      return;
 
-  const mood =
-    getCurrentMood();
-
-
-  if (
-    mood !== lastMood
-  ) {
-
-    animationStep = 0;
-    lastMood = mood;
-
-  } else {
-
-    const sequenceLength =
-      mood === "sad"
-        ? sadSequence.length
-        : idleSequence.length;
+    }
 
 
-    animationStep =
-      (
-        animationStep + 1
-      ) % sequenceLength;
-
-  }
+    const mood =
+      getCurrentMood();
 
 
-  updateCharacterSprite();
+    if (
+      mood !== lastMood
+    ) {
 
-}, 350);
+      animationStep = 0;
+
+      lastMood = mood;
+
+    } else {
+
+      const sequenceLength =
+        mood === "sad"
+          ? sadSequence.length
+          : idleSequence.length;
+
+
+      animationStep =
+        (
+          animationStep + 1
+        ) %
+        sequenceLength;
+
+    }
+
+
+    updateCharacterSprite();
+
+  },
+  350
+);
 
 
 // ======================================================
-// FUNÇÕES DE AÇÃO
+// BLOQUEAR CONTROLES
 // ======================================================
 
-function wait(ms) {
+function lockControls(
+  locked
+) {
 
-  return new Promise(
-    (resolve) =>
-      setTimeout(resolve, ms)
+  foodItems.forEach(
+    (button) => {
+
+      button.disabled =
+        locked;
+
+    }
   );
 
-}
+
+  bathItems.forEach(
+    (button) => {
+
+      button.disabled =
+        locked;
+
+    }
+  );
 
 
-// Bloqueia botões enquanto uma animação toca.
+  menuButtons.forEach(
+    (button) => {
 
-function lockControls(locked) {
+      button.disabled =
+        locked;
 
-  foodItems.forEach((button) => {
-    button.disabled = locked;
-  });
-
-
-  bathItems.forEach((button) => {
-    button.disabled = locked;
-  });
+    }
+  );
 
 
-  menuButtons.forEach((button) => {
-    button.disabled = locked;
-  });
+  if (
+    sleepButton
+  ) {
 
+    sleepButton.disabled =
+      locked;
 
-  if (sleepButton) {
-    sleepButton.disabled = locked;
   }
 
 }
 
 
-// ===========================
+// ======================================================
 // ANIMAÇÃO DE AÇÃO
-// ===========================
+// ======================================================
 
 async function playActionAnimation(
   frames,
@@ -519,26 +984,32 @@ async function playActionAnimation(
     isPlayingAction ||
     isSleeping
   ) {
+
     return;
+
   }
 
 
-  isPlayingAction = true;
+  isPlayingAction =
+    true;
 
-  lockControls(true);
+
+  lockControls(
+    true
+  );
+
 
   character.classList.add(
     "action-playing"
   );
 
 
-  // Se só existirem dois frames,
-  // fazemos 1 → 2 → 1 → 2.
-
   let sequence;
 
 
-  if (frames.length === 2) {
+  if (
+    frames.length === 2
+  ) {
 
     sequence = [
       0,
@@ -551,89 +1022,106 @@ async function playActionAnimation(
 
     sequence =
       frames.map(
-        (_, index) =>
+        (
+          _,
+          index
+        ) =>
           index
       );
 
   }
 
 
-  // Toca os frames.
-
   for (
-    const index of sequence
+    const index
+    of sequence
   ) {
 
     character.src =
-      frames[index];
+      frames[
+        index
+      ];
 
-    await wait(250);
+
+    await wait(
+      250
+    );
 
   }
 
 
-  // Segura um pouquinho
-  // o último frame.
+  await wait(
+    120
+  );
 
-  await wait(120);
 
-
-  // Executa o efeito da ação.
-  if (afterAction) {
+  if (
+    afterAction
+  ) {
 
     afterAction();
 
   }
 
 
-  isPlayingAction = false;
+  isPlayingAction =
+    false;
 
-  lockControls(false);
+
+  lockControls(
+    false
+  );
+
 
   character.classList.remove(
     "action-playing"
   );
 
 
-  // Decide automaticamente
-  // se volta neutro ou triste.
-
-  updateCharacterSprite(true);
+  updateCharacterSprite(
+    true
+  );
 
 }
 
 
 // ======================================================
-// DIMINUIÇÃO DAS NECESSIDADES
+// DIMINUI STATUS
 // ======================================================
 
-// Ainda está rápido para testes.
+// Continua rápido para testes.
 
 function decreaseStatus() {
 
   cinnaStatus.happiness =
     limitStatus(
-      cinnaStatus.happiness - 1
+      cinnaStatus.happiness -
+      1
     );
 
 
   cinnaStatus.hunger =
     limitStatus(
-      cinnaStatus.hunger - 2
+      cinnaStatus.hunger -
+      2
     );
 
 
   cinnaStatus.hygiene =
     limitStatus(
-      cinnaStatus.hygiene - 2
+      cinnaStatus.hygiene -
+      2
     );
 
 
-  if (!isSleeping) {
+  if (
+    !isSleeping
+  ) {
 
     cinnaStatus.energy =
       limitStatus(
-        cinnaStatus.energy - 1
+        cinnaStatus.energy -
+        1
       );
 
   }
@@ -668,18 +1156,25 @@ let pets =
 
 function petCinna() {
 
-  if (isSleeping) {
+  if (
+    isSleeping
+  ) {
 
     message.textContent =
       "Shhh... Cinna está dormindo 😴";
+
 
     return;
 
   }
 
 
-  if (isPlayingAction) {
+  if (
+    isPlayingAction
+  ) {
+
     return;
+
   }
 
 
@@ -694,7 +1189,8 @@ function petCinna() {
 
   cinnaStatus.happiness =
     limitStatus(
-      cinnaStatus.happiness + 3
+      cinnaStatus.happiness +
+      3
     );
 
 
@@ -703,6 +1199,17 @@ function petCinna() {
   updateStatusBars();
 
   updateCharacterSprite();
+
+
+  /*
+    Cada clique cria UM coração.
+
+    Logo:
+    1 clique = 1 coração
+    6 cliques = 6 corações
+  */
+
+  spawnHeart();
 
 
   message.textContent =
@@ -749,8 +1256,12 @@ character.addEventListener(
 
 function updateSleepButton() {
 
-  if (!sleepButton) {
+  if (
+    !sleepButton
+  ) {
+
     return;
+
   }
 
 
@@ -766,10 +1277,13 @@ function updateSleepButton() {
     );
 
 
-  if (isSleeping) {
+  if (
+    isSleeping
+  ) {
 
     icon.textContent =
       "☀️";
+
 
     label.textContent =
       "Acordar";
@@ -778,6 +1292,7 @@ function updateSleepButton() {
 
     icon.textContent =
       "😴";
+
 
     label.textContent =
       "Dormir";
@@ -788,29 +1303,36 @@ function updateSleepButton() {
 
 
 // ===========================
-// DORMIR
+// COMEÇAR A DORMIR
 // ===========================
 
 function startSleeping() {
 
-  if (isPlayingAction) {
+  if (
+    isPlayingAction
+  ) {
+
     return;
+
   }
 
 
   if (
-    cinnaStatus.energy >= 100
+    cinnaStatus.energy >=
+    100
   ) {
 
     message.textContent =
       "Cinna já está cheio de energia! ⚡";
 
+
     return;
 
   }
 
 
-  isSleeping = true;
+  isSleeping =
+    true;
 
 
   character.src =
@@ -829,34 +1351,44 @@ function startSleeping() {
     "Boa noite, Cinna... 😴💤";
 
 
+  startSleepEffects();
+
+
   clearInterval(
     sleepInterval
   );
 
 
   sleepInterval =
-    setInterval(() => {
+    setInterval(
+      () => {
 
-      cinnaStatus.energy =
-        limitStatus(
-          cinnaStatus.energy + 5
-        );
-
-
-      saveStatus();
-
-      updateStatusBars();
+        cinnaStatus.energy =
+          limitStatus(
+            cinnaStatus.energy +
+            5
+          );
 
 
-      if (
-        cinnaStatus.energy >= 100
-      ) {
+        saveStatus();
 
-        stopSleeping(true);
+        updateStatusBars();
 
-      }
 
-    }, 5000);
+        if (
+          cinnaStatus.energy >=
+          100
+        ) {
+
+          stopSleeping(
+            true
+          );
+
+        }
+
+      },
+      5000
+    );
 
 }
 
@@ -869,7 +1401,8 @@ function stopSleeping(
   fullyRested = false
 ) {
 
-  isSleeping = false;
+  isSleeping =
+    false;
 
 
   clearInterval(
@@ -877,7 +1410,11 @@ function stopSleeping(
   );
 
 
-  sleepInterval = null;
+  sleepInterval =
+    null;
+
+
+  stopSleepEffects();
 
 
   room.classList.remove(
@@ -888,10 +1425,14 @@ function stopSleeping(
   updateSleepButton();
 
 
-  updateCharacterSprite(true);
+  updateCharacterSprite(
+    true
+  );
 
 
-  if (fullyRested) {
+  if (
+    fullyRested
+  ) {
 
     message.textContent =
       "Cinna acordou descansado! ☀️⚡";
@@ -906,18 +1447,26 @@ function stopSleeping(
 }
 
 
-if (sleepButton) {
+if (
+  sleepButton
+) {
 
   sleepButton.addEventListener(
     "click",
     () => {
 
-      if (isPlayingAction) {
+      if (
+        isPlayingAction
+      ) {
+
         return;
+
       }
 
 
-      if (isSleeping) {
+      if (
+        isSleeping
+      ) {
 
         stopSleeping();
 
@@ -942,7 +1491,7 @@ room.dataset.room =
 
 
 // ======================================================
-// MENU
+// MENU DE CÔMODOS
 // ======================================================
 
 menuButtons.forEach(
@@ -952,8 +1501,12 @@ menuButtons.forEach(
       "click",
       () => {
 
-        if (isPlayingAction) {
+        if (
+          isPlayingAction
+        ) {
+
           return;
+
         }
 
 
@@ -961,12 +1514,10 @@ menuButtons.forEach(
           button.dataset.room;
 
 
-        // Se mudar de quarto
-        // enquanto dorme, acorda.
-
         if (
           isSleeping &&
-          selectedRoom !== "bedroom"
+          selectedRoom !==
+            "bedroom"
         ) {
 
           stopSleeping();
@@ -994,11 +1545,13 @@ menuButtons.forEach(
           selectedRoom;
 
 
-        // ===================
+        // =====================
         // BANDEJAS
-        // ===================
+        // =====================
 
-        if (foodTray) {
+        if (
+          foodTray
+        ) {
 
           foodTray.hidden =
             selectedRoom !==
@@ -1007,7 +1560,9 @@ menuButtons.forEach(
         }
 
 
-        if (bathTray) {
+        if (
+          bathTray
+        ) {
 
           bathTray.hidden =
             selectedRoom !==
@@ -1016,7 +1571,9 @@ menuButtons.forEach(
         }
 
 
-        if (sleepTray) {
+        if (
+          sleepTray
+        ) {
 
           sleepTray.hidden =
             selectedRoom !==
@@ -1025,12 +1582,13 @@ menuButtons.forEach(
         }
 
 
-        // ===================
+        // =====================
         // MENSAGENS
-        // ===================
+        // =====================
 
         if (
-          selectedRoom === "home"
+          selectedRoom ===
+          "home"
         ) {
 
           message.textContent =
@@ -1066,7 +1624,9 @@ menuButtons.forEach(
           "bedroom"
         ) {
 
-          if (isSleeping) {
+          if (
+            isSleeping
+          ) {
 
             message.textContent =
               "Zzz... 😴💤";
@@ -1099,7 +1659,7 @@ menuButtons.forEach(
 
 
 // ======================================================
-// ESCOLHER ANIMAÇÃO DA COMIDA
+// ESCOLHER SPRITES DA COMIDA
 // ======================================================
 
 function getFoodFrames(
@@ -1107,30 +1667,42 @@ function getFoodFrames(
 ) {
 
   if (
-    foodName === "Morango"
+    foodName ===
+    "Morango"
   ) {
+
     return strawberryFrames;
+
   }
 
 
   if (
-    foodName === "Maçã"
+    foodName ===
+    "Maçã"
   ) {
+
     return appleFrames;
+
   }
 
 
   if (
-    foodName === "Leite"
+    foodName ===
+    "Leite"
   ) {
+
     return milkFrames;
+
   }
 
 
   if (
-    foodName === "Bolo"
+    foodName ===
+    "Bolo"
   ) {
+
     return cakeFrames;
+
   }
 
 
@@ -1154,7 +1726,9 @@ foodItems.forEach(
           isPlayingAction ||
           isSleeping
         ) {
+
           return;
+
         }
 
 
@@ -1168,15 +1742,14 @@ foodItems.forEach(
           );
 
 
-        // Se já estiver cheio,
-        // nem inicia a animação.
-
         if (
-          cinnaStatus.hunger >= 100
+          cinnaStatus.hunger >=
+          100
         ) {
 
           message.textContent =
             "Cinna já está de barriguinha cheia ♡";
+
 
           return;
 
@@ -1219,7 +1792,7 @@ foodItems.forEach(
 
 
             message.textContent =
-              `${foodName} , que delicioso! +${gained}% 🍽️`;
+              `${foodName} delicioso! +${gained}% 🍽️`;
 
           }
         );
@@ -1246,7 +1819,9 @@ bathItems.forEach(
           isPlayingAction ||
           isSleeping
         ) {
+
           return;
+
         }
 
 
@@ -1261,11 +1836,13 @@ bathItems.forEach(
 
 
         if (
-          cinnaStatus.hygiene >= 100
+          cinnaStatus.hygiene >=
+          100
         ) {
 
           message.textContent =
             "Cinna já está limpinho! 🫧";
+
 
           return;
 
@@ -1274,6 +1851,17 @@ bathItems.forEach(
 
         message.textContent =
           "Hora de ficar limpinho! 🫧";
+
+
+        /*
+          As bolhas começam imediatamente
+          e continuam aparecendo enquanto
+          os frames do banho rodam.
+        */
+
+        spawnBubbles(
+          8
+        );
 
 
         await playActionAnimation(
@@ -1327,7 +1915,8 @@ setInterval(
 
 
     if (
-      currentRoom === "home" &&
+      currentRoom ===
+        "home" &&
       !isSleeping &&
       !isPlayingAction
     ) {

@@ -9,11 +9,11 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>CinnamonPou</title>
+  <title>ᑕIᑎᑎᗩᗰOᑎᖇOᒪᒪ ☁️</title>
 
   <link
     rel="stylesheet"
-    href="style.css?v=6"
+    href="style.css?v=7"
   >
 </head>
 
@@ -21,7 +21,7 @@
 
   <main class="game">
 
-    <h1>CinnamonPou ☁️</h1>
+    <h1>ᑕIᑎᑎᗩᗰOᑎᖇOᒪᒪ ☁️</h1>
 
 
     <!-- ========================= -->
@@ -31,70 +31,90 @@
     <div class="status-panel">
 
       <div class="status">
+
         <span class="status-icon">❤️</span>
 
         <div class="status-info">
+
           <span>Felicidade</span>
 
           <div class="status-bar">
+
             <div
               class="status-fill"
               id="happiness-bar"
-              style="width: 90%;"
             ></div>
+
           </div>
+
         </div>
+
       </div>
 
 
       <div class="status">
+
         <span class="status-icon">🍰</span>
 
         <div class="status-info">
+
           <span>Comida</span>
 
           <div class="status-bar">
+
             <div
               class="status-fill"
               id="hunger-bar"
-              style="width: 80%;"
             ></div>
+
           </div>
+
         </div>
+
       </div>
 
 
       <div class="status">
+
         <span class="status-icon">⚡</span>
 
         <div class="status-info">
+
           <span>Energia</span>
 
           <div class="status-bar">
+
             <div
               class="status-fill"
               id="energy-bar"
-              style="width: 100%;"
             ></div>
+
           </div>
+
         </div>
+
       </div>
 
 
       <div class="status">
+
         <span class="status-icon">🫧</span>
 
         <div class="status-info">
+
           <span>Higiene</span>
 
           <div class="status-bar">
+
             <div
               class="status-fill"
               id="hygiene-bar"
-              style="width: 90%;"
             ></div>
+
           </div>
+
         </div>
+
       </div>
 
     </div>
@@ -109,17 +129,25 @@
       data-room="home"
     >
 
-      <!--
-        Wrapper do Cinna.
-        A effect-layer fica ATRÁS dele.
-      -->
+
+      <!-- ========================= -->
+      <!-- PERSONAGEM -->
+      <!-- ========================= -->
 
       <div class="cinna-wrap">
+
+
+        <!--
+          Corações, bolhas e Zzz
+          aparecem nessa camada.
+          Ela fica atrás do Cinna.
+        -->
 
         <div
           id="effect-layer"
           class="effect-layer"
         ></div>
+
 
         <img
           id="cinna"
@@ -127,6 +155,20 @@
           src="assets/sprites/cinna-idle-1.PNG"
           alt="Cinna"
         >
+
+
+        <!--
+          Sujeira fica por cima do personagem.
+        -->
+
+        <img
+          id="dirt-overlay"
+          class="dirt-overlay"
+          src="assets/sprites/sujeira-1.PNG"
+          alt=""
+          hidden
+        >
+
 
       </div>
 
@@ -137,12 +179,15 @@
 
       <nav class="game-menu">
 
+
         <button
           class="menu-button active"
           data-room="home"
         >
+
           <span>🏠</span>
           <small>Início</small>
+
         </button>
 
 
@@ -150,8 +195,10 @@
           class="menu-button"
           data-room="kitchen"
         >
+
           <span>🍰</span>
           <small>Comida</small>
+
         </button>
 
 
@@ -159,8 +206,10 @@
           class="menu-button"
           data-room="bathroom"
         >
-          <span>🧼</span>
+
+          <span>🫧</span>
           <small>Banho</small>
+
         </button>
 
 
@@ -168,8 +217,10 @@
           class="menu-button"
           data-room="bedroom"
         >
-          <span>🌙</span>
+
+          <span>💡</span>
           <small>Dormir</small>
+
         </button>
 
 
@@ -177,15 +228,18 @@
           class="menu-button"
           data-room="games"
         >
+
           <span>🎮</span>
           <small>Jogos</small>
+
         </button>
+
 
       </nav>
 
 
       <!-- ========================= -->
-      <!-- COMIDAS -->
+      <!-- COMIDA -->
       <!-- ========================= -->
 
       <div
@@ -194,13 +248,16 @@
         hidden
       >
 
+
         <button
           class="food-item"
           data-food="Morango"
           data-value="25"
         >
+
           <span>🍓</span>
           <small>+25%</small>
+
         </button>
 
 
@@ -209,8 +266,10 @@
           data-food="Maçã"
           data-value="35"
         >
+
           <span>🍎</span>
           <small>+35%</small>
+
         </button>
 
 
@@ -219,8 +278,10 @@
           data-food="Leite"
           data-value="30"
         >
+
           <span>🥛</span>
           <small>+30%</small>
+
         </button>
 
 
@@ -229,9 +290,12 @@
           data-food="Bolo"
           data-value="50"
         >
+
           <span>🍰</span>
           <small>+50%</small>
+
         </button>
+
 
       </div>
 
@@ -246,13 +310,16 @@
         hidden
       >
 
+
         <button
           class="bath-item"
           data-care="Esponja"
           data-value="25"
         >
+
           <span>🧽</span>
           <small>+25%</small>
+
         </button>
 
 
@@ -261,8 +328,10 @@
           data-care="Sabonete"
           data-value="35"
         >
+
           <span>🧼</span>
           <small>+35%</small>
+
         </button>
 
 
@@ -271,8 +340,10 @@
           data-care="Shampoo"
           data-value="40"
         >
+
           <span>🧴</span>
           <small>+40%</small>
+
         </button>
 
 
@@ -281,9 +352,12 @@
           data-care="Enxágue"
           data-value="20"
         >
+
           <span>🚿</span>
           <small>+20%</small>
+
         </button>
+
 
       </div>
 
@@ -298,13 +372,17 @@
         hidden
       >
 
+
         <button
           id="sleep-button"
           class="sleep-button"
         >
+
           <span>💡</span>
           <small>Dormir</small>
+
         </button>
+
 
       </div>
 
@@ -317,12 +395,13 @@
         Cinna está esperando você ♡
       </p>
 
+
     </section>
 
   </main>
 
 
-  <script src="game.js?v=6"></script>
+  <script src="game.js?v=7"></script>
 
 </body>
 </html>

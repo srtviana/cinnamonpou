@@ -1219,7 +1219,7 @@ foodItems.forEach(
 
 
             message.textContent =
-              `${foodName} delicioso! +${gained}% 🍽️`;
+              `${foodName} , que delicioso! +${gained}% 🍽️`;
 
           }
         );

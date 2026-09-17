@@ -1,0 +1,392 @@
+/* =====================================================
+   CENTRAL DE MINIJOGOS
+   ===================================================== */
+
+.game-hub {
+  width: 88%;
+
+  position: absolute;
+
+  left: 50%;
+  top: 46%;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+  z-index: 20;
+
+  display: none;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 18px;
+
+  border-radius: 26px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.88
+    );
+
+  backdrop-filter:
+    blur(10px);
+
+  -webkit-backdrop-filter:
+    blur(10px);
+
+  box-shadow:
+    0
+    12px
+    35px
+    rgba(
+      78,
+      112,
+      150,
+      0.2
+    );
+}
+
+
+/* Quando estamos no cômodo Jogos */
+
+.room.games-open
+.game-hub {
+  display: flex;
+}
+
+
+/* Esconde o Cinna somente enquanto
+   a central de jogos estiver aberta */
+
+.room.games-open
+.cinna-wrap {
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+
+/* Esconde a mensagem normal */
+
+.room.games-open
+#message {
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+
+/* ========================= */
+/* TÍTULO */
+/* ========================= */
+
+.game-hub-title {
+  text-align: center;
+
+  font-size: 23px;
+
+  font-weight: 800;
+
+  color: #6189ad;
+}
+
+
+.game-hub-subtitle {
+  margin-top: -6px;
+
+  text-align: center;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  color: #7994a9;
+}
+
+
+/* ========================= */
+/* CARDS */
+/* ========================= */
+
+.game-cards {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr;
+
+  gap: 10px;
+}
+
+
+.game-card {
+  width: 100%;
+
+  min-height: 76px;
+
+  border: none;
+
+  border-radius: 20px;
+
+  padding:
+    12px
+    14px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.95
+    );
+
+  display: grid;
+
+  grid-template-columns:
+    54px
+    1fr
+    auto;
+
+  align-items: center;
+
+  gap: 10px;
+
+  font-family: inherit;
+
+  color: #587386;
+
+  text-align: left;
+
+  box-shadow:
+    0
+    5px
+    15px
+    rgba(
+      86,
+      126,
+      156,
+      0.1
+    );
+}
+
+
+/* Card disponível */
+
+.game-card.available {
+  cursor: pointer;
+
+  transition:
+    transform
+    0.15s
+    ease,
+    box-shadow
+    0.2s
+    ease;
+}
+
+
+.game-card.available:active {
+  transform:
+    scale(0.96);
+}
+
+
+.game-card.available:hover {
+  box-shadow:
+    0
+    8px
+    20px
+    rgba(
+      86,
+      126,
+      156,
+      0.18
+    );
+}
+
+
+/* Cards bloqueados */
+
+.game-card.locked {
+  opacity: 0.65;
+
+  cursor: default;
+}
+
+
+/* ========================= */
+/* ÍCONE */
+/* ========================= */
+
+.game-card-icon {
+  width: 52px;
+
+  height: 52px;
+
+  border-radius: 16px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 31px;
+
+  background:
+    #eef8ff;
+}
+
+
+/* ========================= */
+/* TEXTOS */
+/* ========================= */
+
+.game-card-info {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+
+.game-card-name {
+  font-size: 15px;
+
+  font-weight: 800;
+
+  color: #547996;
+}
+
+
+.game-card-description {
+  font-size: 11px;
+
+  line-height: 1.3;
+
+  color: #8299aa;
+}
+
+
+/* ========================= */
+/* STATUS */
+/* ========================= */
+
+.game-card-status {
+  padding:
+    6px
+    9px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+
+  background:
+    #e7f6ff;
+
+  color: #5b9ac5;
+}
+
+
+.game-card.locked
+.game-card-status {
+  background:
+    #f1f1f1;
+
+  color: #9c9c9c;
+}
+
+
+/* ========================= */
+/* MENSAGEM INTERNA */
+/* ========================= */
+
+.game-hub-message {
+  width: 100%;
+
+  min-height: 36px;
+
+  padding:
+    9px
+    12px;
+
+  border-radius: 15px;
+
+  text-align: center;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  color: #66869e;
+
+  background:
+    rgba(
+      230,
+      246,
+      255,
+      0.85
+    );
+}
+
+
+/* ========================= */
+/* RESPONSIVO */
+/* ========================= */
+
+@media (
+  max-width: 390px
+) {
+
+  .game-hub {
+    width: 90%;
+
+    padding: 14px;
+
+    top: 45%;
+  }
+
+
+  .game-card {
+    min-height: 70px;
+
+    grid-template-columns:
+      48px
+      1fr
+      auto;
+
+    padding:
+      10px;
+  }
+
+
+  .game-card-icon {
+    width: 46px;
+
+    height: 46px;
+
+    font-size: 27px;
+  }
+
+
+  .game-card-name {
+    font-size: 14px;
+  }
+
+}

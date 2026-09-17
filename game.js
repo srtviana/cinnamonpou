@@ -16,6 +16,92 @@ const message =
 const room =
   document.querySelector(".room");
 
+// ======================================================
+// CENÁRIOS DIA / NOITE
+// ======================================================
+
+const sceneBackgrounds = {
+  home: {
+    day: "assets/scenarios/inicio-dia.PNG",
+    night: "assets/scenarios/inicio-noite.PNG"
+  },
+
+  kitchen: {
+    day: "assets/scenarios/cozinha-dia.PNG",
+    night: "assets/scenarios/cozinha-noite.PNG"
+  },
+
+  bathroom: {
+    day: "assets/scenarios/banheiro.PNG",
+    night: "assets/scenarios/banheiro.PNG"
+  },
+
+  bedroom: {
+    day: "assets/scenarios/quarto-dia.PNG",
+    night: "assets/scenarios/quarto-noite.PNG"
+  },
+
+  games: {
+    day: "assets/scenarios/jogos-dia.PNG",
+    night: "assets/scenarios/jogos-noite.PNG"
+  }
+};
+
+
+// Usa a hora LOCAL do celular/computador.
+
+function getTimePeriod() {
+  const hour = new Date().getHours();
+
+  // 06:00 até 17:59 = dia
+  if (hour >= 6 && hour < 18) {
+    return "day";
+  }
+
+  // 18:00 até 05:59 = noite
+  return "night";
+}
+
+
+function updateRoomBackground() {
+  const currentRoom =
+    room.dataset.room || "home";
+  updateRoomBackground();
+
+  const period =
+    getTimePeriod();
+
+  let scene =
+    sceneBackgrounds[currentRoom]?.[period];
+
+
+  // Caso alguma versão noturna ainda não exista,
+  // usa a versão diurna daquele cômodo.
+
+  if (!scene) {
+    scene =
+      sceneBackgrounds[currentRoom]?.day;
+  }
+
+
+  if (!scene) {
+    return;
+  }
+
+
+  room.style.backgroundImage =
+    `url("${scene}")`;
+
+  room.style.backgroundSize =
+    "100% 100%";
+
+  room.style.backgroundPosition =
+    "center";
+
+  room.style.backgroundRepeat =
+    "no-repeat";
+}
+
 const effectLayer =
   document.querySelector("#effect-layer");
 
@@ -2208,3 +2294,14 @@ updateCharacterSprite(
 );
 
 updateSleepButton();
+
+// Carrega o cenário correto ao abrir o jogo.
+updateRoomBackground();
+
+// Verifica a hora a cada minuto.
+// Se virar de dia/noite com o jogo aberto,
+// o cenário troca sozinho.
+setInterval(
+  updateRoomBackground,
+  60000
+);

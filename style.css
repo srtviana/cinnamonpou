@@ -1151,7 +1151,7 @@ os próprios sprites fazem o movimento.
 /* ========================= */
 
 .cinna-wrap {
-  transform: translateY(55px);
+  transform: translateY(180px);
 }
 
 .game-menu,
@@ -1159,5 +1159,5 @@ os próprios sprites fazem o movimento.
 .bath-tray,
 .sleep-tray,
 #message {
-  transform: translateY(55px);
+  transform: translateY(120px);
 }

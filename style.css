@@ -1145,3 +1145,19 @@ os próprios sprites fazem o movimento.
   }
 
 }
+
+/* ========================= */
+/* POSIÇÃO DO CINNA E CONTROLES */
+/* ========================= */
+
+.cinna-wrap {
+  transform: translateY(55px);
+}
+
+.game-menu,
+.food-tray,
+.bath-tray,
+.sleep-tray,
+#message {
+  transform: translateY(55px);
+}

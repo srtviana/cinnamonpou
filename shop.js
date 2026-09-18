@@ -1882,7 +1882,7 @@ const cinnaAccessories = [
     price: 130,
     stackable: false,
     image:
-      "assets/accessories/acessorio-oculos.PNG"
+      "assets/accessories/acessorio-oculos .PNG"
   },
 
   {

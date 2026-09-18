@@ -1864,7 +1864,7 @@ const cinnaAccessories = [
     category: "accessories",
     slot: "head",
     icon: "👑",
-    name: "Coroa",
+    name: "Coroa Celestial",
     description: "Para quando o Cinna decidir que agora é da realeza.",
     price: 250,
     stackable: false,
@@ -1882,7 +1882,7 @@ const cinnaAccessories = [
     price: 130,
     stackable: false,
     image:
-      "assets/accessories/acessorio-óculos.PNG"
+      "assets/accessories/acessorio-oculos.PNG"
   },
 
   {

@@ -1830,3 +1830,824 @@ window.CinnaFoodTray = {
 // ======================================================
 
 updateFoodTrayStockDisplay();
+
+
+// ======================================================
+// ACESSÓRIOS DO CINNA 🎀
+// ======================================================
+
+const CINNA_ACCESSORIES_KEY =
+  "cinnaEquippedAccessories";
+
+
+// ======================================================
+// PACK DE ACESSÓRIOS
+// ======================================================
+
+const cinnaAccessories = [
+
+  {
+    id: "laco-azul",
+    category: "accessories",
+    slot: "head",
+    icon: "🎀",
+    name: "Lacinho Azul",
+    description: "Um lacinho azul delicado para o Cinna.",
+    price: 100,
+    stackable: false,
+    image:
+      "assets/accessories/acessorio-laco-azul.PNG"
+  },
+
+  {
+    id: "coroa",
+    category: "accessories",
+    slot: "head",
+    icon: "👑",
+    name: "Coroa Celestial",
+    description: "Para quando o Cinna decidir que agora é da realeza.",
+    price: 250,
+    stackable: false,
+    image:
+      "assets/accessories/acessorio-coroa.PNG"
+  },
+
+  {
+    id: "oculos",
+    category: "accessories",
+    slot: "face",
+    icon: "👓",
+    name: "Óculos Nuvem",
+    description: "Óculos azuis redondinhos e muito intelectuais.",
+    price: 130,
+    stackable: false,
+    image:
+      "assets/accessories/acessorio-oculos.PNG"
+  },
+
+  {
+    id: "touca",
+    category: "accessories",
+    slot: "head",
+    icon: "🌙",
+    name: "Touca Estrelinha",
+    description: "Uma touquinha confortável para noites sonolentas.",
+    price: 160,
+    stackable: false,
+    image:
+      "assets/accessories/acessorio-touca.PNG"
+  },
+
+  {
+    id: "colar-coracao",
+    category: "accessories",
+    slot: "neck",
+    icon: "💗",
+    name: "Colar de Coração",
+    description: "Um colar rosa com pingente de coração.",
+    price: 150,
+    stackable: false,
+    image:
+      "assets/accessories/acessorio-colar-coracao.PNG"
+  },
+
+  {
+    id: "morango",
+    category: "accessories",
+    slot: "head",
+    icon: "🍓",
+    name: "Presilha Morango",
+    description: "Uma presilha de moranguinho absurdamente fofa.",
+    price: 120,
+    stackable: false,
+    image:
+      "assets/accessories/acessorio-morango.PNG"
+  }
+
+];
+
+
+// ======================================================
+// REMOVE OS ACESSÓRIOS ANTIGOS DA LOJA
+// E COLOCA O PACK NOVO
+// ======================================================
+
+for (
+  let i =
+    shopItems.length - 1;
+
+  i >= 0;
+
+  i--
+) {
+
+  if (
+    shopItems[i].category ===
+    "accessories"
+  ) {
+
+    shopItems.splice(
+      i,
+      1
+    );
+
+  }
+
+}
+
+
+shopItems.push(
+  ...cinnaAccessories
+);
+
+
+// ======================================================
+// MIGRA COMPRAS ANTIGAS
+// caso você já tenha comprado algum dos placeholders
+// ======================================================
+
+const accessoryMigration = {
+
+  laco:
+    "laco-azul",
+
+  chapeu:
+    "touca"
+
+};
+
+
+Object.entries(
+  accessoryMigration
+).forEach(
+  ([oldId, newId]) => {
+
+    if (
+      cinnaInventory[oldId] &&
+      !cinnaInventory[newId]
+    ) {
+
+      cinnaInventory[newId] =
+        cinnaInventory[oldId];
+
+    }
+
+  }
+);
+
+
+// Óculos já tinha o mesmo ID,
+// então não precisa migrar.
+
+saveInventory();
+
+
+// ======================================================
+// CARREGAR ACESSÓRIOS EQUIPADOS
+// ======================================================
+
+function loadEquippedAccessories() {
+
+  const saved =
+    localStorage.getItem(
+      CINNA_ACCESSORIES_KEY
+    );
+
+
+  if (!saved) {
+
+    return {
+
+      head: null,
+      face: null,
+      neck: null
+
+    };
+
+  }
+
+
+  try {
+
+    const data =
+      JSON.parse(
+        saved
+      );
+
+
+    return {
+
+      head:
+        data.head || null,
+
+      face:
+        data.face || null,
+
+      neck:
+        data.neck || null
+
+    };
+
+  }
+
+  catch {
+
+    return {
+
+      head: null,
+      face: null,
+      neck: null
+
+    };
+
+  }
+
+}
+
+
+let cinnaEquippedAccessories =
+  loadEquippedAccessories();
+
+
+// ======================================================
+// SALVAR EQUIPADOS
+// ======================================================
+
+function saveEquippedAccessories() {
+
+  localStorage.setItem(
+
+    CINNA_ACCESSORIES_KEY,
+
+    JSON.stringify(
+      cinnaEquippedAccessories
+    )
+
+  );
+
+}
+
+
+// ======================================================
+// CAMADA DOS ACESSÓRIOS
+// ======================================================
+
+const cinnaWrap =
+  document.querySelector(
+    ".cinna-wrap"
+  );
+
+
+let accessoryLayer =
+  document.querySelector(
+    "#cinna-accessories-layer"
+  );
+
+
+if (
+  cinnaWrap &&
+  !accessoryLayer
+) {
+
+  accessoryLayer =
+    document.createElement(
+      "div"
+    );
+
+
+  accessoryLayer.id =
+    "cinna-accessories-layer";
+
+
+  accessoryLayer.className =
+    "cinna-accessories-layer";
+
+
+  cinnaWrap.appendChild(
+    accessoryLayer
+  );
+
+}
+
+
+// ======================================================
+// ACHAR ACESSÓRIO
+// ======================================================
+
+function getAccessoryById(
+  accessoryId
+) {
+
+  return cinnaAccessories.find(
+
+    item =>
+      item.id ===
+      accessoryId
+
+  );
+
+}
+
+
+// ======================================================
+// DESENHAR ACESSÓRIOS NO CINNA
+// ======================================================
+
+function applyEquippedAccessories() {
+
+  if (!accessoryLayer) {
+
+    return;
+
+  }
+
+
+  accessoryLayer.innerHTML =
+    "";
+
+
+  const slots = [
+
+    "head",
+    "face",
+    "neck"
+
+  ];
+
+
+  slots.forEach(
+    slot => {
+
+      const accessoryId =
+        cinnaEquippedAccessories[
+          slot
+        ];
+
+
+      if (!accessoryId) {
+
+        return;
+
+      }
+
+
+      const accessory =
+        getAccessoryById(
+          accessoryId
+        );
+
+
+      if (!accessory) {
+
+        return;
+
+      }
+
+
+      // Só equipa se realmente
+      // estiver no inventário.
+
+      if (
+        getItemAmount(
+          accessory.id
+        ) <= 0
+      ) {
+
+        cinnaEquippedAccessories[
+          slot
+        ] =
+          null;
+
+
+        return;
+
+      }
+
+
+      const image =
+        document.createElement(
+          "img"
+        );
+
+
+      image.src =
+        accessory.image;
+
+
+      image.alt =
+        accessory.name;
+
+
+      image.className =
+        `cinna-accessory cinna-accessory-${accessory.id}`;
+
+
+      image.dataset.slot =
+        slot;
+
+
+      accessoryLayer.appendChild(
+        image
+      );
+
+    }
+  );
+
+
+  saveEquippedAccessories();
+
+}
+
+
+// ======================================================
+// EQUIPAR / REMOVER
+// ======================================================
+
+function toggleAccessory(
+  accessoryId
+) {
+
+  const accessory =
+    getAccessoryById(
+      accessoryId
+    );
+
+
+  if (!accessory) {
+
+    return;
+
+  }
+
+
+  if (
+    getItemAmount(
+      accessory.id
+    ) <= 0
+  ) {
+
+    shopMessage.textContent =
+      "Você ainda não comprou esse acessório ;-;";
+
+    return;
+
+  }
+
+
+  const slot =
+    accessory.slot;
+
+
+  // Se já está equipado:
+  // remove.
+
+  if (
+    cinnaEquippedAccessories[
+      slot
+    ] ===
+    accessory.id
+  ) {
+
+    cinnaEquippedAccessories[
+      slot
+    ] =
+      null;
+
+
+    shopMessage.textContent =
+      `${accessory.icon} ${accessory.name} removido!`;
+
+  }
+
+  else {
+
+    // Se outro item ocupa o mesmo slot,
+    // ele é substituído automaticamente.
+
+    cinnaEquippedAccessories[
+      slot
+    ] =
+      accessory.id;
+
+
+    shopMessage.textContent =
+      `${accessory.icon} ${accessory.name} equipado!`;
+
+  }
+
+
+  saveEquippedAccessories();
+
+
+  applyEquippedAccessories();
+
+
+  renderInventory();
+
+}
+
+
+// ======================================================
+// MOSTRAR IMAGENS REAIS NA LOJA
+// ======================================================
+
+function decorateAccessoryShop() {
+
+  const cards =
+    shopContent.querySelectorAll(
+      ".shop-item"
+    );
+
+
+  const items =
+    shopItems.filter(
+      item =>
+        item.category ===
+        "accessories"
+    );
+
+
+  cards.forEach(
+    (card, index) => {
+
+      const item =
+        items[index];
+
+
+      if (!item) {
+
+        return;
+
+      }
+
+
+      const icon =
+        card.querySelector(
+          ".shop-item-icon"
+        );
+
+
+      if (
+        icon &&
+        item.image
+      ) {
+
+        icon.innerHTML = `
+
+          <img
+            class="shop-accessory-preview"
+            src="${item.image}"
+            alt="${item.name}"
+          >
+
+        `;
+
+      }
+
+    }
+  );
+
+}
+
+
+// ======================================================
+// ENVOLVE O RENDER DA LOJA
+// ======================================================
+
+const renderShopCategoryBeforeAccessories =
+  renderShopCategory;
+
+
+renderShopCategory =
+  function (
+    category
+  ) {
+
+    renderShopCategoryBeforeAccessories(
+      category
+    );
+
+
+    if (
+      category ===
+      "accessories"
+    ) {
+
+      decorateAccessoryShop();
+
+    }
+
+  };
+
+
+// ======================================================
+// MELHORA O INVENTÁRIO
+// SEM QUEBRAR O SISTEMA DA COMIDA
+// ======================================================
+
+const renderInventoryBeforeAccessories =
+  renderInventory;
+
+
+renderInventory =
+  function () {
+
+    renderInventoryBeforeAccessories();
+
+
+    const cards =
+      shopContent.querySelectorAll(
+        ".inventory-item"
+      );
+
+
+    cards.forEach(
+      card => {
+
+        const nameElement =
+          card.querySelector(
+            ".inventory-info strong"
+          );
+
+
+        if (!nameElement) {
+
+          return;
+
+        }
+
+
+        const accessory =
+          cinnaAccessories.find(
+
+            item =>
+              item.name.trim() ===
+              nameElement
+                .textContent
+                .trim()
+
+          );
+
+
+        if (!accessory) {
+
+          return;
+
+        }
+
+
+        // Troca emoji pela imagem real.
+
+        const icon =
+          card.querySelector(
+            ".inventory-icon"
+          );
+
+
+        if (icon) {
+
+          icon.innerHTML = `
+
+            <img
+              class="inventory-accessory-preview"
+              src="${accessory.image}"
+              alt="${accessory.name}"
+            >
+
+          `;
+
+        }
+
+
+        // Remove o ✓ padrão.
+
+        const oldCheck =
+          card.querySelector(
+            ".inventory-check"
+          );
+
+
+        if (oldCheck) {
+
+          oldCheck.remove();
+
+        }
+
+
+        const actions =
+          document.createElement(
+            "div"
+          );
+
+
+        actions.className =
+          "inventory-accessory-actions";
+
+
+        const equipped =
+
+          cinnaEquippedAccessories[
+            accessory.slot
+          ] ===
+          accessory.id;
+
+
+        actions.innerHTML = `
+
+          <button
+
+            class="
+              inventory-equip-button
+              ${
+                equipped
+                  ? "equipped"
+                  : ""
+              }
+            "
+
+            type="button"
+
+          >
+
+            ${
+              equipped
+                ? "REMOVER"
+                : "EQUIPAR"
+            }
+
+          </button>
+
+        `;
+
+
+        actions
+          .querySelector(
+            ".inventory-equip-button"
+          )
+          .addEventListener(
+
+            "click",
+
+            () => {
+
+              toggleAccessory(
+                accessory.id
+              );
+
+            }
+
+          );
+
+
+        card.appendChild(
+          actions
+        );
+
+      }
+    );
+
+  };
+
+
+// ======================================================
+// API DOS ACESSÓRIOS
+// ======================================================
+
+window.CinnaAccessories = {
+
+  equip(
+    accessoryId
+  ) {
+
+    toggleAccessory(
+      accessoryId
+    );
+
+  },
+
+
+  getEquipped() {
+
+    return {
+
+      ...cinnaEquippedAccessories
+
+    };
+
+  },
+
+
+  refresh() {
+
+    applyEquippedAccessories();
+
+  }
+
+};
+
+
+// ======================================================
+// INICIALIZAÇÃO
+// ======================================================
+
+applyEquippedAccessories();

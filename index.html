@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -9,30 +10,55 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>ᑕIᑎᑎᗩᗰOᑎᖇOᒪᒪ ☁️</title>
+  <title>
+    ᑕIᑎᑎᗩᗰOᑎᖇOᒪᒪ ☁️
+  </title>
+
+
+  <!-- CSS PRINCIPAL -->
 
   <link
     rel="stylesheet"
     href="style.css?v=7"
   >
-<link
-  rel="stylesheet"
-  href="games.css?v=3"
 
->
+
+  <!-- MINIJOGOS -->
 
   <link
-  rel="stylesheet"
-  href="shop.css?v=5"
->
-  
+    rel="stylesheet"
+    href="games.css?v=3"
+  >
+
+
+  <!-- LOJA -->
+
+  <link
+    rel="stylesheet"
+    href="shop.css?v=5"
+  >
+
+
+  <!-- ACESSÓRIOS -->
+
+  <link
+    rel="stylesheet"
+    href="accessories.css?v=1"
+  >
+
+
 </head>
+
 
 <body>
 
+
   <main class="game">
 
-    <h1>ᑕIᑎᑎᗩᗰOᑎᖇOᒪᒪ ☁️</h1>
+
+    <h1>
+      ᑕIᑎᑎᗩᗰOᑎᖇOᒪᒪ ☁️
+    </h1>
 
 
     <!-- ========================= -->
@@ -41,13 +67,18 @@
 
     <div class="status-panel">
 
+
       <div class="status">
 
-        <span class="status-icon">❤️</span>
+        <span class="status-icon">
+          ❤️
+        </span>
 
         <div class="status-info">
 
-          <span>Felicidade</span>
+          <span>
+            Felicidade
+          </span>
 
           <div class="status-bar">
 
@@ -65,11 +96,15 @@
 
       <div class="status">
 
-        <span class="status-icon">🍰</span>
+        <span class="status-icon">
+          🍰
+        </span>
 
         <div class="status-info">
 
-          <span>Comida</span>
+          <span>
+            Comida
+          </span>
 
           <div class="status-bar">
 
@@ -87,11 +122,15 @@
 
       <div class="status">
 
-        <span class="status-icon">⚡</span>
+        <span class="status-icon">
+          ⚡
+        </span>
 
         <div class="status-info">
 
-          <span>Energia</span>
+          <span>
+            Energia
+          </span>
 
           <div class="status-bar">
 
@@ -109,11 +148,15 @@
 
       <div class="status">
 
-        <span class="status-icon">🫧</span>
+        <span class="status-icon">
+          🫧
+        </span>
 
         <div class="status-info">
 
-          <span>Higiene</span>
+          <span>
+            Higiene
+          </span>
 
           <div class="status-bar">
 
@@ -127,6 +170,7 @@
         </div>
 
       </div>
+
 
     </div>
 
@@ -149,9 +193,8 @@
 
 
         <!--
-          Corações, bolhas e Zzz
-          aparecem nessa camada.
-          Ela fica atrás do Cinna.
+          EFEITOS LIVRES:
+          corações, bolhas e Zzz
         -->
 
         <div
@@ -160,25 +203,47 @@
         ></div>
 
 
-        <img
-          id="cinna"
-          class="character"
-          src="assets/sprites/cinna-idle-1.PNG"
-          alt="Cinna"
-        >
-
-
         <!--
-          Sujeira fica por cima do personagem.
+          CORPO DO CINNA
+          Tudo aqui dentro se move junto
         -->
 
-        <img
-          id="dirt-overlay"
-          class="dirt-overlay"
-          src="assets/sprites/sujeira-1.PNG"
-          alt=""
-          hidden
+        <div
+          id="cinna-body"
+          class="cinna-body"
         >
+
+
+          <!-- CINNA -->
+
+          <img
+            id="cinna"
+            class="character"
+            src="assets/sprites/cinna-idle-1.PNG"
+            alt="Cinna"
+          >
+
+
+          <!-- ACESSÓRIOS -->
+
+          <div
+            id="cinna-accessories-layer"
+            class="cinna-accessories-layer"
+          ></div>
+
+
+          <!-- SUJEIRA -->
+
+          <img
+            id="dirt-overlay"
+            class="dirt-overlay"
+            src="assets/sprites/sujeira-1.PNG"
+            alt=""
+            hidden
+          >
+
+
+        </div>
 
 
       </div>
@@ -194,10 +259,16 @@
         <button
           class="menu-button active"
           data-room="home"
+          type="button"
         >
 
-          <span>🏠</span>
-          <small>Início</small>
+          <span>
+            🏠
+          </span>
+
+          <small>
+            Início
+          </small>
 
         </button>
 
@@ -205,10 +276,16 @@
         <button
           class="menu-button"
           data-room="kitchen"
+          type="button"
         >
 
-          <span>🍰</span>
-          <small>Comida</small>
+          <span>
+            🍰
+          </span>
+
+          <small>
+            Comida
+          </small>
 
         </button>
 
@@ -216,10 +293,16 @@
         <button
           class="menu-button"
           data-room="bathroom"
+          type="button"
         >
 
-          <span>🫧</span>
-          <small>Banho</small>
+          <span>
+            🫧
+          </span>
+
+          <small>
+            Banho
+          </small>
 
         </button>
 
@@ -227,10 +310,16 @@
         <button
           class="menu-button"
           data-room="bedroom"
+          type="button"
         >
 
-          <span>💡</span>
-          <small>Dormir</small>
+          <span>
+            💡
+          </span>
+
+          <small>
+            Dormir
+          </small>
 
         </button>
 
@@ -238,10 +327,16 @@
         <button
           class="menu-button"
           data-room="games"
+          type="button"
         >
 
-          <span>🎮</span>
-          <small>Jogos</small>
+          <span>
+            🎮
+          </span>
+
+          <small>
+            Jogos
+          </small>
 
         </button>
 
@@ -264,10 +359,16 @@
           class="food-item"
           data-food="Morango"
           data-value="25"
+          type="button"
         >
 
-          <span>🍓</span>
-          <small>+25%</small>
+          <span>
+            🍓
+          </span>
+
+          <small>
+            +25%
+          </small>
 
         </button>
 
@@ -276,10 +377,16 @@
           class="food-item"
           data-food="Maçã"
           data-value="35"
+          type="button"
         >
 
-          <span>🍎</span>
-          <small>+35%</small>
+          <span>
+            🍎
+          </span>
+
+          <small>
+            +35%
+          </small>
 
         </button>
 
@@ -288,10 +395,16 @@
           class="food-item"
           data-food="Leite"
           data-value="30"
+          type="button"
         >
 
-          <span>🥛</span>
-          <small>+30%</small>
+          <span>
+            🥛
+          </span>
+
+          <small>
+            +30%
+          </small>
 
         </button>
 
@@ -300,10 +413,16 @@
           class="food-item"
           data-food="Bolo"
           data-value="50"
+          type="button"
         >
 
-          <span>🍰</span>
-          <small>+50%</small>
+          <span>
+            🍰
+          </span>
+
+          <small>
+            +50%
+          </small>
 
         </button>
 
@@ -326,10 +445,16 @@
           class="bath-item"
           data-care="Esponja"
           data-value="25"
+          type="button"
         >
 
-          <span>🧽</span>
-          <small>+25%</small>
+          <span>
+            🧽
+          </span>
+
+          <small>
+            +25%
+          </small>
 
         </button>
 
@@ -338,10 +463,16 @@
           class="bath-item"
           data-care="Sabonete"
           data-value="35"
+          type="button"
         >
 
-          <span>🧼</span>
-          <small>+35%</small>
+          <span>
+            🧼
+          </span>
+
+          <small>
+            +35%
+          </small>
 
         </button>
 
@@ -350,10 +481,16 @@
           class="bath-item"
           data-care="Shampoo"
           data-value="40"
+          type="button"
         >
 
-          <span>🧴</span>
-          <small>+40%</small>
+          <span>
+            🧴
+          </span>
+
+          <small>
+            +40%
+          </small>
 
         </button>
 
@@ -362,10 +499,16 @@
           class="bath-item"
           data-care="Enxágue"
           data-value="20"
+          type="button"
         >
 
-          <span>🚿</span>
-          <small>+20%</small>
+          <span>
+            🚿
+          </span>
+
+          <small>
+            +20%
+          </small>
 
         </button>
 
@@ -387,10 +530,16 @@
         <button
           id="sleep-button"
           class="sleep-button"
+          type="button"
         >
 
-          <span>💡</span>
-          <small>Dormir</small>
+          <span>
+            💡
+          </span>
+
+          <small>
+            Dormir
+          </small>
 
         </button>
 
@@ -409,12 +558,30 @@
 
     </section>
 
+
   </main>
 
 
-<script src="game.js?v=9"></script>
-<script src="games.js?v=3"></script>
-<script src="shop.js?v=5"></script>
-  
+  <!-- ========================= -->
+  <!-- JAVASCRIPT -->
+  <!-- ========================= -->
+
+
+  <script
+    src="game.js?v=9"
+  ></script>
+
+
+  <script
+    src="games.js?v=3"
+  ></script>
+
+
+  <script
+    src="shop.js?v=5"
+  ></script>
+
+
 </body>
+
 </html>

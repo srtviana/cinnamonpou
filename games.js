@@ -1074,3 +1074,639 @@ gamesMenuButtons.forEach(
 // ======================================================
 
 updateGamesHub();
+
+
+// ======================================================
+// CINNA COINS 🪙
+// ======================================================
+
+const CINNA_COINS_KEY =
+  "cinnaCoins";
+
+
+// ======================================================
+// CARREGAR SALDO
+// ======================================================
+
+function loadCinnaCoins() {
+
+  const saved =
+    localStorage.getItem(
+      CINNA_COINS_KEY
+    );
+
+
+  // Primeira vez jogando:
+  // começa com 50 Cinna Coins.
+
+  if (saved === null) {
+
+    localStorage.setItem(
+      CINNA_COINS_KEY,
+      "50"
+    );
+
+    return 50;
+
+  }
+
+
+  const value =
+    Number(saved);
+
+
+  if (
+    Number.isNaN(value)
+  ) {
+
+    localStorage.setItem(
+      CINNA_COINS_KEY,
+      "50"
+    );
+
+    return 50;
+
+  }
+
+
+  return value;
+
+}
+
+
+let cinnaCoins =
+  loadCinnaCoins();
+
+
+// ======================================================
+// VISUAL DO CONTADOR
+// ======================================================
+
+const coinStyles =
+  document.createElement(
+    "style"
+  );
+
+
+coinStyles.textContent = `
+
+  .cinna-coins-area {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    padding:
+      0
+      18px
+      10px;
+
+    margin-top: -5px;
+
+  }
+
+
+  .cinna-coins-wallet {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding:
+      7px
+      12px;
+
+    border-radius:
+      999px;
+
+    background:
+      rgba(
+        255,
+        255,
+        255,
+        0.9
+      );
+
+    box-shadow:
+      0
+      5px
+      15px
+      rgba(
+        84,
+        143,
+        177,
+        0.14
+      );
+
+    color:
+      #587b97;
+
+    font-weight:
+      800;
+
+    user-select:
+      none;
+
+    -webkit-user-select:
+      none;
+
+  }
+
+
+  .cinna-coins-icon {
+
+    font-size:
+      20px;
+
+    line-height:
+      1;
+
+  }
+
+
+  .cinna-coins-number {
+
+    font-size:
+      15px;
+
+    min-width:
+      20px;
+
+    text-align:
+      center;
+
+  }
+
+
+  .cinna-coins-name {
+
+    font-size:
+      10px;
+
+    color:
+      #7994a9;
+
+    font-weight:
+      700;
+
+  }
+
+
+  .cinna-coins-wallet.coin-bump {
+
+    animation:
+      cinnaCoinBump
+      0.45s
+      ease;
+
+  }
+
+
+  @keyframes cinnaCoinBump {
+
+    0% {
+
+      transform:
+        scale(1);
+
+    }
+
+
+    35% {
+
+      transform:
+        scale(1.16)
+        rotate(-3deg);
+
+    }
+
+
+    70% {
+
+      transform:
+        scale(0.96)
+        rotate(2deg);
+
+    }
+
+
+    100% {
+
+      transform:
+        scale(1)
+        rotate(0deg);
+
+    }
+
+  }
+
+
+  @media (
+    max-width: 390px
+  ) {
+
+    .cinna-coins-area {
+
+      padding:
+        0
+        16px
+        8px;
+
+    }
+
+
+    .cinna-coins-wallet {
+
+      padding:
+        6px
+        10px;
+
+    }
+
+
+    .cinna-coins-name {
+
+      font-size:
+        9px;
+
+    }
+
+  }
+
+`;
+
+
+document.head.appendChild(
+  coinStyles
+);
+
+
+// ======================================================
+// CRIA O CONTADOR
+// ======================================================
+
+const coinArea =
+  document.createElement(
+    "div"
+  );
+
+
+coinArea.className =
+  "cinna-coins-area";
+
+
+coinArea.innerHTML = `
+
+  <div
+    id="cinna-coins-wallet"
+    class="cinna-coins-wallet"
+  >
+
+    <span class="cinna-coins-icon">
+      🪙
+    </span>
+
+    <span
+      id="cinna-coins-number"
+      class="cinna-coins-number"
+    >
+      ${cinnaCoins}
+    </span>
+
+    <span class="cinna-coins-name">
+      Cinna Coins
+    </span>
+
+  </div>
+
+`;
+
+
+const statusPanel =
+  document.querySelector(
+    ".status-panel"
+  );
+
+
+statusPanel.insertAdjacentElement(
+  "beforebegin",
+  coinArea
+);
+
+
+// ======================================================
+// ATUALIZAR CONTADOR
+// ======================================================
+
+function updateCinnaCoinsDisplay(
+  animate = false
+) {
+
+  const number =
+    document.querySelector(
+      "#cinna-coins-number"
+    );
+
+
+  const wallet =
+    document.querySelector(
+      "#cinna-coins-wallet"
+    );
+
+
+  if (number) {
+
+    number.textContent =
+      cinnaCoins;
+
+  }
+
+
+  if (
+    animate &&
+    wallet
+  ) {
+
+    wallet.classList.remove(
+      "coin-bump"
+    );
+
+
+    void wallet.offsetWidth;
+
+
+    wallet.classList.add(
+      "coin-bump"
+    );
+
+  }
+
+}
+
+
+// ======================================================
+// GANHAR MOEDAS
+// ======================================================
+
+function addCinnaCoins(
+  amount
+) {
+
+  const value =
+    Math.max(
+      0,
+      Math.floor(
+        Number(amount) || 0
+      )
+    );
+
+
+  cinnaCoins +=
+    value;
+
+
+  localStorage.setItem(
+    CINNA_COINS_KEY,
+    cinnaCoins
+  );
+
+
+  updateCinnaCoinsDisplay(
+    true
+  );
+
+
+  return cinnaCoins;
+
+}
+
+
+// ======================================================
+// GASTAR MOEDAS
+// ======================================================
+
+function spendCinnaCoins(
+  amount
+) {
+
+  const value =
+    Math.max(
+      0,
+      Math.floor(
+        Number(amount) || 0
+      )
+    );
+
+
+  if (
+    cinnaCoins <
+    value
+  ) {
+
+    return false;
+
+  }
+
+
+  cinnaCoins -=
+    value;
+
+
+  localStorage.setItem(
+    CINNA_COINS_KEY,
+    cinnaCoins
+  );
+
+
+  updateCinnaCoinsDisplay(
+    true
+  );
+
+
+  return true;
+
+}
+
+
+// ======================================================
+// RECOMPENSA DO PEGA ESTRELINHAS
+// ======================================================
+
+function getStarCoinReward(
+  score
+) {
+
+  if (
+    score <= 5
+  ) {
+
+    return 5;
+
+  }
+
+
+  if (
+    score <= 10
+  ) {
+
+    return 10;
+
+  }
+
+
+  if (
+    score <= 20
+  ) {
+
+    return 20;
+
+  }
+
+
+  if (
+    score <= 30
+  ) {
+
+    return 30;
+
+  }
+
+
+  return 40;
+
+}
+
+
+// ======================================================
+// GUARDA A FUNÇÃO ORIGINAL DO MINIJOGO
+// ======================================================
+
+const originalFinishStarGame =
+  finishStarGame;
+
+
+// ======================================================
+// NOVO FINAL DO PEGA ESTRELINHAS
+// ======================================================
+
+finishStarGame =
+  function () {
+
+    if (
+      !starGameRunning
+    ) {
+
+      return;
+
+    }
+
+
+    // Guardamos a pontuação
+    // antes da função original terminar.
+
+    const finalScore =
+      starScore;
+
+
+    // A função original continua cuidando:
+    // - cronômetro
+    // - recorde
+    // - felicidade
+    // - tela de resultado
+
+    originalFinishStarGame();
+
+
+    // Recompensa de moedas.
+
+    const coinReward =
+      getStarCoinReward(
+        finalScore
+      );
+
+
+    addCinnaCoins(
+      coinReward
+    );
+
+
+    // Recompensa de felicidade
+    // que o próprio jogo já calcula.
+
+    const happinessReward =
+      getStarReward(
+        finalScore
+      );
+
+
+    // Atualiza o texto final.
+
+    starRewardText.innerHTML = `
+
+      ❤️ +${happinessReward}% felicidade
+
+      <br>
+
+      🪙 +${coinReward} Cinna Coins
+
+      <br><br>
+
+      <small>
+        Saldo: 🪙 ${cinnaCoins}
+      </small>
+
+    `;
+
+  };
+
+
+// ======================================================
+// API DAS CINNA COINS
+// Para nossa futura lojinha 🌝
+// ======================================================
+
+window.CinnaCoins = {
+
+  getBalance() {
+
+    return cinnaCoins;
+
+  },
+
+
+  add(amount) {
+
+    return addCinnaCoins(
+      amount
+    );
+
+  },
+
+
+  spend(amount) {
+
+    return spendCinnaCoins(
+      amount
+    );
+
+  },
+
+
+  refresh() {
+
+    updateCinnaCoinsDisplay();
+
+  }
+
+};
+
+
+// ======================================================
+// INICIALIZAÇÃO
+// ======================================================
+
+updateCinnaCoinsDisplay();

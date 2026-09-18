@@ -218,19 +218,11 @@
 
 
 /* 🌙 TOUCA */
-
-.cinna-body
 .cinna-accessory-touca {
   width: 49.5%;
-
   left: 50%;
   top: 20.5%;
-
-  transform:
-    translate(
-      -50%,
-      -50%
-    );
+  transform: translate(-50%, -50%) rotate(-4deg);
 }
 
 

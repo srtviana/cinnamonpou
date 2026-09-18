@@ -1,0 +1,264 @@
+/* =====================================================
+   CORPO DO CINNA + ACESSÓRIOS
+   ===================================================== */
+
+
+/*
+  O cinna-wrap continua sendo a área geral.
+  Efeitos como coração, bolha e Zzz ficam aqui fora.
+*/
+
+.cinna-wrap {
+  position: relative;
+}
+
+
+/*
+  Este é o "corpo" único do personagem.
+
+  Cinna
+  + acessórios
+  + sujeira
+
+  Tudo se movimenta junto.
+*/
+
+.cinna-body {
+  width: 320px;
+  max-width: 85%;
+
+  position: relative;
+
+  display: block;
+
+  animation:
+    cinna-body-breathe
+    1.8s
+    ease-in-out
+    infinite;
+}
+
+
+/* =====================================================
+   PERSONAGEM
+   ===================================================== */
+
+.cinna-body .character {
+  width: 100%;
+  max-width: none;
+  height: auto;
+
+  display: block;
+
+  position: relative;
+
+  z-index: 2;
+
+  /*
+    MUITO IMPORTANTE:
+    tira a animação antiga que estava
+    somente na imagem do Cinna.
+  */
+  animation: none !important;
+}
+
+
+/* =====================================================
+   ANIMAÇÃO DO CONJUNTO INTEIRO
+   ===================================================== */
+
+@keyframes cinna-body-breathe {
+
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      translateY(-6px)
+      scale(1.015);
+  }
+
+}
+
+
+/*
+  Durante comida/banho,
+  o game.js coloca action-playing no Cinna.
+
+  Nesse momento pausamos a respiração
+  do conjunto inteiro.
+*/
+
+.cinna-body:has(.character.action-playing) {
+  animation: none;
+}
+
+
+/* =====================================================
+   CAMADA DE ACESSÓRIOS
+   ===================================================== */
+
+.cinna-body
+.cinna-accessories-layer {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 8;
+
+  pointer-events: none;
+}
+
+
+/*
+  Todos os acessórios seguem a MESMA referência:
+  o corpo do Cinna.
+
+  Portanto, qualquer movimento do .cinna-body
+  carrega todos junto.
+*/
+
+.cinna-body
+.cinna-accessory {
+  position: absolute;
+
+  display: block;
+
+  object-fit: contain;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+
+  -webkit-user-drag: none;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+}
+
+
+/* =====================================================
+   SUJEIRA
+   ===================================================== */
+
+/*
+  A sujeira agora também é relativa
+  ao corpo do Cinna.
+*/
+
+.cinna-body
+.dirt-overlay {
+  width: 80%;
+  height: auto;
+
+  position: absolute;
+
+  left: 50%;
+  top: 54%;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+  z-index: 9;
+
+  pointer-events: none;
+
+  object-fit: contain;
+}
+
+
+/* =====================================================
+   POSIÇÕES DOS ACESSÓRIOS
+   ===================================================== */
+
+
+/* 🎀 LACINHO AZUL */
+
+.cinna-body
+.cinna-accessory-laco-azul {
+  width: 28%;
+
+  left: 50%;
+  top: 12%;
+}
+
+
+/* 👑 COROA */
+
+.cinna-body
+.cinna-accessory-coroa {
+  width: 30%;
+
+  left: 50%;
+  top: 8%;
+}
+
+
+/* 👓 ÓCULOS */
+
+.cinna-body
+.cinna-accessory-oculos {
+  width: 42%;
+
+  left: 50%;
+  top: 36%;
+}
+
+
+/* 🌙 TOUCA */
+
+.cinna-body
+.cinna-accessory-touca {
+  width: 46%;
+
+  left: 50%;
+  top: 17%;
+}
+
+
+/* 💗 COLAR */
+
+.cinna-body
+.cinna-accessory-colar-coracao {
+  width: 26%;
+
+  left: 50%;
+  top: 58%;
+}
+
+
+/* 🍓 PRESILHA */
+
+.cinna-body
+.cinna-accessory-morango {
+  width: 21%;
+
+  left: 37%;
+  top: 19%;
+}
+
+
+/* =====================================================
+   CELULAR
+   ===================================================== */
+
+@media (max-width: 390px) {
+
+  .cinna-body {
+    width: 290px;
+    max-width: 85%;
+  }
+
+}

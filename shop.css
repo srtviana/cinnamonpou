@@ -921,3 +921,237 @@
   }
 
 }
+
+
+/* =====================================================
+   ACESSÓRIOS DO CINNA 🎀
+   ===================================================== */
+
+
+/* CAMADA */
+
+.cinna-accessories-layer {
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 8;
+
+  pointer-events: none;
+
+}
+
+
+/* ACESSÓRIO BASE */
+
+.cinna-accessory {
+
+  position: absolute;
+
+  object-fit: contain;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+}
+
+
+/* =====================================================
+   POSIÇÕES
+   ===================================================== */
+
+
+/* 🎀 LAÇO AZUL */
+
+.cinna-accessory-laco-azul {
+
+  width: 28%;
+
+  left: 50%;
+
+  top: 12%;
+
+}
+
+
+/* 👑 COROA */
+
+.cinna-accessory-coroa {
+
+  width: 30%;
+
+  left: 50%;
+
+  top: 8%;
+
+}
+
+
+/* 👓 ÓCULOS */
+
+.cinna-accessory-oculos {
+
+  width: 42%;
+
+  left: 50%;
+
+  top: 36%;
+
+}
+
+
+/* 🌙 TOUCA */
+
+.cinna-accessory-touca {
+
+  width: 40%;
+
+  left: 50%;
+
+  top: 11%;
+
+}
+
+
+/* 💗 COLAR */
+
+.cinna-accessory-colar-coracao {
+
+  width: 26%;
+
+  left: 50%;
+
+  top: 58%;
+
+}
+
+
+/* 🍓 PRESILHA */
+
+.cinna-accessory-morango {
+
+  width: 21%;
+
+  left: 37%;
+
+  top: 19%;
+
+}
+
+
+/* =====================================================
+   IMAGENS NA LOJA
+   ===================================================== */
+
+.shop-accessory-preview {
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: contain;
+
+}
+
+
+.inventory-accessory-preview {
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: contain;
+
+}
+
+
+/* =====================================================
+   BOTÃO EQUIPAR
+   ===================================================== */
+
+.inventory-accessory-actions {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+}
+
+
+.inventory-equip-button {
+
+  min-width: 62px;
+
+  min-height: 30px;
+
+  border: none;
+
+  border-radius: 11px;
+
+  padding: 6px 8px;
+
+  font-family: inherit;
+
+  font-size: 8px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+
+  touch-action: manipulation;
+
+  background: #dff3ff;
+
+  color: #5382a5;
+
+}
+
+
+.inventory-equip-button:active {
+
+  transform:
+    scale(0.94);
+
+}
+
+
+.inventory-equip-button.equipped {
+
+  background: #ffe8f2;
+
+  color: #b76a8b;
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (
+  max-width: 500px
+) {
+
+  .inventory-equip-button {
+
+    min-width: 56px;
+
+    font-size: 7px;
+
+    padding: 6px;
+
+  }
+
+}

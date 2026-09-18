@@ -1159,8 +1159,13 @@
 
 /* AJUSTE FINO — TOUCA */
 
-.cinna-accessory-touca {
-  width: 46%;
+.cinna-accessory {
+  position: absolute;
+  top: 20px;
   left: 50%;
-  top: 17%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: auto;
+  z-index: 8;
+  pointer-events: none;
 }

@@ -1032,3 +1032,801 @@ setTimeout(
   createShopButton,
   300
 );
+
+// ======================================================
+// ESTOQUE DA BANDEJA DE COMIDA 🍓🍎🥛🍰
+// ======================================================
+
+const FOOD_TRAY_STORAGE_KEY =
+  "cinnaFoodTray";
+
+const FOOD_TRAY_MAX =
+  10;
+
+
+// ======================================================
+// RELAÇÃO ENTRE BOTÃO E ITEM DA LOJA
+// ======================================================
+
+const foodTrayIds = {
+  "Morango": "morango",
+  "Maçã": "maca",
+  "Leite": "leite",
+  "Bolo": "bolo"
+};
+
+
+const foodTrayNames = {
+  morango: "Morango",
+  maca: "Maçã",
+  leite: "Leite",
+  bolo: "Bolo"
+};
+
+
+const foodTrayIcons = {
+  morango: "🍓",
+  maca: "🍎",
+  leite: "🥛",
+  bolo: "🍰"
+};
+
+
+// ======================================================
+// ESTOQUE INICIAL
+// ======================================================
+
+const INITIAL_FOOD_TRAY = {
+  morango: 10,
+  maca: 10,
+  leite: 10,
+  bolo: 10
+};
+
+
+// ======================================================
+// CARREGAR BANDEJA
+// ======================================================
+
+function loadFoodTray() {
+
+  const saved =
+    localStorage.getItem(
+      FOOD_TRAY_STORAGE_KEY
+    );
+
+
+  // Primeira vez:
+  // ganha 10 de cada comida.
+
+  if (!saved) {
+
+    localStorage.setItem(
+      FOOD_TRAY_STORAGE_KEY,
+      JSON.stringify(
+        INITIAL_FOOD_TRAY
+      )
+    );
+
+
+    return {
+      ...INITIAL_FOOD_TRAY
+    };
+
+  }
+
+
+  try {
+
+    const parsed =
+      JSON.parse(saved);
+
+
+    return {
+
+      morango:
+        Math.max(
+          0,
+          Math.min(
+            FOOD_TRAY_MAX,
+            Number(
+              parsed.morango
+            ) || 0
+          )
+        ),
+
+      maca:
+        Math.max(
+          0,
+          Math.min(
+            FOOD_TRAY_MAX,
+            Number(
+              parsed.maca
+            ) || 0
+          )
+        ),
+
+      leite:
+        Math.max(
+          0,
+          Math.min(
+            FOOD_TRAY_MAX,
+            Number(
+              parsed.leite
+            ) || 0
+          )
+        ),
+
+      bolo:
+        Math.max(
+          0,
+          Math.min(
+            FOOD_TRAY_MAX,
+            Number(
+              parsed.bolo
+            ) || 0
+          )
+        )
+
+    };
+
+  }
+
+  catch {
+
+    return {
+      ...INITIAL_FOOD_TRAY
+    };
+
+  }
+
+}
+
+
+let cinnaFoodTray =
+  loadFoodTray();
+
+
+// ======================================================
+// SALVAR BANDEJA
+// ======================================================
+
+function saveFoodTray() {
+
+  localStorage.setItem(
+    FOOD_TRAY_STORAGE_KEY,
+    JSON.stringify(
+      cinnaFoodTray
+    )
+  );
+
+}
+
+
+// ======================================================
+// PEGAR QUANTIDADE
+// ======================================================
+
+function getFoodTrayAmount(
+  foodId
+) {
+
+  return (
+    cinnaFoodTray[
+      foodId
+    ]
+    ||
+    0
+  );
+
+}
+
+
+// ======================================================
+// ATUALIZAR VISUAL DA BANDEJA
+// ======================================================
+
+function updateFoodTrayStockDisplay() {
+
+  const buttons =
+    document.querySelectorAll(
+      ".food-item"
+    );
+
+
+  buttons.forEach(
+    button => {
+
+      const foodName =
+        button.dataset.food;
+
+
+      const foodId =
+        foodTrayIds[
+          foodName
+        ];
+
+
+      if (!foodId) {
+        return;
+      }
+
+
+      const amount =
+        getFoodTrayAmount(
+          foodId
+        );
+
+
+      let counter =
+        button.querySelector(
+          ".food-stock-count"
+        );
+
+
+      if (!counter) {
+
+        counter =
+          document.createElement(
+            "small"
+          );
+
+
+        counter.className =
+          "food-stock-count";
+
+
+        const valueText =
+          button.querySelector(
+            "small"
+          );
+
+
+        button.insertBefore(
+          counter,
+          valueText
+        );
+
+      }
+
+
+      counter.textContent =
+        `x${amount}`;
+
+
+      button.classList.toggle(
+        "out-of-stock",
+        amount <= 0
+      );
+
+
+      button.setAttribute(
+        "aria-label",
+        `${foodName}: ${amount} de ${FOOD_TRAY_MAX}`
+      );
+
+    }
+  );
+
+}
+
+
+// ======================================================
+// CONSUMIR UMA UNIDADE
+// ======================================================
+
+function consumeFoodFromTray(
+  foodId
+) {
+
+  const current =
+    getFoodTrayAmount(
+      foodId
+    );
+
+
+  if (
+    current <=
+    0
+  ) {
+
+    return false;
+
+  }
+
+
+  cinnaFoodTray[
+    foodId
+  ] =
+    current - 1;
+
+
+  saveFoodTray();
+
+
+  updateFoodTrayStockDisplay();
+
+
+  return true;
+
+}
+
+
+// ======================================================
+// INTERCEPTA O CLIQUE DA COMIDA
+//
+// Este listener roda ANTES do listener do game.js.
+// Assim só deixamos o Cinna comer se houver estoque.
+// ======================================================
+
+document
+  .querySelectorAll(
+    ".food-item"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+
+        "click",
+
+        event => {
+
+          const foodName =
+            button.dataset.food;
+
+
+          const foodId =
+            foodTrayIds[
+              foodName
+            ];
+
+
+          if (!foodId) {
+            return;
+          }
+
+
+          // Se estiver de barriga cheia,
+          // o game.js cuida da mensagem.
+          // Não gastamos comida.
+
+          if (
+            typeof cinnaStatus !==
+              "undefined"
+            &&
+            cinnaStatus.hunger >=
+              100
+          ) {
+
+            return;
+
+          }
+
+
+          const amount =
+            getFoodTrayAmount(
+              foodId
+            );
+
+
+          // Acabou.
+
+          if (
+            amount <=
+            0
+          ) {
+
+            event.preventDefault();
+
+            event.stopImmediatePropagation();
+
+
+            if (
+              typeof message !==
+              "undefined"
+            ) {
+
+              message.textContent =
+                `${foodName} acabou! Reponha pelo inventário 🛍️`;
+
+            }
+
+
+            return;
+
+          }
+
+
+          // Tem estoque:
+          // consome uma unidade
+          // e deixa o game.js continuar normalmente.
+
+          consumeFoodFromTray(
+            foodId
+          );
+
+        },
+
+        true
+
+      );
+
+    }
+  );
+
+
+// ======================================================
+// REPOR UM ALIMENTO
+// ======================================================
+
+function refillFoodTray(
+  foodId
+) {
+
+  const inventoryAmount =
+    getItemAmount(
+      foodId
+    );
+
+
+  const trayAmount =
+    getFoodTrayAmount(
+      foodId
+    );
+
+
+  const missing =
+    FOOD_TRAY_MAX -
+    trayAmount;
+
+
+  if (
+    missing <=
+    0
+  ) {
+
+    shopMessage.textContent =
+      `${foodTrayIcons[foodId]} A bandeja de ${foodTrayNames[foodId]} já está cheia!`;
+
+    return;
+
+  }
+
+
+  if (
+    inventoryAmount <=
+    0
+  ) {
+
+    shopMessage.textContent =
+      `${foodTrayIcons[foodId]} Você não tem ${foodTrayNames[foodId]} no inventário.`;
+
+    return;
+
+  }
+
+
+  const amountToMove =
+    Math.min(
+      missing,
+      inventoryAmount
+    );
+
+
+  // Tira do inventário.
+
+  cinnaInventory[
+    foodId
+  ] =
+    inventoryAmount -
+    amountToMove;
+
+
+  // Coloca na bandeja.
+
+  cinnaFoodTray[
+    foodId
+  ] =
+    trayAmount +
+    amountToMove;
+
+
+  saveInventory();
+
+  saveFoodTray();
+
+
+  updateFoodTrayStockDisplay();
+
+
+  shopMessage.textContent =
+    `${foodTrayIcons[foodId]} +${amountToMove} ${foodTrayNames[foodId]} na bandeja!`;
+
+
+  shopMessage.classList.add(
+    "success"
+  );
+
+
+  setTimeout(
+    () => {
+
+      shopMessage.classList.remove(
+        "success"
+      );
+
+    },
+    900
+  );
+
+
+  renderInventory();
+
+}
+
+
+// ======================================================
+// NOVO INVENTÁRIO COM BOTÃO REPOR
+// ======================================================
+
+renderInventory =
+  function () {
+
+    shopContent.innerHTML =
+      "";
+
+
+    const ownedItems =
+      shopItems.filter(
+        item =>
+          getItemAmount(
+            item.id
+          ) > 0
+      );
+
+
+    if (
+      ownedItems.length ===
+      0
+    ) {
+
+      shopContent.innerHTML = `
+
+        <div class="shop-empty">
+
+          <div>
+            🎒
+          </div>
+
+          <strong>
+            Inventário vazio
+          </strong>
+
+          <small>
+            Compra alguma coisa primeiro KSKSKSK
+          </small>
+
+        </div>
+
+      `;
+
+
+      return;
+
+    }
+
+
+    ownedItems.forEach(
+      item => {
+
+        const amount =
+          getItemAmount(
+            item.id
+          );
+
+
+        const isFood =
+          item.category ===
+          "food";
+
+
+        const trayAmount =
+          isFood
+
+            ? getFoodTrayAmount(
+                item.id
+              )
+
+            : 0;
+
+
+        const card =
+          document.createElement(
+            "article"
+          );
+
+
+        card.className =
+          "inventory-item";
+
+
+        card.innerHTML = `
+
+          <div class="inventory-icon">
+
+            ${item.icon}
+
+          </div>
+
+
+          <div class="inventory-info">
+
+            <strong>
+              ${item.name}
+            </strong>
+
+
+            <small>
+
+              ${
+                isFood
+
+                  ? `Inventário: ${amount} • Bandeja: ${trayAmount}/${FOOD_TRAY_MAX}`
+
+                  : item.stackable
+
+                    ? `Quantidade: ${amount}`
+
+                    : "Item adquirido"
+              }
+
+            </small>
+
+          </div>
+
+
+          ${
+            isFood
+
+              ? `
+
+                <div class="inventory-food-actions">
+
+                  <span class="inventory-check">
+                    ×${amount}
+                  </span>
+
+
+                  <button
+                    class="inventory-refill-button"
+                    data-refill-food="${item.id}"
+                    type="button"
+                    ${
+                      trayAmount >=
+                      FOOD_TRAY_MAX
+
+                        ? "disabled"
+
+                        : ""
+                    }
+                  >
+
+                    ${
+                      trayAmount >=
+                      FOOD_TRAY_MAX
+
+                        ? "CHEIO"
+
+                        : "REPOR"
+                    }
+
+                  </button>
+
+                </div>
+
+              `
+
+              : `
+
+                <span class="inventory-check">
+
+                  ${
+                    item.stackable
+
+                      ? `×${amount}`
+
+                      : "✓"
+                  }
+
+                </span>
+
+              `
+          }
+
+        `;
+
+
+        shopContent.appendChild(
+          card
+        );
+
+      }
+    );
+
+
+    // Botões REPOR
+
+    document
+      .querySelectorAll(
+        ".inventory-refill-button"
+      )
+      .forEach(
+        button => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              refillFoodTray(
+                button.dataset
+                  .refillFood
+              );
+
+            }
+          );
+
+        }
+      );
+
+  };
+
+
+// ======================================================
+// API PARA USARMOS DEPOIS
+// ======================================================
+
+window.CinnaFoodTray = {
+
+  getStock(
+    foodId
+  ) {
+
+    return getFoodTrayAmount(
+      foodId
+    );
+
+  },
+
+
+  getAll() {
+
+    return {
+      ...cinnaFoodTray
+    };
+
+  },
+
+
+  refill(
+    foodId
+  ) {
+
+    refillFoodTray(
+      foodId
+    );
+
+  },
+
+
+  max:
+    FOOD_TRAY_MAX
+
+};
+
+
+// ======================================================
+// INICIALIZAÇÃO
+// ======================================================
+
+updateFoodTrayStockDisplay();

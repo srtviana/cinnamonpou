@@ -221,10 +221,16 @@
 
 .cinna-body
 .cinna-accessory-touca {
-  width: 46%;
+  width: 36%;
 
   left: 50%;
-  top: 17%;
+  top: 12%;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
 }
 
 

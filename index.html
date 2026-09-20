@@ -355,6 +355,8 @@
       >
 
 
+        <!-- MORANGO -->
+
         <button
           class="food-item"
           data-food="Morango"
@@ -372,6 +374,8 @@
 
         </button>
 
+
+        <!-- MAÇÃ -->
 
         <button
           class="food-item"
@@ -391,6 +395,8 @@
         </button>
 
 
+        <!-- LEITE -->
+
         <button
           class="food-item"
           data-food="Leite"
@@ -409,6 +415,8 @@
         </button>
 
 
+        <!-- BOLO -->
+
         <button
           class="food-item"
           data-food="Bolo"
@@ -422,6 +430,32 @@
 
           <small>
             +50%
+          </small>
+
+        </button>
+
+
+        <!-- ACHOCOLATADO -->
+
+        <button
+          class="food-item"
+          data-food="Achocolatado"
+          data-value="30"
+          type="button"
+          hidden
+        >
+
+          <span class="food-image-icon">
+
+            <img
+              src="assets/sprites/achocolatado.PNG"
+              alt="Achocolatado"
+            >
+
+          </span>
+
+          <small>
+            +30%
           </small>
 
         </button>
@@ -567,18 +601,41 @@
   <!-- ========================= -->
 
 
+  <!-- JOGO PRINCIPAL -->
+
   <script
     src="game.js?v=9"
   ></script>
 
+
+  <!-- MINIJOGOS -->
 
   <script
     src="games.js?v=3"
   ></script>
 
 
+  <!-- LOJA / INVENTÁRIO -->
+
   <script
     src="shop.js?v=6"
+  ></script>
+
+
+  <!--
+    EXPANSÃO DE COMIDAS
+
+    Adiciona:
+    - Achocolatado
+    - animação de 3 frames
+    - estoque
+    - loja/inventário
+    - máximo de 4 tipos na bandeja
+    - alimento some ao chegar em x0
+  -->
+
+  <script
+    src="food-expansion.js?v=1"
   ></script>
 
 

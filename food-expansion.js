@@ -2,19 +2,18 @@
 // EXPANSÃO DE COMIDAS 🍫🥛
 // ======================================================
 //
-// Este arquivo adiciona:
+// ACHOCOLATADO
 //
-// - Achocolatado
-// - 3 sprites de animação
-// - item na Loja do Cinna
-// - estoque máximo de 10
-// - bandeja com no máximo 4 tipos
-// - alimento some da bandeja quando acaba
-// - alimento volta quando é reposto
+// - aparece na loja
+// - vai para o inventário
+// - pode ser colocado na bandeja
+// - máximo de 10 unidades
+// - usa 3 frames de animação
+// - bandeja mostra no máximo 4 tipos
+// - alimento some quando chega a x0
+// - volta quando for reposto
 //
-// NÃO substitui game.js nem shop.js.
 // ======================================================
-
 
 (() => {
 
@@ -57,130 +56,7 @@
 
 
   // ====================================================
-  // CRIA O BOTÃO DO ACHOCOLATADO
-  //
-  // Esta parte roda ANTES do game.js.
-  // Assim o game.js já encontra esse botão normalmente.
-  // ====================================================
-
-  function createChocolateButton() {
-
-    const tray =
-      document.querySelector(
-        "#food-tray"
-      );
-
-
-    if (!tray) {
-
-      return;
-
-    }
-
-
-    const existing =
-      tray.querySelector(
-        '[data-food="Achocolatado"]'
-      );
-
-
-    if (existing) {
-
-      return;
-
-    }
-
-
-    const button =
-      document.createElement(
-        "button"
-      );
-
-
-    button.className =
-      "food-item";
-
-
-    button.dataset.food =
-      FOOD_NAME;
-
-
-    button.dataset.value =
-      String(
-        FOOD_VALUE
-      );
-
-
-    button.type =
-      "button";
-
-
-    button.innerHTML = `
-
-      <span class="chocolate-food-icon">
-
-        <img
-          src="${FOOD_ICON}"
-          alt="Achocolatado"
-        >
-
-      </span>
-
-      <small>
-        +${FOOD_VALUE}%
-      </small>
-
-    `;
-
-
-    // Mensagem mais natural:
-    // "tomando" em vez de "comendo".
-
-    button.addEventListener(
-
-      "click",
-
-      () => {
-
-        setTimeout(
-
-          () => {
-
-            if (
-              typeof isPlayingAction !==
-                "undefined"
-              &&
-              isPlayingAction
-              &&
-              typeof message !==
-                "undefined"
-            ) {
-
-              message.textContent =
-                "Cinna está tomando achocolatado... ♡";
-
-            }
-
-          },
-
-          0
-
-        );
-
-      }
-
-    );
-
-
-    tray.appendChild(
-      button
-    );
-
-  }
-
-
-  // ====================================================
-  // CSS DO ÍCONE
+  // CSS DO ACHOCOLATADO
   // ====================================================
 
   function createChocolateStyles() {
@@ -208,23 +84,35 @@
 
     style.textContent = `
 
-      .chocolate-food-icon {
+      /* ===============================================
+         ÍCONE NA BANDEJA
+         =============================================== */
 
-        width: 38px;
-        height: 38px;
+      .food-image-icon {
 
-        display: flex;
+        width: 42px !important;
+        height: 42px !important;
+
+        display: flex !important;
 
         align-items: center;
         justify-content: center;
 
+        font-size: 0 !important;
+        line-height: 1 !important;
+
+        overflow: hidden;
+
       }
 
 
-      .chocolate-food-icon img {
+      .food-image-icon img {
 
-        width: 100%;
-        height: 100%;
+        width: 100% !important;
+        height: 100% !important;
+
+        max-width: 42px !important;
+        max-height: 42px !important;
 
         display: block;
 
@@ -232,6 +120,10 @@
 
       }
 
+
+      /* ===============================================
+         ÍCONE NA LOJA
+         =============================================== */
 
       .shop-chocolate-icon {
 
@@ -245,11 +137,16 @@
       }
 
 
-      .inventory-icon
-      .shop-chocolate-icon {
+      /* ===============================================
+         ÍCONE NO INVENTÁRIO
+         =============================================== */
+
+      .inventory-chocolate-icon {
 
         width: 100%;
         height: 100%;
+
+        display: block;
 
         object-fit: contain;
 
@@ -265,18 +162,16 @@
   }
 
 
-  createChocolateButton();
-
   createChocolateStyles();
 
 
   // ====================================================
-  // ESPERA GAME.JS + SHOP.JS CARREGAREM
+  // ESPERA GAME.JS E SHOP.JS
   // ====================================================
 
   function initializeFoodExpansion() {
 
-    const coreReady =
+    const ready =
 
       typeof getFoodFrames !==
         "undefined"
@@ -293,21 +188,56 @@
 
       &&
 
+      typeof foodTrayNames !==
+        "undefined"
+
+      &&
+
+      typeof foodTrayIcons !==
+        "undefined"
+
+      &&
+
       typeof cinnaFoodTray !==
         "undefined"
 
       &&
 
-      typeof updateFoodTrayStockDisplay !==
-        "undefined"
+      typeof saveFoodTray ===
+        "function"
 
       &&
 
-      typeof refillFoodTray !==
-        "undefined";
+      typeof getFoodTrayAmount ===
+        "function"
+
+      &&
+
+      typeof getItemAmount ===
+        "function"
+
+      &&
+
+      typeof updateFoodTrayStockDisplay ===
+        "function"
+
+      &&
+
+      typeof refillFoodTray ===
+        "function"
+
+      &&
+
+      typeof renderShopCategory ===
+        "function"
+
+      &&
+
+      typeof renderInventory ===
+        "function";
 
 
-    if (!coreReady) {
+    if (!ready) {
 
       setTimeout(
         initializeFoodExpansion,
@@ -320,10 +250,10 @@
 
 
     // ==================================================
-    // ADICIONA ACHOCOLATADO À LOJA
+    // ACHOCOLATADO NA LOJA
     // ==================================================
 
-    const alreadyInShop =
+    const alreadyExists =
       shopItems.some(
 
         item =>
@@ -333,7 +263,7 @@
       );
 
 
-    if (!alreadyInShop) {
+    if (!alreadyExists) {
 
       const chocolateItem = {
 
@@ -343,15 +273,19 @@
         category:
           "food",
 
-        icon: `
+        /*
+          IMPORTANTE:
 
-          <img
-            class="shop-chocolate-icon"
-            src="${FOOD_ICON}"
-            alt="Achocolatado"
-          >
+          O icon agora é texto simples.
+          Assim a mensagem da loja não imprime
+          HTML cru na tela.
+        */
 
-        `,
+        icon:
+          "🥤",
+
+        image:
+          FOOD_ICON,
 
         name:
           FOOD_NAME,
@@ -368,21 +302,46 @@
       };
 
 
-      // As quatro primeiras posições atuais
-      // são Morango, Maçã, Leite e Bolo.
-      // Colocamos o Achocolatado logo depois.
+      const cakeIndex =
+        shopItems.findIndex(
 
-      shopItems.splice(
-        4,
-        0,
-        chocolateItem
-      );
+          item =>
+            item.id ===
+            "bolo"
+
+        );
+
+
+      if (
+        cakeIndex >=
+        0
+      ) {
+
+        shopItems.splice(
+
+          cakeIndex + 1,
+
+          0,
+
+          chocolateItem
+
+        );
+
+      }
+
+      else {
+
+        shopItems.push(
+          chocolateItem
+        );
+
+      }
 
     }
 
 
     // ==================================================
-    // REGISTRA NO SISTEMA DE ESTOQUE
+    // REGISTRA NO ESTOQUE
     // ==================================================
 
     foodTrayIds[
@@ -403,14 +362,16 @@
       "🥤";
 
 
-    // Usuários que já possuem save
-    // começam com zero achocolatado na bandeja.
+    // Se é um save antigo,
+    // adiciona o novo alimento com estoque 0.
 
     if (
-      !Object.prototype.hasOwnProperty.call(
-        cinnaFoodTray,
-        FOOD_ID
-      )
+      !Object.prototype
+        .hasOwnProperty
+        .call(
+          cinnaFoodTray,
+          FOOD_ID
+        )
     ) {
 
       cinnaFoodTray[
@@ -425,7 +386,7 @@
 
 
     // ==================================================
-    // ANIMAÇÃO DO ACHOCOLATADO
+    // ANIMAÇÃO
     // ==================================================
 
     const originalGetFoodFrames =
@@ -454,9 +415,17 @@
       };
 
 
-    // Pré-carrega as imagens.
+    // ==================================================
+    // PRÉ-CARREGAMENTO
+    // ==================================================
 
-    chocolateFrames.forEach(
+    [
+
+      FOOD_ICON,
+
+      ...chocolateFrames
+
+    ].forEach(
 
       src => {
 
@@ -472,14 +441,257 @@
     );
 
 
-    // Pré-carrega o ícone.
+    // ==================================================
+    // TEXTO "TOMANDO"
+    // ==================================================
 
-    const chocolateIcon =
-      new Image();
+    const chocolateButton =
+      document.querySelector(
+        '[data-food="Achocolatado"]'
+      );
 
 
-    chocolateIcon.src =
-      FOOD_ICON;
+    if (
+      chocolateButton
+    ) {
+
+      chocolateButton.addEventListener(
+
+        "click",
+
+        () => {
+
+          setTimeout(
+
+            () => {
+
+              if (
+                typeof isPlayingAction !==
+                  "undefined"
+
+                &&
+
+                isPlayingAction
+
+                &&
+
+                typeof message !==
+                  "undefined"
+              ) {
+
+                message.textContent =
+                  "Cinna está tomando achocolatado... ♡";
+
+              }
+
+            },
+
+            0
+
+          );
+
+        }
+
+      );
+
+    }
+
+
+    // ==================================================
+    // IMAGEM DO ACHOCOLATADO NA LOJA
+    // ==================================================
+
+    function decorateChocolateShop() {
+
+      const foodItems =
+        shopItems.filter(
+
+          item =>
+            item.category ===
+            "food"
+
+        );
+
+
+      const cards =
+        shopContent
+          .querySelectorAll(
+            ".shop-item"
+          );
+
+
+      cards.forEach(
+
+        (
+          card,
+          index
+        ) => {
+
+          const item =
+            foodItems[
+              index
+            ];
+
+
+          if (
+            !item
+
+            ||
+
+            item.id !==
+              FOOD_ID
+          ) {
+
+            return;
+
+          }
+
+
+          const icon =
+            card.querySelector(
+              ".shop-item-icon"
+            );
+
+
+          if (!icon) {
+
+            return;
+
+          }
+
+
+          icon.innerHTML = `
+
+            <img
+              class="shop-chocolate-icon"
+              src="${FOOD_ICON}"
+              alt="Achocolatado"
+            >
+
+          `;
+
+        }
+
+      );
+
+    }
+
+
+    // ==================================================
+    // IMAGEM NO INVENTÁRIO
+    // ==================================================
+
+    function decorateChocolateInventory() {
+
+      const cards =
+        shopContent
+          .querySelectorAll(
+            ".inventory-item"
+          );
+
+
+      cards.forEach(
+
+        card => {
+
+          const title =
+            card.querySelector(
+              ".inventory-info strong"
+            );
+
+
+          if (
+            !title
+
+            ||
+
+            title.textContent
+              .trim() !==
+              FOOD_NAME
+          ) {
+
+            return;
+
+          }
+
+
+          const icon =
+            card.querySelector(
+              ".inventory-icon"
+            );
+
+
+          if (!icon) {
+
+            return;
+
+          }
+
+
+          icon.innerHTML = `
+
+            <img
+              class="inventory-chocolate-icon"
+              src="${FOOD_ICON}"
+              alt="Achocolatado"
+            >
+
+          `;
+
+        }
+
+      );
+
+    }
+
+
+    // ==================================================
+    // ENVOLVE O RENDER DA LOJA
+    // ==================================================
+
+    const originalRenderShopCategory =
+      renderShopCategory;
+
+
+    renderShopCategory =
+      function (
+        category
+      ) {
+
+        originalRenderShopCategory(
+          category
+        );
+
+
+        if (
+          category ===
+          "food"
+        ) {
+
+          decorateChocolateShop();
+
+        }
+
+      };
+
+
+    // ==================================================
+    // ENVOLVE O INVENTÁRIO
+    // ==================================================
+
+    const originalRenderInventory =
+      renderInventory;
+
+
+    renderInventory =
+      function () {
+
+        originalRenderInventory();
+
+
+        decorateChocolateInventory();
+
+    };
 
 
     // ==================================================
@@ -502,7 +714,7 @@
 
 
     // ==================================================
-    // SLOTS VISÍVEIS DA BANDEJA
+    // CARREGAR OS 4 SLOTS
     // ==================================================
 
     function loadVisibleFoodSlots() {
@@ -537,26 +749,25 @@
 
         catch {
 
-          // Ignora save inválido.
+          // Ignora save quebrado.
 
         }
 
       }
 
 
-      // Primeira criação:
-      // pega até quatro comidas
-      // que já possuem estoque.
-
       return foodOrder
+
         .filter(
 
           foodId =>
+
             getFoodTrayAmount(
               foodId
             ) > 0
 
         )
+
         .slice(
           0,
           FOOD_MAX_VISIBLE
@@ -589,49 +800,56 @@
 
 
     // ==================================================
-    // NORMALIZAR SLOTS
+    // ORGANIZAR BANDEJA
     // ==================================================
 
     function normalizeVisibleFoodSlots() {
 
-      // Remove:
-      // - duplicados
-      // - comidas inexistentes
-      // - comidas que zeraram
+      /*
+        Primeiro remove:
 
-      visibleFoodSlots =
+        - duplicados
+        - alimentos inexistentes
+        - alimentos com estoque 0
+      */
 
-        [
-          ...new Set(
-            visibleFoodSlots
-          )
-        ]
+      visibleFoodSlots = [
 
-          .filter(
+        ...new Set(
+          visibleFoodSlots
+        )
 
-            foodId =>
+      ]
 
-              foodOrder.includes(
-                foodId
-              )
+        .filter(
 
-              &&
+          foodId =>
 
-              getFoodTrayAmount(
-                foodId
-              ) > 0
+            foodOrder.includes(
+              foodId
+            )
 
-          )
+            &&
 
-          .slice(
-            0,
-            FOOD_MAX_VISIBLE
-          );
+            getFoodTrayAmount(
+              foodId
+            ) > 0
+
+        )
+
+        .slice(
+          0,
+          FOOD_MAX_VISIBLE
+        );
 
 
-      // Se abriu uma vaga e existe alguma
-      // comida que já possui estoque,
-      // ela pode ocupar a vaga automaticamente.
+      /*
+        Se algum item acabou,
+        fica uma vaga.
+
+        Se outra comida já tiver estoque,
+        ela entra automaticamente.
+      */
 
       for (
         const foodId
@@ -680,7 +898,7 @@
 
 
     // ==================================================
-    // ESCONDER / MOSTRAR COMIDAS
+    // MOSTRAR / ESCONDER ALIMENTOS
     // ==================================================
 
     function applyFoodTrayVisibility() {
@@ -721,7 +939,8 @@
             );
 
 
-          const isVisible =
+          const visible =
+
             amount > 0
 
             &&
@@ -731,12 +950,12 @@
             );
 
 
-          // Se acabou, desaparece.
-          // Se não ocupa um dos quatro slots,
-          // também não aparece.
+          /*
+            x0 = desaparece completamente.
+          */
 
           button.hidden =
-            !isVisible;
+            !visible;
 
         }
 
@@ -746,7 +965,7 @@
 
 
     // ==================================================
-    // SUBSTITUI A ATUALIZAÇÃO VISUAL
+    // ATUALIZAÇÃO DO ESTOQUE
     // ==================================================
 
     const originalUpdateFoodTrayStockDisplay =
@@ -756,16 +975,21 @@
     updateFoodTrayStockDisplay =
       function () {
 
-        // Mantém o contador x10, x9 etc.
+        /*
+          Primeiro o shop.js atualiza
+          x10, x9, x8...
+        */
 
         originalUpdateFoodTrayStockDisplay();
 
 
-        // Depois controla quem aparece.
+        /*
+          Depois nós escondemos os x0.
+        */
 
         applyFoodTrayVisibility();
 
-      };
+    };
 
 
     // ==================================================
@@ -799,32 +1023,22 @@
           );
 
 
-        // Sem item no inventário:
-        // usa a mensagem original.
+        /*
+          Se estiver tentando colocar
+          uma NOVA comida e os quatro
+          slots estiverem ocupados.
+        */
 
         if (
-          inventoryAmount <=
-          0
-        ) {
-
-          originalRefillFoodTray(
-            foodId
-          );
-
-          return;
-
-        }
-
-
-        // A comida ainda não está na bandeja
-        // e os quatro slots estão ocupados.
-
-        if (
-          !alreadyVisible
+          inventoryAmount > 0
 
           &&
 
           trayAmount <= 0
+
+          &&
+
+          !alreadyVisible
 
           &&
 
@@ -833,8 +1047,7 @@
         ) {
 
           shopMessage.textContent =
-
-            "A bandeja já tem 4 tipos de comida. Espere uma acabar para colocar outra 🍽️";
+            "A bandeja já tem 4 tipos de comida 🍽️";
 
 
           return;
@@ -842,10 +1055,16 @@
         }
 
 
-        // Existe uma vaga.
-        // Reserva o slot antes de repor.
+        /*
+          Se existe uma vaga,
+          reserva o slot.
+        */
 
         if (
+          inventoryAmount > 0
+
+          &&
+
           !alreadyVisible
 
           &&
@@ -864,6 +1083,12 @@
         }
 
 
+        /*
+          Shop.js continua fazendo
+          a transferência normal:
+          inventário → bandeja.
+        */
+
         originalRefillFoodTray(
           foodId
         );
@@ -871,22 +1096,56 @@
 
         normalizeVisibleFoodSlots();
 
+
         updateFoodTrayStockDisplay();
 
-      };
+    };
 
 
     // ==================================================
-    // PRIMEIRA ATUALIZAÇÃO
+    // ATUALIZAÇÃO INICIAL
     // ==================================================
 
     normalizeVisibleFoodSlots();
+
 
     updateFoodTrayStockDisplay();
 
 
     // ==================================================
-    // API PARA O FUTURO
+    // SE A LOJA JÁ ESTIVER ABERTA
+    // ==================================================
+
+    const activeCategory =
+      document.querySelector(
+        ".shop-category.active"
+      );
+
+
+    if (
+      activeCategory
+    ) {
+
+      const category =
+        activeCategory.dataset.category;
+
+
+      if (
+        category ===
+        "food"
+      ) {
+
+        renderShopCategory(
+          "food"
+        );
+
+      }
+
+    }
+
+
+    // ==================================================
+    // API
     // ==================================================
 
     window.CinnaFoodExpansion = {
@@ -910,9 +1169,6 @@
 
   }
 
-
-  // Dá tempo para game.js e shop.js
-  // terminarem de carregar.
 
   setTimeout(
     initializeFoodExpansion,

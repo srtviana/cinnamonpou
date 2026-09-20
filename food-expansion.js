@@ -48,9 +48,21 @@
 
     "assets/sprites/cinna-achocolatado-1.PNG",
 
-    "assets/sprites/cinna-achocolatado-2.PNG",
+  "assets/sprites/cinna-achocolatado-1.PNG",
 
-    "assets/sprites/cinna-achocolatado-3.PNG"
+  "assets/sprites/cinna-achocolatado-2.PNG",
+
+  "assets/sprites/cinna-achocolatado-2.PNG",
+
+  "assets/sprites/cinna-achocolatado-3.PNG",
+
+  "assets/sprites/cinna-achocolatado-3.PNG",
+
+  "assets/sprites/cinna-achocolatado-2.PNG",
+
+  "assets/sprites/cinna-achocolatado-2.PNG",
+
+  "assets/sprites/cinna-achocolatado-1.PNG"
 
   ];
 

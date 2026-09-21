@@ -1,107 +1,176 @@
 // ======================================================
-// BRINQUEDOS DO CINNA 🧸
+// BRINQUEDOS DO CINNA 🧸⚽
 // ======================================================
 //
-// PRIMEIRO BRINQUEDO:
-// Ursinho
+// Brinquedos atuais:
 //
-// - comprado uma única vez
-// - fica permanentemente no inventário
-// - botão BRINCAR aparece no inventário
-// - toca os 5 frames
-// - aumenta felicidade
-// - não consome o brinquedo
+// 🧸 Ursinho
+// ⚽ Bola
+//
+// - comprados uma única vez
+// - ficam permanentemente no inventário
+// - botão BRINCAR no inventário
+// - aumentam felicidade
+// - não são consumidos
 //
 // ======================================================
 
 (() => {
 
   // ====================================================
-  // CONFIGURAÇÃO
+  // CONFIGURAÇÃO DOS BRINQUEDOS
   // ====================================================
 
-  const TEDDY_ID =
-    "ursinho";
+  const TOYS = {
 
-  const TEDDY_NAME =
-    "Ursinho";
+    // ==================================================
+    // 🧸 URSINHO
+    // ==================================================
 
-  const TEDDY_HAPPINESS =
-    20;
+    ursinho: {
 
+      id:
+        "ursinho",
 
-  // ====================================================
-  // FRAMES
-  // ====================================================
+      name:
+        "Ursinho",
 
-  /*
-    Fazemos ida e volta:
+      happiness:
+        20,
 
-    1
-    2
-    3
-    4
-    5
+      startMessage:
+        "Cinna pegou o ursinho 🧸♡",
 
-    segura um pouquinho no abraço
+      finishMessage:
+        "Cinna amou abraçar o ursinho!",
 
-    5
-    4
-    3
-    2
-    1
+      frames: [
 
-    Assim não corta do abraço direto
-    para o idle normal.
-  */
+        "assets/sprites/cinna-ursinho-1.PNG",
 
-  const teddyFrames = [
+        "assets/sprites/cinna-ursinho-2.PNG",
 
-    "assets/sprites/cinna-ursinho-1.PNG",
+        "assets/sprites/cinna-ursinho-3.PNG",
 
-    "assets/sprites/cinna-ursinho-2.PNG",
+        "assets/sprites/cinna-ursinho-4.PNG",
 
-    "assets/sprites/cinna-ursinho-3.PNG",
-
-    "assets/sprites/cinna-ursinho-4.PNG",
-
-    "assets/sprites/cinna-ursinho-5.PNG",
+        "assets/sprites/cinna-ursinho-5.PNG",
 
 
-    "assets/sprites/cinna-ursinho-5.PNG",
+        // Segura o abraço
 
-    "assets/sprites/cinna-ursinho-5.PNG",
+        "assets/sprites/cinna-ursinho-5.PNG",
+
+        "assets/sprites/cinna-ursinho-5.PNG",
 
 
-    "assets/sprites/cinna-ursinho-4.PNG",
+        // Volta suavemente
 
-    "assets/sprites/cinna-ursinho-3.PNG",
+        "assets/sprites/cinna-ursinho-4.PNG",
 
-    "assets/sprites/cinna-ursinho-2.PNG",
+        "assets/sprites/cinna-ursinho-3.PNG",
 
-    "assets/sprites/cinna-ursinho-1.PNG"
+        "assets/sprites/cinna-ursinho-2.PNG",
 
-  ];
+        "assets/sprites/cinna-ursinho-1.PNG"
+
+      ]
+
+    },
+
+
+    // ==================================================
+    // ⚽ BOLA
+    // ==================================================
+
+    bola: {
+
+      id:
+        "bola",
+
+      name:
+        "Bola",
+
+      happiness:
+        15,
+
+      startMessage:
+        "Cinna começou a brincar com a bola! ⚽♡",
+
+      finishMessage:
+        "Cinna se divertiu com a bola!",
+
+      /*
+        Sequência pedida:
+
+        1
+        2
+        3
+        4
+        5
+        6
+        7
+        1
+
+        O último frame 1 faz a animação
+        fechar o ciclo de forma mais natural.
+      */
+
+      frames: [
+
+        "assets/sprites/cinna-bola-1.PNG",
+
+        "assets/sprites/cinna-bola-2.PNG",
+
+        "assets/sprites/cinna-bola-3.PNG",
+
+        "assets/sprites/cinna-bola-4.PNG",
+
+        "assets/sprites/cinna-bola-5.PNG",
+
+        "assets/sprites/cinna-bola-6.PNG",
+
+        "assets/sprites/cinna-bola-7.PNG",
+
+        "assets/sprites/cinna-bola-1.PNG"
+
+      ]
+
+    }
+
+  };
 
 
   // ====================================================
   // PRÉ-CARREGAMENTO
   // ====================================================
 
-  teddyFrames.forEach(
+  Object
+    .values(
+      TOYS
+    )
+    .forEach(
 
-    src => {
+      toy => {
 
-      const image =
-        new Image();
+        toy.frames.forEach(
+
+          src => {
+
+            const image =
+              new Image();
 
 
-      image.src =
-        src;
+            image.src =
+              src;
 
-    }
+          }
 
-  );
+        );
+
+      }
+
+    );
 
 
   // ====================================================
@@ -215,7 +284,7 @@
 
 
   // ====================================================
-  // ESPERA O JOGO + LOJA CARREGAREM
+  // ESPERA O JOGO + LOJA
   // ====================================================
 
   function initializeToySystem() {
@@ -270,18 +339,33 @@
 
 
     // ==================================================
-    // BRINCAR COM O URSINHO
+    // FUNÇÃO GENÉRICA DE BRINCADEIRA
     // ==================================================
 
-    async function playWithTeddy() {
+    async function playWithToy(
+      toyId
+    ) {
+
+      const toy =
+        TOYS[
+          toyId
+        ];
+
+
+      if (!toy) {
+
+        return;
+
+      }
+
 
       // -----------------------------------------------
-      // Confirma que o item foi comprado
+      // Confere se foi comprado
       // -----------------------------------------------
 
       if (
         getItemAmount(
-          TEDDY_ID
+          toy.id
         ) <= 0
       ) {
 
@@ -291,7 +375,7 @@
 
 
       // -----------------------------------------------
-      // Não interrompe outras ações
+      // Não interrompe outra ação
       // -----------------------------------------------
 
       if (
@@ -338,12 +422,12 @@
 
 
       // -----------------------------------------------
-      // Fecha a loja
+      // Fecha loja
       // -----------------------------------------------
 
       if (
         typeof closeShop ===
-        "function"
+          "function"
       ) {
 
         closeShop();
@@ -352,12 +436,12 @@
 
 
       // -----------------------------------------------
-      // Leva pro cômodo inicial
+      // Vai para o início
       // -----------------------------------------------
 
       if (
         typeof setRoom ===
-        "function"
+          "function"
       ) {
 
         setRoom(
@@ -368,7 +452,7 @@
 
 
       // -----------------------------------------------
-      // Mensagem
+      // Mensagem inicial
       // -----------------------------------------------
 
       if (
@@ -377,7 +461,7 @@
       ) {
 
         message.textContent =
-          "Cinna pegou o ursinho 🧸♡";
+          toy.startMessage;
 
       }
 
@@ -388,7 +472,7 @@
 
       await playActionAnimation(
 
-        teddyFrames,
+        toy.frames,
 
         () => {
 
@@ -400,7 +484,7 @@
             limitStatus(
 
               cinnaStatus.happiness +
-              TEDDY_HAPPINESS
+              toy.happiness
 
             );
 
@@ -415,13 +499,13 @@
           updateStatusBars();
 
 
-          // -------------------------------------------
-          // Corações
-          // -------------------------------------------
+          // ===========================================
+          // CORAÇÕES
+          // ===========================================
 
           if (
             typeof spawnHeart ===
-            "function"
+              "function"
           ) {
 
             spawnHeart();
@@ -441,9 +525,9 @@
           }
 
 
-          // -------------------------------------------
-          // Mensagem final
-          // -------------------------------------------
+          // ===========================================
+          // MENSAGEM FINAL
+          // ===========================================
 
           if (
             typeof message !==
@@ -455,14 +539,14 @@
             ) {
 
               message.textContent =
-                `Cinna amou abraçar o ursinho! +${gained}% ❤️`;
+                `${toy.finishMessage} +${gained}% ❤️`;
 
             }
 
             else {
 
               message.textContent =
-                "Cinna já está felicíssimo com o ursinho 🧸❤️";
+                `Cinna já está felicíssimo! ❤️`;
 
             }
 
@@ -510,17 +594,34 @@
               .trim();
 
 
-          if (
-            itemName !==
-            TEDDY_NAME
-          ) {
+          // -------------------------------------------
+          // Descobre qual brinquedo é
+          // -------------------------------------------
+
+          const toy =
+            Object
+              .values(
+                TOYS
+              )
+              .find(
+
+                item =>
+                  item.name ===
+                  itemName
+
+              );
+
+
+          if (!toy) {
 
             return;
 
           }
 
 
-          // Evita duplicar botão
+          // -------------------------------------------
+          // Evita botão duplicado
+          // -------------------------------------------
 
           if (
             card.querySelector(
@@ -533,7 +634,9 @@
           }
 
 
-          // Remove o ✓ padrão
+          // -------------------------------------------
+          // Remove ✓ antigo
+          // -------------------------------------------
 
           const oldCheck =
             card.querySelector(
@@ -549,7 +652,7 @@
 
 
           // -------------------------------------------
-          // Cria área de ação
+          // Área do botão
           // -------------------------------------------
 
           const actions =
@@ -580,6 +683,10 @@
             );
 
 
+          // -------------------------------------------
+          // Clique
+          // -------------------------------------------
+
           button.addEventListener(
 
             "click",
@@ -592,7 +699,9 @@
 
               try {
 
-                await playWithTeddy();
+                await playWithToy(
+                  toy.id
+                );
 
               }
 
@@ -631,21 +740,16 @@
       function () {
 
         /*
-          Primeiro deixa:
-          - comida
-          - acessórios
-          - achocolatado
-          - reposição
-
-          fazerem tudo normalmente.
+          Primeiro deixa o sistema normal
+          montar tudo.
         */
 
         renderInventoryBeforeToys();
 
 
         /*
-          Depois adicionamos BRINCAR
-          somente ao Ursinho.
+          Depois troca o ✓ dos brinquedos
+          pelo botão BRINCAR.
         */
 
         decorateToyInventory();
@@ -654,7 +758,7 @@
 
 
     // ==================================================
-    // SE O INVENTÁRIO JÁ ESTIVER ABERTO
+    // INVENTÁRIO JÁ ABERTO
     // ==================================================
 
     const activeCategory =
@@ -665,7 +769,9 @@
 
     if (
       activeCategory
+
       &&
+
       activeCategory.dataset.category ===
         "inventory"
     ) {
@@ -676,14 +782,36 @@
 
 
     // ==================================================
-    // API PARA OS PRÓXIMOS BRINQUEDOS
+    // API
     // ==================================================
 
     window.CinnaToys = {
 
+      play(
+        toyId
+      ) {
+
+        return playWithToy(
+          toyId
+        );
+
+      },
+
+
       playTeddy() {
 
-        return playWithTeddy();
+        return playWithToy(
+          "ursinho"
+        );
+
+      },
+
+
+      playBall() {
+
+        return playWithToy(
+          "bola"
+        );
 
       }
 

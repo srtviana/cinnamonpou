@@ -2,23 +2,27 @@
 // BRINQUEDOS DO CINNA 🧸⚽
 // ======================================================
 //
-// Brinquedos atuais:
+// Brinquedos funcionando:
 //
 // 🧸 Ursinho
 // ⚽ Bola
 //
 // - comprados uma única vez
 // - ficam permanentemente no inventário
-// - botão BRINCAR no inventário
-// - aumentam felicidade
+// - possuem botão BRINCAR
 // - não são consumidos
+// - aumentam felicidade
+// - verifica os sprites ANTES da animação
+//
+// Se algum PNG estiver faltando,
+// o Cinna NÃO desaparece.
 //
 // ======================================================
 
 (() => {
 
   // ====================================================
-  // CONFIGURAÇÃO DOS BRINQUEDOS
+  // CONFIGURAÇÃO
   // ====================================================
 
   const TOYS = {
@@ -44,6 +48,9 @@
       finishMessage:
         "Cinna amou abraçar o ursinho!",
 
+      missingMessage:
+        "Não achei todos os sprites do Ursinho ;-;",
+
       frames: [
 
         "assets/sprites/cinna-ursinho-1.PNG",
@@ -57,14 +64,14 @@
         "assets/sprites/cinna-ursinho-5.PNG",
 
 
-        // Segura o abraço
+        // segura o abraço
 
         "assets/sprites/cinna-ursinho-5.PNG",
 
         "assets/sprites/cinna-ursinho-5.PNG",
 
 
-        // Volta suavemente
+        // volta suavemente
 
         "assets/sprites/cinna-ursinho-4.PNG",
 
@@ -100,8 +107,11 @@
       finishMessage:
         "Cinna se divertiu com a bola!",
 
+      missingMessage:
+        "Não achei os 7 sprites da Bola 🥲",
+
       /*
-        Sequência pedida:
+        Sequência:
 
         1
         2
@@ -112,8 +122,8 @@
         7
         1
 
-        O último frame 1 faz a animação
-        fechar o ciclo de forma mais natural.
+        O frame 1 volta no final
+        para fechar o movimento.
       */
 
       frames: [
@@ -142,39 +152,7 @@
 
 
   // ====================================================
-  // PRÉ-CARREGAMENTO
-  // ====================================================
-
-  Object
-    .values(
-      TOYS
-    )
-    .forEach(
-
-      toy => {
-
-        toy.frames.forEach(
-
-          src => {
-
-            const image =
-              new Image();
-
-
-            image.src =
-              src;
-
-          }
-
-        );
-
-      }
-
-    );
-
-
-  // ====================================================
-  // CSS DO BOTÃO
+  // CSS DOS BOTÕES
   // ====================================================
 
   function createToyStyles() {
@@ -266,6 +244,8 @@
 
           font-size: 7px;
 
+          padding: 6px;
+
         }
 
       }
@@ -284,7 +264,196 @@
 
 
   // ====================================================
-  // ESPERA O JOGO + LOJA
+  // TESTAR SE UMA IMAGEM EXISTE
+  // ====================================================
+
+  function checkImage(
+    src
+  ) {
+
+    return new Promise(
+
+      resolve => {
+
+        const image =
+          new Image();
+
+
+        let finished =
+          false;
+
+
+        const finish =
+          result => {
+
+            if (
+              finished
+            ) {
+
+              return;
+
+            }
+
+
+            finished =
+              true;
+
+
+            resolve(
+              result
+            );
+
+          };
+
+
+        image.onload =
+          () => {
+
+            finish(
+              true
+            );
+
+          };
+
+
+        image.onerror =
+          () => {
+
+            console.error(
+              "Sprite não encontrado:",
+              src
+            );
+
+
+            finish(
+              false
+            );
+
+          };
+
+
+        image.src =
+          src;
+
+
+        /*
+          Segurança:
+          se o navegador ficar esperando
+          eternamente por alguma imagem.
+        */
+
+        setTimeout(
+
+          () => {
+
+            finish(
+              false
+            );
+
+          },
+
+          5000
+
+        );
+
+      }
+
+    );
+
+  }
+
+
+  // ====================================================
+  // VERIFICAR TODOS OS FRAMES
+  // ====================================================
+
+  async function validateToyFrames(
+    toy
+  ) {
+
+    /*
+      Remove repetidos.
+
+      Exemplo:
+      bola usa o frame 1 duas vezes,
+      mas só precisamos testar o arquivo uma vez.
+    */
+
+    const uniqueFrames = [
+
+      ...new Set(
+        toy.frames
+      )
+
+    ];
+
+
+    const results =
+      await Promise.all(
+
+        uniqueFrames.map(
+          checkImage
+        )
+
+      );
+
+
+    return results.every(
+      result =>
+        result === true
+    );
+
+  }
+
+
+  // ====================================================
+  // PRÉ-CARREGAMENTO
+  // ====================================================
+
+  function preloadToyFrames() {
+
+    Object
+      .values(
+        TOYS
+      )
+      .forEach(
+
+        toy => {
+
+          [
+
+            ...new Set(
+              toy.frames
+            )
+
+          ]
+            .forEach(
+
+              src => {
+
+                const image =
+                  new Image();
+
+
+                image.src =
+                  src;
+
+              }
+
+            );
+
+        }
+
+      );
+
+  }
+
+
+  preloadToyFrames();
+
+
+  // ====================================================
+  // ESPERA JOGO + LOJA
   // ====================================================
 
   function initializeToySystem() {
@@ -322,10 +491,17 @@
       &&
 
       typeof cinnaStatus !==
+        "undefined"
+
+      &&
+
+      typeof shopContent !==
         "undefined";
 
 
-    if (!ready) {
+    if (
+      !ready
+    ) {
 
       setTimeout(
         initializeToySystem,
@@ -339,7 +515,53 @@
 
 
     // ==================================================
-    // FUNÇÃO GENÉRICA DE BRINCADEIRA
+    // MOSTRAR MENSAGEM
+    // ==================================================
+
+    function setGameMessage(
+      text
+    ) {
+
+      if (
+        typeof message !==
+          "undefined"
+
+        &&
+
+        message
+      ) {
+
+        message.textContent =
+          text;
+
+      }
+
+    }
+
+
+    function setShopMessage(
+      text
+    ) {
+
+      if (
+        typeof shopMessage !==
+          "undefined"
+
+        &&
+
+        shopMessage
+      ) {
+
+        shopMessage.textContent =
+          text;
+
+      }
+
+    }
+
+
+    // ==================================================
+    // BRINCAR
     // ==================================================
 
     async function playWithToy(
@@ -352,21 +574,8 @@
         ];
 
 
-      if (!toy) {
-
-        return;
-
-      }
-
-
-      // -----------------------------------------------
-      // Confere se foi comprado
-      // -----------------------------------------------
-
       if (
-        getItemAmount(
-          toy.id
-        ) <= 0
+        !toy
       ) {
 
         return;
@@ -375,7 +584,27 @@
 
 
       // -----------------------------------------------
-      // Não interrompe outra ação
+      // CONFERE SE O JOGADOR TEM O ITEM
+      // -----------------------------------------------
+
+      if (
+        getItemAmount(
+          toy.id
+        ) <= 0
+      ) {
+
+        setShopMessage(
+          "Você ainda não comprou esse brinquedo 👀"
+        );
+
+
+        return;
+
+      }
+
+
+      // -----------------------------------------------
+      // NÃO INTERROMPE OUTRA AÇÃO
       // -----------------------------------------------
 
       if (
@@ -393,7 +622,7 @@
 
 
       // -----------------------------------------------
-      // Não brinca dormindo
+      // NÃO BRINCA DORMINDO
       // -----------------------------------------------
 
       if (
@@ -405,15 +634,9 @@
         isSleeping
       ) {
 
-        if (
-          typeof shopMessage !==
-            "undefined"
-        ) {
-
-          shopMessage.textContent =
-            "Acorda o Cinna primeiro 😴";
-
-        }
+        setShopMessage(
+          "Acorda o Cinna primeiro 😴"
+        );
 
 
         return;
@@ -422,7 +645,45 @@
 
 
       // -----------------------------------------------
-      // Fecha loja
+      // MUITO IMPORTANTE:
+      //
+      // verifica os sprites ANTES
+      // de fechar a loja e antes
+      // de trocar a imagem do Cinna.
+      // -----------------------------------------------
+
+      setShopMessage(
+        "Preparando a brincadeira... ♡"
+      );
+
+
+      const validFrames =
+        await validateToyFrames(
+          toy
+        );
+
+
+      if (
+        !validFrames
+      ) {
+
+        setShopMessage(
+          toy.missingMessage
+        );
+
+
+        console.error(
+          `A animação "${toy.name}" não iniciou porque há sprites ausentes.`
+        );
+
+
+        return;
+
+      }
+
+
+      // -----------------------------------------------
+      // FECHA A LOJA
       // -----------------------------------------------
 
       if (
@@ -436,7 +697,7 @@
 
 
       // -----------------------------------------------
-      // Vai para o início
+      // VOLTA PARA O INÍCIO
       // -----------------------------------------------
 
       if (
@@ -452,115 +713,209 @@
 
 
       // -----------------------------------------------
-      // Mensagem inicial
+      // MENSAGEM INICIAL
       // -----------------------------------------------
 
-      if (
-        typeof message !==
-          "undefined"
-      ) {
+      setGameMessage(
+        toy.startMessage
+      );
 
-        message.textContent =
-          toy.startMessage;
+
+      // -----------------------------------------------
+      // ANIMAÇÃO
+      // -----------------------------------------------
+
+      try {
+
+        await playActionAnimation(
+
+          toy.frames,
+
+          () => {
+
+            /*
+              Tudo dentro do callback fica
+              protegido por try/catch.
+
+              Assim, mesmo que dê algum erro
+              no aumento da felicidade,
+              o game.js consegue terminar
+              a animação e devolver o idle.
+            */
+
+            try {
+
+              const before =
+                cinnaStatus.happiness;
+
+
+              cinnaStatus.happiness =
+                limitStatus(
+
+                  cinnaStatus.happiness +
+                  toy.happiness
+
+                );
+
+
+              const gained =
+                cinnaStatus.happiness -
+                before;
+
+
+              saveStatus();
+
+              updateStatusBars();
+
+
+              // ---------------------------------------
+              // CORAÇÕES
+              // ---------------------------------------
+
+              if (
+                typeof spawnHeart ===
+                  "function"
+              ) {
+
+                spawnHeart();
+
+
+                setTimeout(
+                  () => {
+
+                    spawnHeart();
+
+                  },
+                  180
+                );
+
+
+                setTimeout(
+                  () => {
+
+                    spawnHeart();
+
+                  },
+                  360
+                );
+
+              }
+
+
+              // ---------------------------------------
+              // MENSAGEM FINAL
+              // ---------------------------------------
+
+              if (
+                gained > 0
+              ) {
+
+                setGameMessage(
+
+                  `${toy.finishMessage} +${gained}% ❤️`
+
+                );
+
+              }
+
+              else {
+
+                setGameMessage(
+                  "Cinna já está felicíssimo! ❤️"
+                );
+
+              }
+
+            }
+
+            catch (
+              error
+            ) {
+
+              console.error(
+                "Erro ao finalizar a brincadeira:",
+                error
+              );
+
+
+              setGameMessage(
+                "Cinna terminou de brincar ♡"
+              );
+
+            }
+
+          }
+
+        );
 
       }
 
+      catch (
+        error
+      ) {
 
-      // -----------------------------------------------
-      // Animação
-      // -----------------------------------------------
-
-      await playActionAnimation(
-
-        toy.frames,
-
-        () => {
-
-          const before =
-            cinnaStatus.happiness;
+        console.error(
+          "Erro durante a animação do brinquedo:",
+          error
+        );
 
 
-          cinnaStatus.happiness =
-            limitStatus(
+        /*
+          Recuperação extra.
 
-              cinnaStatus.happiness +
-              toy.happiness
+          Se qualquer coisa absurda acontecer,
+          devolvemos o sprite normal.
+        */
 
-            );
+        if (
+          typeof character !==
+            "undefined"
 
+          &&
 
-          const gained =
-            cinnaStatus.happiness -
-            before;
+          character
+        ) {
 
-
-          saveStatus();
-
-          updateStatusBars();
-
-
-          // ===========================================
-          // CORAÇÕES
-          // ===========================================
-
-          if (
-            typeof spawnHeart ===
-              "function"
-          ) {
-
-            spawnHeart();
-
-
-            setTimeout(
-              spawnHeart,
-              180
-            );
-
-
-            setTimeout(
-              spawnHeart,
-              360
-            );
-
-          }
-
-
-          // ===========================================
-          // MENSAGEM FINAL
-          // ===========================================
-
-          if (
-            typeof message !==
-              "undefined"
-          ) {
-
-            if (
-              gained > 0
-            ) {
-
-              message.textContent =
-                `${toy.finishMessage} +${gained}% ❤️`;
-
-            }
-
-            else {
-
-              message.textContent =
-                `Cinna já está felicíssimo! ❤️`;
-
-            }
-
-          }
+          character.src =
+            "assets/sprites/cinna-idle-1.PNG";
 
         }
 
-      );
+
+        if (
+          typeof isPlayingAction !==
+            "undefined"
+        ) {
+
+          isPlayingAction =
+            false;
+
+        }
+
+
+        if (
+          typeof lockControls ===
+            "function"
+        ) {
+
+          lockControls(
+            false
+          );
+
+        }
+
+
+        setGameMessage(
+          "Ops, a brincadeira deu uma tropeçada ;-;"
+        );
+
+      }
 
     }
 
 
     // ==================================================
-    // DECORA O INVENTÁRIO
+    // DECORAR INVENTÁRIO
     // ==================================================
 
     function decorateToyInventory() {
@@ -581,7 +936,9 @@
             );
 
 
-          if (!nameElement) {
+          if (
+            !nameElement
+          ) {
 
             return;
 
@@ -595,7 +952,7 @@
 
 
           // -------------------------------------------
-          // Descobre qual brinquedo é
+          // DESCOBRE QUAL BRINQUEDO É
           // -------------------------------------------
 
           const toy =
@@ -612,7 +969,17 @@
               );
 
 
-          if (!toy) {
+          /*
+            Bolhas e videogame ainda
+            não têm animação.
+
+            Então eles continuam com
+            o ✓ normal por enquanto.
+          */
+
+          if (
+            !toy
+          ) {
 
             return;
 
@@ -620,7 +987,7 @@
 
 
           // -------------------------------------------
-          // Evita botão duplicado
+          // NÃO DUPLICA BOTÃO
           // -------------------------------------------
 
           if (
@@ -635,7 +1002,7 @@
 
 
           // -------------------------------------------
-          // Remove ✓ antigo
+          // REMOVE O ✓
           // -------------------------------------------
 
           const oldCheck =
@@ -644,7 +1011,9 @@
             );
 
 
-          if (oldCheck) {
+          if (
+            oldCheck
+          ) {
 
             oldCheck.remove();
 
@@ -652,7 +1021,7 @@
 
 
           // -------------------------------------------
-          // Área do botão
+          // ÁREA DO BOTÃO
           // -------------------------------------------
 
           const actions =
@@ -684,7 +1053,7 @@
 
 
           // -------------------------------------------
-          // Clique
+          // CLIQUE
           // -------------------------------------------
 
           button.addEventListener(
@@ -697,6 +1066,14 @@
                 true;
 
 
+              const originalText =
+                button.textContent;
+
+
+              button.textContent =
+                "...";
+
+
               try {
 
                 await playWithToy(
@@ -707,8 +1084,19 @@
 
               finally {
 
+                /*
+                  O card pode ter desaparecido
+                  quando a loja fechar.
+
+                  Mesmo assim não tem problema.
+                */
+
                 button.disabled =
                   false;
+
+
+                button.textContent =
+                  originalText;
 
               }
 
@@ -740,16 +1128,22 @@
       function () {
 
         /*
-          Primeiro deixa o sistema normal
-          montar tudo.
+          Primeiro deixa:
+          - comida
+          - acessórios
+          - achocolatado
+          - reposição
+
+          montarem o inventário normalmente.
         */
 
         renderInventoryBeforeToys();
 
 
         /*
-          Depois troca o ✓ dos brinquedos
-          pelo botão BRINCAR.
+          Depois adicionamos BRINCAR
+          aos brinquedos que já possuem
+          animação pronta.
         */
 
         decorateToyInventory();
@@ -819,6 +1213,10 @@
 
   }
 
+
+  // ====================================================
+  // INICIAR
+  // ====================================================
 
   setTimeout(
     initializeToySystem,

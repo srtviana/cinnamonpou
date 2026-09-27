@@ -35,11 +35,8 @@
       0.94
     );
 
-  backdrop-filter:
-    blur(10px);
-
-  -webkit-backdrop-filter:
-    blur(10px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 
   box-shadow:
     0 12px 35px
@@ -52,7 +49,9 @@
 }
 
 
-/* ABRIR */
+/* =====================================================
+   ABRIR O JOGO
+   ===================================================== */
 
 .room.games-open.cloud-fall-open
 .game-hub {
@@ -115,6 +114,13 @@
 }
 
 
+.cloud-fall-stat strong {
+  min-width: 20px;
+
+  text-align: center;
+}
+
+
 .cloud-fall-title {
   text-align: center;
 
@@ -133,6 +139,7 @@
 
 .cloud-fall-board {
   width: 100%;
+
   height: 380px;
 
   position: relative;
@@ -151,6 +158,7 @@
     );
 
   background:
+
     radial-gradient(
       circle at 15% 16%,
       white 0 2px,
@@ -193,12 +201,19 @@
 
 .cloud-fall-cinna {
   width: 82px;
+
   height: auto;
 
   position: absolute;
 
   left: 50%;
-  top: 53%;
+
+  /*
+    Um pouco mais abaixo para termos
+    tempo de enxergar os obstáculos.
+  */
+
+  top: 64%;
 
   z-index: 8;
 
@@ -221,13 +236,12 @@
       )
     );
 
-  will-change:
-    left;
+  will-change: left;
 }
 
 
-//* =====================================================
-   NUVEM
+/* =====================================================
+   NUVENS ☁️
    ===================================================== */
 
 .fall-cloud {
@@ -235,7 +249,13 @@
 
   z-index: 5;
 
+  /*
+    O JS ainda pode alterar a largura
+    individual de cada nuvem.
+  */
+
   width: 72px;
+
   height: 28px;
 
   border-radius: 999px;
@@ -258,6 +278,8 @@
     );
 
   pointer-events: none;
+
+  will-change: top;
 }
 
 
@@ -275,22 +297,106 @@
 
 .fall-cloud::before {
   width: 34px;
+
   height: 34px;
 
   left: 10px;
+
   top: -16px;
 }
 
 
 .fall-cloud::after {
   width: 43px;
+
   height: 43px;
 
   right: 8px;
+
   top: -23px;
 }
+
+
 /* =====================================================
-   OVERLAY
+   MOEDAS 🪙
+   ===================================================== */
+
+.fall-coin {
+  width: 36px;
+
+  height: 36px;
+
+  position: absolute;
+
+  z-index: 7;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 26px;
+
+  line-height: 1;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+
+  filter:
+    drop-shadow(
+      0 4px 4px
+      rgba(
+        88,
+        101,
+        125,
+        0.25
+      )
+    );
+
+  animation:
+    fallCoinSpin
+    0.8s
+    linear
+    infinite;
+
+  will-change:
+    top,
+    transform;
+}
+
+
+@keyframes fallCoinSpin {
+
+  0% {
+
+    transform:
+      rotateY(
+        0deg
+      );
+
+  }
+
+
+  100% {
+
+    transform:
+      rotateY(
+        360deg
+      );
+
+  }
+
+}
+
+
+/* =====================================================
+   OVERLAYS
    ===================================================== */
 
 .cloud-fall-overlay {
@@ -307,6 +413,8 @@
   justify-content: center;
 
   padding: 18px;
+
+  border-radius: 22px;
 
   background:
     rgba(
@@ -329,6 +437,10 @@
 }
 
 
+/* =====================================================
+   CARD DE INÍCIO / RESULTADO
+   ===================================================== */
+
 .cloud-fall-card {
   width:
     min(
@@ -339,8 +451,7 @@
   padding:
     22px 18px;
 
-  border-radius:
-    24px;
+  border-radius: 24px;
 
   text-align: center;
 
@@ -366,6 +477,8 @@
 .cloud-fall-card
 .cloud-fall-big-icon {
   font-size: 48px;
+
+  line-height: 1;
 }
 
 
@@ -385,11 +498,9 @@
   color:
     #7690a3;
 
-  font-size:
-    12px;
+  font-size: 12px;
 
-  line-height:
-    1.45;
+  line-height: 1.45;
 }
 
 
@@ -408,8 +519,12 @@
 
   cursor: pointer;
 
-  touch-action:
-    manipulation;
+  touch-action: manipulation;
+
+  transition:
+    transform
+    0.12s
+    ease;
 }
 
 
@@ -419,8 +534,7 @@
   padding:
     10px 16px;
 
-  border-radius:
-    15px;
+  border-radius: 15px;
 
   background:
     #dff3ff;
@@ -436,8 +550,7 @@
   padding:
     9px 15px;
 
-  border-radius:
-    15px;
+  border-radius: 15px;
 
   background:
     #f0f2f4;
@@ -455,8 +568,7 @@
   padding:
     8px 14px;
 
-  border-radius:
-    999px;
+  border-radius: 999px;
 
   background:
     rgba(
@@ -477,7 +589,9 @@
 .cloud-fall-secondary:active,
 .cloud-fall-exit:active {
   transform:
-    scale(0.96);
+    scale(
+      0.96
+    );
 }
 
 
@@ -532,6 +646,8 @@
 
   .cloud-fall-cinna {
     width: 76px;
+
+    top: 64%;
   }
 
 
@@ -540,6 +656,15 @@
       65px
       1fr
       65px;
+  }
+
+
+  .fall-coin {
+    width: 34px;
+
+    height: 34px;
+
+    font-size: 25px;
   }
 
 }

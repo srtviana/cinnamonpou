@@ -226,7 +226,7 @@
 }
 
 
-/* =====================================================
+//* =====================================================
    NUVEM
    ===================================================== */
 
@@ -235,8 +235,8 @@
 
   z-index: 5;
 
-  width: 90px;
-  height: 35px;
+  width: 72px;
+  height: 28px;
 
   border-radius: 999px;
 
@@ -249,7 +249,7 @@
     );
 
   box-shadow:
-    0 6px 10px
+    0 5px 9px
     rgba(
       83,
       125,
@@ -267,89 +267,28 @@
 
   position: absolute;
 
-  background:
-    inherit;
+  background: inherit;
 
   border-radius: 50%;
 }
 
 
 .fall-cloud::before {
-  width: 42px;
-  height: 42px;
+  width: 34px;
+  height: 34px;
 
-  left: 12px;
-  top: -20px;
+  left: 10px;
+  top: -16px;
 }
 
 
 .fall-cloud::after {
-  width: 54px;
-  height: 54px;
+  width: 43px;
+  height: 43px;
 
-  right: 10px;
-  top: -29px;
+  right: 8px;
+  top: -23px;
 }
-
-
-/* =====================================================
-   MOEDA
-   ===================================================== */
-
-.fall-coin {
-  width: 36px;
-  height: 36px;
-
-  position: absolute;
-
-  z-index: 7;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  border-radius: 50%;
-
-  font-size: 26px;
-
-  pointer-events: none;
-
-  filter:
-    drop-shadow(
-      0 4px 4px
-      rgba(
-        88,
-        101,
-        125,
-        0.25
-      )
-    );
-
-  animation:
-    fallCoinSpin
-    0.8s
-    linear
-    infinite;
-}
-
-
-@keyframes fallCoinSpin {
-
-  0% {
-    transform:
-      rotateY(0deg);
-  }
-
-  100% {
-    transform:
-      rotateY(360deg);
-  }
-
-}
-
-
 /* =====================================================
    OVERLAY
    ===================================================== */

@@ -812,9 +812,9 @@
 
 
     const width =
-      75 +
+      58 +
       Math.random() *
-      55;
+      38;
 
 
     const element =

@@ -1,0 +1,606 @@
+/* =====================================================
+   CINNA FALL ☁️
+   ===================================================== */
+
+.cloud-fall-screen {
+  width: 90%;
+
+  position: absolute;
+
+  left: 50%;
+  top: 45%;
+
+  transform: translate(
+    -50%,
+    -50%
+  );
+
+  z-index: 35;
+
+  display: none;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  padding: 10px;
+
+  border-radius: 26px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.94
+    );
+
+  backdrop-filter:
+    blur(10px);
+
+  -webkit-backdrop-filter:
+    blur(10px);
+
+  box-shadow:
+    0 12px 35px
+    rgba(
+      78,
+      112,
+      150,
+      0.24
+    );
+}
+
+
+/* ABRIR */
+
+.room.games-open.cloud-fall-open
+.game-hub {
+  display: none;
+}
+
+
+.room.games-open.cloud-fall-open
+.cloud-fall-screen {
+  display: flex;
+}
+
+
+/* =====================================================
+   TOPO
+   ===================================================== */
+
+.cloud-fall-topbar {
+  width: 100%;
+
+  min-height: 46px;
+
+  display: grid;
+
+  grid-template-columns:
+    72px
+    1fr
+    72px;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+
+.cloud-fall-stat {
+  min-height: 38px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 4px;
+
+  padding: 6px;
+
+  border-radius: 15px;
+
+  background:
+    #edf8ff;
+
+  color:
+    #587b97;
+
+  font-size: 13px;
+
+  font-weight: 800;
+}
+
+
+.cloud-fall-title {
+  text-align: center;
+
+  color:
+    #5d7f9a;
+
+  font-size: 14px;
+
+  font-weight: 900;
+}
+
+
+/* =====================================================
+   TABULEIRO
+   ===================================================== */
+
+.cloud-fall-board {
+  width: 100%;
+  height: 380px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 23px;
+
+  border:
+    2px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.95
+    );
+
+  background:
+    radial-gradient(
+      circle at 15% 16%,
+      white 0 2px,
+      transparent 3px
+    ),
+
+    radial-gradient(
+      circle at 78% 23%,
+      white 0 2px,
+      transparent 3px
+    ),
+
+    linear-gradient(
+      180deg,
+      #7fc8ff 0%,
+      #acdfff 45%,
+      #dff3ff 100%
+    );
+
+  box-shadow:
+    inset 0 0 35px
+    rgba(
+      255,
+      255,
+      255,
+      0.35
+    );
+
+  touch-action: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+}
+
+
+/* =====================================================
+   CINNA
+   ===================================================== */
+
+.cloud-fall-cinna {
+  width: 82px;
+  height: auto;
+
+  position: absolute;
+
+  left: 50%;
+  top: 53%;
+
+  z-index: 8;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+  pointer-events: none;
+
+  filter:
+    drop-shadow(
+      0 6px 5px
+      rgba(
+        60,
+        104,
+        150,
+        0.2
+      )
+    );
+
+  will-change:
+    left;
+}
+
+
+/* =====================================================
+   NUVEM
+   ===================================================== */
+
+.fall-cloud {
+  position: absolute;
+
+  z-index: 5;
+
+  width: 90px;
+  height: 35px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.96
+    );
+
+  box-shadow:
+    0 6px 10px
+    rgba(
+      83,
+      125,
+      159,
+      0.14
+    );
+
+  pointer-events: none;
+}
+
+
+.fall-cloud::before,
+.fall-cloud::after {
+  content: "";
+
+  position: absolute;
+
+  background:
+    inherit;
+
+  border-radius: 50%;
+}
+
+
+.fall-cloud::before {
+  width: 42px;
+  height: 42px;
+
+  left: 12px;
+  top: -20px;
+}
+
+
+.fall-cloud::after {
+  width: 54px;
+  height: 54px;
+
+  right: 10px;
+  top: -29px;
+}
+
+
+/* =====================================================
+   MOEDA
+   ===================================================== */
+
+.fall-coin {
+  width: 36px;
+  height: 36px;
+
+  position: absolute;
+
+  z-index: 7;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 26px;
+
+  pointer-events: none;
+
+  filter:
+    drop-shadow(
+      0 4px 4px
+      rgba(
+        88,
+        101,
+        125,
+        0.25
+      )
+    );
+
+  animation:
+    fallCoinSpin
+    0.8s
+    linear
+    infinite;
+}
+
+
+@keyframes fallCoinSpin {
+
+  0% {
+    transform:
+      rotateY(0deg);
+  }
+
+  100% {
+    transform:
+      rotateY(360deg);
+  }
+
+}
+
+
+/* =====================================================
+   OVERLAY
+   ===================================================== */
+
+.cloud-fall-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 20;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 18px;
+
+  background:
+    rgba(
+      218,
+      239,
+      253,
+      0.68
+    );
+
+  backdrop-filter:
+    blur(6px);
+
+  -webkit-backdrop-filter:
+    blur(6px);
+}
+
+
+.cloud-fall-overlay[hidden] {
+  display: none;
+}
+
+
+.cloud-fall-card {
+  width:
+    min(
+      300px,
+      93%
+    );
+
+  padding:
+    22px 18px;
+
+  border-radius:
+    24px;
+
+  text-align: center;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.97
+    );
+
+  box-shadow:
+    0 10px 25px
+    rgba(
+      80,
+      122,
+      155,
+      0.18
+    );
+}
+
+
+.cloud-fall-card
+.cloud-fall-big-icon {
+  font-size: 48px;
+}
+
+
+.cloud-fall-card h3 {
+  margin:
+    7px 0;
+
+  color:
+    #5b7e9a;
+}
+
+
+.cloud-fall-card p {
+  margin:
+    0 0 14px;
+
+  color:
+    #7690a3;
+
+  font-size:
+    12px;
+
+  line-height:
+    1.45;
+}
+
+
+/* =====================================================
+   BOTÕES
+   ===================================================== */
+
+.cloud-fall-primary,
+.cloud-fall-secondary,
+.cloud-fall-exit {
+  border: none;
+
+  font-family: inherit;
+
+  font-weight: 900;
+
+  cursor: pointer;
+
+  touch-action:
+    manipulation;
+}
+
+
+.cloud-fall-primary {
+  min-height: 44px;
+
+  padding:
+    10px 16px;
+
+  border-radius:
+    15px;
+
+  background:
+    #dff3ff;
+
+  color:
+    #5382a5;
+}
+
+
+.cloud-fall-secondary {
+  min-height: 40px;
+
+  padding:
+    9px 15px;
+
+  border-radius:
+    15px;
+
+  background:
+    #f0f2f4;
+
+  color:
+    #7e8e99;
+}
+
+
+.cloud-fall-exit {
+  align-self: center;
+
+  min-height: 36px;
+
+  padding:
+    8px 14px;
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(
+      235,
+      246,
+      253,
+      0.96
+    );
+
+  color:
+    #67869d;
+
+  font-size: 11px;
+}
+
+
+.cloud-fall-primary:active,
+.cloud-fall-secondary:active,
+.cloud-fall-exit:active {
+  transform:
+    scale(0.96);
+}
+
+
+/* =====================================================
+   RESULTADO
+   ===================================================== */
+
+.cloud-fall-result {
+  font-weight: 800;
+
+  color:
+    #587b97 !important;
+}
+
+
+.cloud-fall-reward {
+  color:
+    #7392a8 !important;
+
+  font-weight: 800;
+}
+
+
+.cloud-fall-result-buttons {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (
+  max-width: 500px
+) {
+
+  .cloud-fall-screen {
+    width: 90%;
+
+    top: 45%;
+  }
+
+
+  .cloud-fall-board {
+    height: 360px;
+  }
+
+
+  .cloud-fall-cinna {
+    width: 76px;
+  }
+
+
+  .cloud-fall-topbar {
+    grid-template-columns:
+      65px
+      1fr
+      65px;
+  }
+
+}

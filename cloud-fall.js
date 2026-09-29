@@ -503,27 +503,27 @@
 
 
   const TILT_DEAD_ZONE =
-    3;
+    2.5;
 
 
   const MAX_TILT =
-    21;
+    16;
 
 
   const MAX_PLAYER_SPEED =
-    175;
+    235;
 
 
   const MOVEMENT_RESPONSE =
-    7.5;
+    11;
 
 
   const BRAKE_RESPONSE =
-    12;
+    13;
 
 
   const SENSOR_FILTER =
-    0.22;
+    0.30;
 
 
   // ====================================================

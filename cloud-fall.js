@@ -2,13 +2,18 @@
 // CINNA FALL ☁️🪙
 // ======================================================
 //
-// CONTROLE:
+// CONTROLES:
 //
-// 📱 Incline o celular
-// 👆 ou arraste com o dedo
+// 📱 Incline o celular para esquerda/direita
+// 👆 Ou arraste o Cinna com o dedo
 //
-// O sensor é calibrado toda vez
-// que uma partida começa.
+// MOVIMENTO:
+//
+// - calibra a posição neutra ao iniciar
+// - inclinação define velocidade
+// - celular reto = Cinna freia e para
+// - pequena tremedeira é ignorada
+// - sem efeito de "ímã" nas laterais
 //
 // ======================================================
 
@@ -35,13 +40,36 @@
     !gameHub
   ) {
 
+    console.warn(
+      "Cinna Fall: room ou game-hub não encontrado."
+    );
+
     return;
 
   }
 
 
   // ====================================================
-  // ENCONTRA O CARD
+  // EVITA DUPLICAR O JOGO
+  // ====================================================
+
+  const oldScreen =
+    document.querySelector(
+      ".cloud-fall-screen"
+    );
+
+
+  if (
+    oldScreen
+  ) {
+
+    oldScreen.remove();
+
+  }
+
+
+  // ====================================================
+  // ENCONTRA O CARD DO JOGO
   // ====================================================
 
   const gameCards = [
@@ -64,7 +92,9 @@
           );
 
 
-        if (!name) {
+        if (
+          !name
+        ) {
 
           return false;
 
@@ -77,6 +107,7 @@
 
 
         return (
+
           text ===
           "Cloud Jump"
 
@@ -84,6 +115,7 @@
 
           text ===
           "Cinna Fall"
+
         );
 
       }
@@ -91,12 +123,13 @@
     );
 
 
-  if (!cloudCard) {
+  if (
+    !cloudCard
+  ) {
 
     console.warn(
-      "Não encontrei o card do Cinna Fall."
+      "Cinna Fall: card Cloud Jump não encontrado."
     );
-
 
     return;
 
@@ -104,7 +137,7 @@
 
 
   // ====================================================
-  // CONFIGURA O CARD
+  // TRANSFORMA O CARD
   // ====================================================
 
   cloudCard.disabled =
@@ -149,7 +182,9 @@
     );
 
 
-  if (cardIcon) {
+  if (
+    cardIcon
+  ) {
 
     cardIcon.textContent =
       "☁️";
@@ -157,7 +192,9 @@
   }
 
 
-  if (cardName) {
+  if (
+    cardName
+  ) {
 
     cardName.textContent =
       "Cinna Fall";
@@ -165,7 +202,9 @@
   }
 
 
-  if (cardDescription) {
+  if (
+    cardDescription
+  ) {
 
     cardDescription.textContent =
       "Incline o celular, desvie das nuvens e pegue moedas.";
@@ -173,7 +212,9 @@
   }
 
 
-  if (cardStatus) {
+  if (
+    cardStatus
+  ) {
 
     cardStatus.textContent =
       "JOGAR";
@@ -182,22 +223,23 @@
 
 
   // ====================================================
-  // CRIA A TELA
+  // CRIA A TELA DO JOGO
   // ====================================================
 
-  const screen =
+  const gameScreen =
     document.createElement(
       "section"
     );
 
 
-  screen.className =
+  gameScreen.className =
     "cloud-fall-screen";
 
 
-  screen.innerHTML = `
+  gameScreen.innerHTML = `
 
     <div class="cloud-fall-topbar">
+
 
       <div class="cloud-fall-stat">
 
@@ -231,6 +273,7 @@
 
       </div>
 
+
     </div>
 
 
@@ -238,6 +281,9 @@
       id="cloud-fall-board"
       class="cloud-fall-board"
     >
+
+
+      <!-- CINNA -->
 
       <img
         id="cloud-fall-cinna"
@@ -258,6 +304,7 @@
 
         <div class="cloud-fall-card">
 
+
           <div class="cloud-fall-big-icon">
 
             ☁️
@@ -274,23 +321,23 @@
 
           <p>
 
-            Segure o celular como preferir
-            e toque em jogar.
+            Segure o celular do jeito que
+            for confortável.
 
             <br><br>
 
-            Essa posição será considerada
-            o centro.
+            Ao começar, essa posição será
+            considerada o centro.
 
             <br><br>
 
-            Depois incline para a esquerda
-            ou direita para mover o Cinna.
+            Incline para a esquerda ou
+            direita para mover o Cinna.
 
             <br><br>
 
-            Também dá para arrastar com
-            o dedo ♡
+            Desvie das nuvens e pegue
+            Cinna Coins! 🪙
 
           </p>
 
@@ -304,6 +351,7 @@
             ATIVAR MOVIMENTO E JOGAR
 
           </button>
+
 
         </div>
 
@@ -321,6 +369,7 @@
       >
 
         <div class="cloud-fall-card">
+
 
           <div class="cloud-fall-big-icon">
 
@@ -375,6 +424,7 @@
 
           </div>
 
+
         </div>
 
       </div>
@@ -397,7 +447,7 @@
 
 
   room.appendChild(
-    screen
+    gameScreen
   );
 
 
@@ -406,73 +456,73 @@
   // ====================================================
 
   const board =
-    screen.querySelector(
+    gameScreen.querySelector(
       "#cloud-fall-board"
     );
 
 
   const cinna =
-    screen.querySelector(
+    gameScreen.querySelector(
       "#cloud-fall-cinna"
     );
 
 
   const coinDisplay =
-    screen.querySelector(
+    gameScreen.querySelector(
       "#cloud-fall-coins"
     );
 
 
   const scoreDisplay =
-    screen.querySelector(
+    gameScreen.querySelector(
       "#cloud-fall-score"
     );
 
 
   const startOverlay =
-    screen.querySelector(
+    gameScreen.querySelector(
       "#cloud-fall-start"
     );
 
 
   const resultOverlay =
-    screen.querySelector(
+    gameScreen.querySelector(
       "#cloud-fall-result-overlay"
     );
 
 
   const resultText =
-    screen.querySelector(
+    gameScreen.querySelector(
       "#cloud-fall-result"
     );
 
 
   const rewardText =
-    screen.querySelector(
+    gameScreen.querySelector(
       "#cloud-fall-reward"
     );
 
 
   const startButton =
-    screen.querySelector(
+    gameScreen.querySelector(
       "#cloud-fall-start-button"
     );
 
 
   const replayButton =
-    screen.querySelector(
+    gameScreen.querySelector(
       "#cloud-fall-replay"
     );
 
 
   const backButton =
-    screen.querySelector(
+    gameScreen.querySelector(
       "#cloud-fall-back"
     );
 
 
   const exitButton =
-    screen.querySelector(
+    gameScreen.querySelector(
       "#cloud-fall-exit"
     );
 
@@ -522,19 +572,39 @@
 
 
   // ====================================================
-  // POSIÇÃO DO CINNA
+  // MOVIMENTO DO CINNA
   // ====================================================
 
   let playerX =
     0;
 
 
-  let dragTargetX =
+  let playerVelocityX =
     0;
 
 
+  /*
+    Valor de -1 até +1.
+
+    -1 = esquerda máxima
+     0 = celular neutro
+    +1 = direita máxima
+  */
+
+  let tiltInput =
+    0;
+
+
+  // ====================================================
+  // TOQUE
+  // ====================================================
+
   let dragging =
     false;
+
+
+  let dragTargetX =
+    0;
 
 
   // ====================================================
@@ -542,10 +612,6 @@
   // ====================================================
 
   let orientationEnabled =
-    false;
-
-
-  let sensorActive =
     false;
 
 
@@ -557,62 +623,96 @@
     null;
 
 
-  let tiltVelocity =
-    0;
-
-
   let calibrationSamples =
     [];
 
 
+  // ====================================================
+  // CONFIGURAÇÕES DO MOVIMENTO
+  // ====================================================
+
   /*
-    Quantidade de leituras usadas
-    para descobrir a posição neutra.
+    Quantas leituras usamos para descobrir
+    a posição neutra do celular.
+
+    16 leituras = aproximadamente
+    um quarto de segundo.
   */
 
   const CALIBRATION_SAMPLES =
+    16;
+
+
+  /*
+    Pequenas inclinações abaixo de
+    3 graus são ignoradas.
+
+    Isso evita o Cinna tremendo
+    quando sua mão está parada.
+  */
+
+  const TILT_DEAD_ZONE =
+    3;
+
+
+  /*
+    Com 21 graus de inclinação,
+    já atingimos velocidade máxima.
+
+    Não precisa virar o celular
+    como se fosse um volante KSKSK.
+  */
+
+  const MAX_TILT =
+    21;
+
+
+  /*
+    Velocidade máxima lateral.
+
+    Se depois achar rápido:
+    diminui para 160.
+
+    Se achar lento:
+    aumenta para 190.
+  */
+
+  const MAX_PLAYER_SPEED =
+    175;
+
+
+  /*
+    Velocidade com que o Cinna
+    responde quando você inclina.
+
+    Maior = resposta mais rápida.
+  */
+
+  const MOVEMENT_RESPONSE =
+    7.5;
+
+
+  /*
+    Velocidade com que ele freia
+    quando o celular volta ao centro.
+
+    Essa é a parte que elimina
+    a sensação de ímã.
+  */
+
+  const BRAKE_RESPONSE =
     12;
 
 
   /*
-    Inclinação pequena é ignorada.
+    Suavização do sensor.
 
-    Isso elimina tremedeira da mão
-    e ruído natural do sensor.
-  */
-
-  const TILT_DEAD_ZONE =
-    2.5;
-
-
-  /*
-    Com aproximadamente 18 graus
-    já atingimos a velocidade máxima.
-  */
-
-  const MAX_TILT =
-    18;
-
-
-  /*
-    Velocidade máxima horizontal.
-  */
-
-  const MAX_PLAYER_SPEED =
-    240;
-
-
-  /*
-    Filtro do sensor.
-
-    Menor = mais suave.
-    Maior = mais rápido.
-
-    0.16 ficou um meio-termo bom.
+    0.22 deixa suave sem ficar
+    com atraso exagerado.
   */
 
   const SENSOR_FILTER =
-    0.16;
+    0.22;
 
 
   // ====================================================
@@ -621,16 +721,16 @@
 
   function clamp(
     value,
-    min,
-    max
+    minimum,
+    maximum
   ) {
 
     return Math.max(
 
-      min,
+      minimum,
 
       Math.min(
-        max,
+        maximum,
         value
       )
 
@@ -649,7 +749,13 @@
         objects.pop();
 
 
-      object.element.remove();
+      if (
+        object.element
+      ) {
+
+        object.element.remove();
+
+      }
 
     }
 
@@ -657,33 +763,56 @@
 
 
   // ====================================================
-  // DESCOBRE ORIENTAÇÃO DA TELA
+  // ORIENTAÇÃO DA TELA
   // ====================================================
 
   function getScreenAngle() {
 
+    /*
+      IMPORTANTE:
+
+      usamos window.screen.
+
+      Não usamos "screen" porque nossa
+      tela do jogo é outro elemento.
+    */
+
     if (
-      screen.orientation
+      window.screen
 
       &&
 
-      typeof screen.orientation.angle ===
+      window.screen.orientation
+
+      &&
+
+      typeof window.screen.orientation.angle ===
         "number"
     ) {
 
       return (
+
         (
-          screen.orientation.angle %
+          window.screen.orientation.angle %
           360
         )
+
         +
+
         360
+
       )
+
       %
+
       360;
 
     }
 
+
+    /*
+      Fallback antigo do Safari.
+    */
 
     if (
       typeof window.orientation ===
@@ -691,14 +820,20 @@
     ) {
 
       return (
+
         (
           window.orientation %
           360
         )
+
         +
+
         360
+
       )
+
       %
+
       360;
 
     }
@@ -710,7 +845,7 @@
 
 
   // ====================================================
-  // INCLINAÇÃO LATERAL REAL
+  // INCLINAÇÃO LATERAL
   // ====================================================
 
   function getLateralTilt(
@@ -734,8 +869,7 @@
 
 
     /*
-      Retrato normal:
-      gamma controla esquerda/direita.
+      Retrato normal.
     */
 
     if (
@@ -748,7 +882,7 @@
 
 
     /*
-      Retrato de cabeça para baixo.
+      Retrato invertido.
     */
 
     if (
@@ -761,7 +895,7 @@
 
 
     /*
-      Paisagem.
+      Paisagem para um lado.
     */
 
     if (
@@ -772,6 +906,10 @@
 
     }
 
+
+    /*
+      Paisagem para o outro.
+    */
 
     if (
       angle === 270
@@ -788,7 +926,35 @@
 
 
   // ====================================================
-  // SENSOR
+  // RESET DA CALIBRAÇÃO
+  // ====================================================
+
+  function resetSensorCalibration() {
+
+    neutralTilt =
+      null;
+
+
+    filteredTilt =
+      null;
+
+
+    calibrationSamples =
+      [];
+
+
+    tiltInput =
+      0;
+
+
+    playerVelocityX =
+      0;
+
+  }
+
+
+  // ====================================================
+  // LEITURA DO SENSOR
   // ====================================================
 
   function handleOrientation(
@@ -837,10 +1003,14 @@
 
       /*
         Enquanto calibra,
-        Cinna fica parado no centro.
+        Cinna não se move.
       */
 
-      tiltVelocity =
+      tiltInput =
+        0;
+
+
+      playerVelocityX =
         0;
 
 
@@ -861,6 +1031,7 @@
             sum,
             value
           ) =>
+
             sum +
             value,
 
@@ -870,6 +1041,7 @@
 
 
       neutralTilt =
+
         total /
         calibrationSamples.length;
 
@@ -882,17 +1054,13 @@
         [];
 
 
-      sensorActive =
-        true;
-
-
       return;
 
     }
 
 
     // ==================================================
-    // FILTRO
+    // FILTRO CONTRA TREMOR
     // ==================================================
 
     if (
@@ -912,12 +1080,14 @@
         rawTilt -
         filteredTilt
       )
+
       *
+
       SENSOR_FILTER;
 
 
     // ==================================================
-    // DIFERENÇA DA POSIÇÃO NEUTRA
+    // INCLINAÇÃO RELATIVA
     // ==================================================
 
     let relativeTilt =
@@ -926,22 +1096,17 @@
       neutralTilt;
 
 
-    /*
-      Evita valores malucos em mudanças
-      de orientação.
-    */
-
     relativeTilt =
       clamp(
+
         relativeTilt,
+
         -MAX_TILT,
+
         MAX_TILT
+
       );
 
-
-    // ==================================================
-    // ZONA MORTA
-    // ==================================================
 
     const absoluteTilt =
       Math.abs(
@@ -949,12 +1114,16 @@
       );
 
 
+    // ==================================================
+    // ZONA MORTA
+    // ==================================================
+
     if (
       absoluteTilt <=
       TILT_DEAD_ZONE
     ) {
 
-      tiltVelocity =
+      tiltInput =
         0;
 
 
@@ -964,7 +1133,7 @@
 
 
     // ==================================================
-    // VELOCIDADE
+    // FORÇA DA INCLINAÇÃO
     // ==================================================
 
     const usableTilt =
@@ -979,19 +1148,40 @@
       TILT_DEAD_ZONE;
 
 
-    const strength =
+    let strength =
+
+      usableTilt /
+      usableRange;
+
+
+    strength =
       clamp(
 
-        usableTilt /
-        usableRange,
+        strength,
 
         0,
+
         1
 
       );
 
 
-    tiltVelocity =
+    /*
+      Curva levemente progressiva.
+
+      Inclinação pequena = precisão.
+
+      Inclinação grande = velocidade.
+    */
+
+    strength =
+      Math.pow(
+        strength,
+        1.15
+      );
+
+
+    tiltInput =
 
       Math.sign(
         relativeTilt
@@ -999,11 +1189,7 @@
 
       *
 
-      strength
-
-      *
-
-      MAX_PLAYER_SPEED;
+      strength;
 
   }
 
@@ -1021,10 +1207,20 @@
         "undefined"
       ) {
 
+        console.warn(
+          "DeviceOrientationEvent não disponível."
+        );
+
+
         return false;
 
       }
 
+
+      /*
+        iPhone / Safari exige permissão
+        após toque do usuário.
+      */
 
       if (
         typeof DeviceOrientationEvent
@@ -1041,6 +1237,11 @@
           permission !==
           "granted"
         ) {
+
+          console.warn(
+            "Permissão do sensor negada."
+          );
+
 
           return false;
 
@@ -1079,7 +1280,7 @@
     ) {
 
       console.warn(
-        "Sensor não disponível:",
+        "Não foi possível ativar o sensor:",
         error
       );
 
@@ -1087,34 +1288,6 @@
       return false;
 
     }
-
-  }
-
-
-  // ====================================================
-  // RECALIBRAR SENSOR
-  // ====================================================
-
-  function resetSensorCalibration() {
-
-    neutralTilt =
-      null;
-
-
-    filteredTilt =
-      null;
-
-
-    tiltVelocity =
-      0;
-
-
-    calibrationSamples =
-      [];
-
-
-    sensorActive =
-      false;
 
   }
 
@@ -1166,6 +1339,10 @@
         true;
 
 
+      playerVelocityX =
+        0;
+
+
       moveToPointer(
         event
       );
@@ -1182,11 +1359,8 @@
     event => {
 
       if (
+        !running ||
         !dragging
-
-        ||
-
-        !running
       ) {
 
         return;
@@ -1232,7 +1406,7 @@
 
 
   // ====================================================
-  // ATUALIZA POSIÇÃO DO CINNA
+  // MOVIMENTO DO CINNA
   // ====================================================
 
   function updatePlayerPosition(
@@ -1248,24 +1422,33 @@
 
 
     const maximumX =
+
       boardRect.width -
       40;
 
 
-    /*
-      Se estiver tocando,
-      o dedo tem prioridade sobre o sensor.
-    */
+    // ==================================================
+    // CONTROLE PELO DEDO
+    // ==================================================
 
     if (
       dragging
     ) {
 
-      const touchSmoothing =
-        Math.min(
-          1,
-          delta *
-          16
+      /*
+        Enquanto arrasta, eliminamos
+        a velocidade do sensor.
+      */
+
+      playerVelocityX =
+        0;
+
+
+      const touchResponse =
+        1 -
+        Math.exp(
+          -18 *
+          delta
         );
 
 
@@ -1278,38 +1461,159 @@
 
         *
 
-        touchSmoothing;
+        touchResponse;
 
     }
+
+
+    // ==================================================
+    // CONTROLE PELO SENSOR
+    // ==================================================
 
     else {
 
       /*
-        Inclinação controla VELOCIDADE,
-        não posição absoluta.
+        Inclinação NÃO determina posição.
 
-        Isso é o que deixa o movimento
-        natural e contínuo.
+        Ela determina apenas a
+        velocidade desejada.
       */
+
+      const targetVelocity =
+
+        tiltInput *
+        MAX_PLAYER_SPEED;
+
+
+      /*
+        Quando o celular está reto,
+        usamos uma frenagem mais forte.
+
+        É isso que evita aquela
+        sensação de ímã / deslizamento.
+      */
+
+      const response =
+
+        Math.abs(
+          targetVelocity
+        ) <
+        1
+
+          ? BRAKE_RESPONSE
+
+          : MOVEMENT_RESPONSE;
+
+
+      /*
+        Suavização independente do FPS.
+      */
+
+      const velocityBlend =
+
+        1 -
+
+        Math.exp(
+          -response *
+          delta
+        );
+
+
+      playerVelocityX +=
+
+        (
+          targetVelocity -
+          playerVelocityX
+        )
+
+        *
+
+        velocityBlend;
+
+
+      /*
+        Mata micro-movimentos residuais.
+      */
+
+      if (
+
+        tiltInput ===
+        0
+
+        &&
+
+        Math.abs(
+          playerVelocityX
+        ) <
+        1.5
+
+      ) {
+
+        playerVelocityX =
+          0;
+
+      }
+
 
       playerX +=
 
-        tiltVelocity *
+        playerVelocityX *
         delta;
 
     }
 
 
-    playerX =
-      clamp(
+    // ==================================================
+    // LIMITES DA TELA
+    // ==================================================
 
-        playerX,
+    if (
+      playerX <=
+      minimumX
+    ) {
 
-        minimumX,
+      playerX =
+        minimumX;
 
-        maximumX
 
-      );
+      /*
+        Só zera se estiver tentando
+        continuar andando para fora.
+      */
+
+      if (
+        playerVelocityX <
+        0
+      ) {
+
+        playerVelocityX =
+          0;
+
+      }
+
+    }
+
+
+    if (
+      playerX >=
+      maximumX
+    ) {
+
+      playerX =
+        maximumX;
+
+
+      if (
+        playerVelocityX >
+        0
+      ) {
+
+        playerVelocityX =
+          0;
+
+      }
+
+    }
 
 
     cinna.style.left =
@@ -1319,10 +1623,15 @@
 
 
   // ====================================================
-  // ABRIR JOGO
+  // ABRIR O JOGO
   // ====================================================
 
   function openGame() {
+
+    /*
+      Fecha Pega Estrelinhas,
+      caso ele esteja aberto.
+    */
 
     if (
       typeof closeStarGame ===
@@ -1350,12 +1659,15 @@
 
 
   // ====================================================
-  // FECHAR
+  // FECHAR O JOGO
   // ====================================================
 
   function closeGame() {
 
     stopGame();
+
+
+    clearObjects();
 
 
     room.classList.remove(
@@ -1429,6 +1741,10 @@
       true;
 
 
+    dragging =
+      false;
+
+
     resetSensorCalibration();
 
 
@@ -1441,6 +1757,7 @@
 
 
         playerX =
+
           boardRect.width /
           2;
 
@@ -1460,7 +1777,7 @@
 
 
   // ====================================================
-  // CRIAR NUVEM
+  // CRIA NUVEM
   // ====================================================
 
   function spawnCloud() {
@@ -1470,7 +1787,8 @@
 
 
     /*
-      Nuvens menores.
+      Nuvens menores:
+      aproximadamente 58px até 96px.
     */
 
     const width =
@@ -1495,14 +1813,22 @@
       `${width}px`;
 
 
+    const maximumX =
+
+      Math.max(
+
+        0,
+
+        boardRect.width -
+        width
+
+      );
+
+
     const x =
 
       Math.random() *
-
-      (
-        boardRect.width -
-        width
-      );
+      maximumX;
 
 
     element.style.left =
@@ -1538,7 +1864,7 @@
 
 
   // ====================================================
-  // CRIAR MOEDA
+  // CRIA MOEDA
   // ====================================================
 
   function spawnCoin() {
@@ -1565,17 +1891,25 @@
       36;
 
 
+    const availableWidth =
+
+      Math.max(
+
+        0,
+
+        boardRect.width -
+        size -
+        20
+
+      );
+
+
     const x =
 
       10 +
 
       Math.random() *
-
-      (
-        boardRect.width -
-        size -
-        20
-      );
+      availableWidth;
 
 
     element.style.left =
@@ -1616,34 +1950,38 @@
   // ====================================================
 
   function intersects(
-    a,
-    b
+    first,
+    second
   ) {
 
     return !(
 
-      a.right <
-      b.left
+      first.right <
+      second.left
 
       ||
 
-      a.left >
-      b.right
+      first.left >
+      second.right
 
       ||
 
-      a.bottom <
-      b.top
+      first.bottom <
+      second.top
 
       ||
 
-      a.top >
-      b.bottom
+      first.top >
+      second.bottom
 
     );
 
   }
 
+
+  // ====================================================
+  // HITBOX DO CINNA
+  // ====================================================
 
   function getPlayerHitbox() {
 
@@ -1652,10 +1990,10 @@
 
 
     /*
-      Hitbox menor que a imagem.
+      A imagem tem orelhas grandes.
 
-      As orelhas não contam totalmente,
-      para não ficar injusto.
+      Reduzimos a hitbox para o jogo
+      não ficar injusto demais.
     */
 
     return {
@@ -1689,6 +2027,11 @@
     delta
   ) {
 
+    /*
+      Velocidade vertical cresce
+      conforme a dificuldade.
+    */
+
     const speed =
 
       105 +
@@ -1703,18 +2046,20 @@
 
     for (
 
-      let i =
+      let index =
         objects.length -
         1;
 
-      i >= 0;
+      index >= 0;
 
-      i--
+      index--
 
     ) {
 
       const object =
-        objects[i];
+        objects[
+          index
+        ];
 
 
       object.y -=
@@ -1727,21 +2072,25 @@
         `${object.y}px`;
 
 
-      const rect =
+      const objectRect =
         object.element
           .getBoundingClientRect();
 
 
+      // ==================================================
+      // COLISÃO
+      // ==================================================
+
       if (
         intersects(
           playerHitbox,
-          rect
+          objectRect
         )
       ) {
 
-        // =============================================
+        // ================================================
         // NUVEM
-        // =============================================
+        // ================================================
 
         if (
           object.type ===
@@ -1756,9 +2105,9 @@
         }
 
 
-        // =============================================
+        // ================================================
         // MOEDA
-        // =============================================
+        // ================================================
 
         if (
           object.type ===
@@ -1772,13 +2121,20 @@
             runCoins;
 
 
+          /*
+            Adiciona diretamente ao
+            saldo global de Cinna Coins.
+          */
+
           if (
+
             window.CinnaCoins
 
             &&
 
             typeof window.CinnaCoins.add ===
               "function"
+
           ) {
 
             window.CinnaCoins.add(
@@ -1792,7 +2148,7 @@
 
 
           objects.splice(
-            i,
+            index,
             1
           );
 
@@ -1804,21 +2160,23 @@
       }
 
 
-      // ===============================================
-      // SAIU PELO TOPO
-      // ===============================================
+      // ==================================================
+      // OBJETO SAIU DA TELA
+      // ==================================================
 
       if (
+
         object.y +
         object.height <
-        -20
+        -30
+
       ) {
 
         object.element.remove();
 
 
         objects.splice(
-          i,
+          index,
           1
         );
 
@@ -1834,7 +2192,7 @@
   // ====================================================
 
   function gameLoop(
-    time
+    currentTime
   ) {
 
     if (
@@ -1851,19 +2209,26 @@
     ) {
 
       lastTime =
-        time;
+        currentTime;
 
     }
 
+
+    /*
+      Limite de delta evita um salto
+      enorme se o navegador travar.
+    */
 
     const delta =
       Math.min(
 
         (
-          time -
+          currentTime -
           lastTime
         )
+
         /
+
         1000,
 
         0.05
@@ -1872,8 +2237,12 @@
 
 
     lastTime =
-      time;
+      currentTime;
 
+
+    // ==================================================
+    // PONTUAÇÃO
+    // ==================================================
 
     survivalTime +=
       delta;
@@ -1887,6 +2256,11 @@
 
       );
 
+
+    /*
+      Dificuldade sobe a cada
+      10 segundos.
+    */
 
     difficulty =
 
@@ -1905,7 +2279,7 @@
 
 
     // ==================================================
-    // GERADORES
+    // TEMPORIZADORES
     // ==================================================
 
     cloudTimer +=
@@ -1915,6 +2289,13 @@
     coinTimer +=
       delta;
 
+
+    /*
+      Conforme a dificuldade aumenta,
+      nuvens aparecem mais rápido.
+
+      Nunca abaixo de 0.52 segundos.
+    */
 
     const cloudInterval =
       Math.max(
@@ -1929,6 +2310,10 @@
       );
 
 
+    // ==================================================
+    // NUVENS
+    // ==================================================
+
     if (
       cloudTimer >=
       cloudInterval
@@ -1942,6 +2327,10 @@
 
     }
 
+
+    // ==================================================
+    // MOEDAS
+    // ==================================================
 
     if (
       coinTimer >=
@@ -1958,7 +2347,7 @@
 
 
     // ==================================================
-    // MOVIMENTO
+    // MOVIMENTO DO CINNA
     // ==================================================
 
     updatePlayerPosition(
@@ -2000,8 +2389,8 @@
   async function startGame() {
 
     /*
-      O pedido de permissão precisa acontecer
-      diretamente depois do toque no botão.
+      No iPhone a permissão precisa
+      vir diretamente de um clique.
     */
 
     await enableOrientation();
@@ -2026,12 +2415,19 @@
       1;
 
 
+    /*
+      Pequeno atraso inicial nas nuvens.
+
+      Dá tempo de calibrar o sensor
+      sem já nascer uma nuvem na cara.
+    */
+
     cloudTimer =
-      0;
+      -0.35;
 
 
     coinTimer =
-      0;
+      -0.15;
 
 
     lastTime =
@@ -2054,12 +2450,17 @@
       true;
 
 
-    const rect =
+    dragging =
+      false;
+
+
+    const boardRect =
       board.getBoundingClientRect();
 
 
     playerX =
-      rect.width /
+
+      boardRect.width /
       2;
 
 
@@ -2072,10 +2473,8 @@
 
 
     /*
-      MUITO IMPORTANTE:
-
-      Toda nova partida recalibra
-      a posição neutra do celular.
+      Toda partida começa com nova
+      calibração do celular.
     */
 
     resetSensorCalibration();
@@ -2094,7 +2493,7 @@
 
 
   // ====================================================
-  // PARAR
+  // PARAR PARTIDA
   // ====================================================
 
   function stopGame() {
@@ -2103,12 +2502,16 @@
       false;
 
 
-    tiltVelocity =
+    dragging =
+      false;
+
+
+    tiltInput =
       0;
 
 
-    dragging =
-      false;
+    playerVelocityX =
+      0;
 
 
     if (
@@ -2129,7 +2532,7 @@
 
 
   // ====================================================
-  // FIM DE JOGO
+  // GAME OVER
   // ====================================================
 
   function finishGame() {
@@ -2252,7 +2655,7 @@
 
 
   // ====================================================
-  // SAIR DO CÔMODO
+  // SAIR DO CÔMODO JOGOS
   // ====================================================
 
   document
@@ -2285,6 +2688,72 @@
       }
 
     );
+
+
+  // ====================================================
+  // APP / ABA SAIU DO FOCO
+  // ====================================================
+
+  document.addEventListener(
+
+    "visibilitychange",
+
+    () => {
+
+      /*
+        Evita a física dar um salto estranho
+        quando o Safari fica em segundo plano.
+      */
+
+      if (
+        document.hidden
+
+        &&
+
+        running
+      ) {
+
+        lastTime =
+          0;
+
+
+        playerVelocityX =
+          0;
+
+      }
+
+    }
+
+  );
+
+
+  // ====================================================
+  // API
+  // ====================================================
+
+  window.CinnaFall = {
+
+    open() {
+
+      openGame();
+
+    },
+
+
+    close() {
+
+      closeGame();
+
+    },
+
+
+    recalibrate() {
+
+      resetSensorCalibration();
+
+    }
+
+  };
 
 
 })();

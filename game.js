@@ -2,7 +2,10 @@
 // ᑕIᑎᑎᗩᗰOᑎᖇOᒪᒪ ☁️
 // ======================================================
 
-// -------------------- ELEMENTOS --------------------
+
+// ======================================================
+// ELEMENTOS
+// ======================================================
 
 const character = document.querySelector("#cinna");
 const message = document.querySelector("#message");
@@ -11,140 +14,82 @@ const room = document.querySelector(".room");
 const effectLayer = document.querySelector("#effect-layer");
 const dirtOverlay = document.querySelector("#dirt-overlay");
 
-const menuButtons =
-  document.querySelectorAll(".menu-button");
+const menuButtons = document.querySelectorAll(".menu-button");
 
-const happinessBar =
-  document.querySelector("#happiness-bar");
+const happinessBar = document.querySelector("#happiness-bar");
+const hungerBar = document.querySelector("#hunger-bar");
+const energyBar = document.querySelector("#energy-bar");
+const hygieneBar = document.querySelector("#hygiene-bar");
 
-const hungerBar =
-  document.querySelector("#hunger-bar");
+const foodTray = document.querySelector("#food-tray");
+const foodItems = document.querySelectorAll(".food-item");
 
-const energyBar =
-  document.querySelector("#energy-bar");
+const bathTray = document.querySelector("#bath-tray");
+const bathItems = document.querySelectorAll(".bath-item");
 
-const hygieneBar =
-  document.querySelector("#hygiene-bar");
-
-const foodTray =
-  document.querySelector("#food-tray");
-
-const foodItems =
-  document.querySelectorAll(".food-item");
-
-const bathTray =
-  document.querySelector("#bath-tray");
-
-const bathItems =
-  document.querySelectorAll(".bath-item");
-
-const sleepTray =
-  document.querySelector("#sleep-tray");
-
-const sleepButton =
-  document.querySelector("#sleep-button");
+const sleepTray = document.querySelector("#sleep-tray");
+const sleepButton = document.querySelector("#sleep-button");
 
 
 // ======================================================
-// CENÁRIOS
+// CENÁRIOS — DIA / NOITE
 // ======================================================
 
 const sceneBackgrounds = {
-
   home: {
-    day:
-      "assets/scenarios/inicio-dia.PNG",
-
-    night:
-      "assets/scenarios/inicio-noite.PNG"
+    day: "assets/scenarios/inicio-dia.PNG",
+    night: "assets/scenarios/inicio-noite.PNG"
   },
 
   kitchen: {
-    day:
-      "assets/scenarios/cozinha-dia.PNG",
-
-    night:
-      "assets/scenarios/cozinha-noite.PNG"
+    day: "assets/scenarios/cozinha-dia.PNG",
+    night: "assets/scenarios/cozinha-noite.PNG"
   },
 
   bathroom: {
-    day:
-      "assets/scenarios/banheiro.PNG",
-
-    night:
-      "assets/scenarios/banheiro.PNG"
+    day: "assets/scenarios/banheiro.PNG",
+    night: "assets/scenarios/banheiro.PNG"
   },
 
   bedroom: {
-    day:
-      "assets/scenarios/quarto-dia.PNG",
-
-    night:
-      "assets/scenarios/quarto-noite.PNG"
+    day: "assets/scenarios/quarto-dia.PNG",
+    night: "assets/scenarios/quarto-noite.PNG"
   },
 
   games: {
-    day:
-      "assets/scenarios/jogos-dia.PNG",
-
-    night:
-      "assets/scenarios/jogos-noite.PNG"
+    day: "assets/scenarios/jogos-dia.PNG",
+    night: "assets/scenarios/jogos-noite.PNG"
   }
-
 };
 
-
 function getTimePeriod() {
+  const hour = new Date().getHours();
 
-  const hour =
-    new Date().getHours();
+  // 06:00 até 17:59 = dia
+  if (hour >= 6 && hour < 18) {
+    return "day";
+  }
 
-  return (
-    hour >= 6 &&
-    hour < 18
-  )
-    ? "day"
-    : "night";
-
+  // 18:00 até 05:59 = noite
+  return "night";
 }
 
-
 function updateRoomBackground() {
-
-  const currentRoom =
-    room.dataset.room ||
-    "home";
-
-  const period =
-    getTimePeriod();
+  const currentRoom = room.dataset.room || "home";
+  const period = getTimePeriod();
 
   const scene =
-    sceneBackgrounds[
-      currentRoom
-    ]?.[period]
-    ||
-    sceneBackgrounds[
-      currentRoom
-    ]?.day;
-
+    sceneBackgrounds[currentRoom]?.[period] ||
+    sceneBackgrounds[currentRoom]?.day;
 
   if (!scene) {
     return;
   }
 
-
-  room.style.backgroundImage =
-    `url("${scene}")`;
-
-  room.style.backgroundSize =
-    "100% 100%";
-
-  room.style.backgroundPosition =
-    "center";
-
-  room.style.backgroundRepeat =
-    "no-repeat";
-
+  room.style.backgroundImage = `url("${scene}")`;
+  room.style.backgroundSize = "100% 100%";
+  room.style.backgroundPosition = "center";
+  room.style.backgroundRepeat = "no-repeat";
 }
 
 
@@ -152,29 +97,16 @@ function updateRoomBackground() {
 // ESTADOS
 // ======================================================
 
-let isSleeping =
-  false;
+let isSleeping = false;
+let isPlayingAction = false;
 
-let isPlayingAction =
-  false;
+let sleepInterval = null;
+let sleepEffectInterval = null;
+let dirtInterval = null;
 
-let sleepInterval =
-  null;
-
-let sleepEffectInterval =
-  null;
-
-let dirtInterval =
-  null;
-
-let animationStep =
-  0;
-
-let dirtStep =
-  0;
-
-let lastMood =
-  "idle";
+let animationStep = 0;
+let dirtStep = 0;
+let lastMood = "idle";
 
 
 // ======================================================
@@ -182,114 +114,71 @@ let lastMood =
 // ======================================================
 
 const idleFrames = [
-
   "assets/sprites/cinna-idle-1.PNG",
-
   "assets/sprites/cinna-idle-2.PNG",
-
   "assets/sprites/cinna-idle-3.PNG",
-
   "assets/sprites/cinna-idle-4.PNG"
-
 ];
-
 
 const sadFrames = [
-
   "assets/sprites/cinna-triste-1.PNG",
-
   "assets/sprites/cinna-triste-2.PNG",
-
   "assets/sprites/cinna-triste-3.PNG",
-
   "assets/sprites/cinna-triste-4.PNG"
-
 ];
-
 
 const sleepFrame =
   "assets/sprites/cinna-dormindo.PNG";
 
-
 const bathFrames = [
-
   "assets/sprites/cinna-banho-1.PNG",
-
   "assets/sprites/cinna-banho-2.PNG",
-
   "assets/sprites/cinna-banho-3.PNG",
-
   "assets/sprites/cinna-banho-4.PNG"
-
 ];
-
 
 const cakeFrames = [
-
   "assets/sprites/cinna-bolo-1.PNG",
-
   "assets/sprites/cinna-bolo-2.PNG",
-
   "assets/sprites/cinna-bolo-3.PNG",
-
   "assets/sprites/cinna-bolo-4.PNG"
-
 ];
-
 
 const milkFrames = [
-
   "assets/sprites/cinna-leite-1.PNG",
-
   "assets/sprites/cinna-leite-2.PNG"
-
 ];
-
 
 const appleFrames = [
-
   "assets/sprites/cinna-maca-1.PNG",
-
   "assets/sprites/cinna-maca-2.PNG",
-
   "assets/sprites/cinna-maca-3.PNG",
-
   "assets/sprites/cinna-maca-4.PNG"
-
 ];
-
 
 const strawberryFrames = [
-
   "assets/sprites/cinna-morango-1.PNG",
-
   "assets/sprites/cinna-morango-2.PNG",
-
   "assets/sprites/cinna-morango-3.PNG",
-
   "assets/sprites/cinna-morango-4.PNG"
-
 ];
-
 
 const dirtFrames = [
-
   "assets/sprites/sujeira-1.PNG",
-
   "assets/sprites/sujeira-2.PNG",
-
   "assets/sprites/sujeira-3.PNG"
-
 ];
 
+
+// ======================================================
+// EFEITOS
+// ======================================================
 
 const heartImage =
   "assets/sprites/coracao.PNG";
 
-
 const bubbleImage =
   "assets/sprites/bolha.PNG";
-
 
 const zzzImage =
   "assets/sprites/zzz.PNG";
@@ -300,42 +189,15 @@ const zzzImage =
 // ======================================================
 
 const idleSequence = [
-
-  0,
-  1,
-  2,
-  1,
-
-  0,
-  1,
-  2,
-  1,
-
-  0,
-  3,
-  0,
-  1
-
+  0, 1, 2, 1,
+  0, 1, 2, 1,
+  0, 3, 0, 1
 ];
 
-
 const sadSequence = [
-
-  0,
-  1,
-  2,
-  1,
-
-  0,
-  1,
-  2,
-  1,
-
-  0,
-  3,
-  0,
-  1
-
+  0, 1, 2, 1,
+  0, 1, 2, 1,
+  0, 3, 0, 1
 ];
 
 
@@ -343,62 +205,34 @@ const sadSequence = [
 // PRÉ-CARREGAMENTO
 // ======================================================
 
-const allAssets = [
-
+const allSprites = [
   ...idleFrames,
-
   ...sadFrames,
-
   sleepFrame,
-
   ...bathFrames,
-
   ...cakeFrames,
-
   ...milkFrames,
-
   ...appleFrames,
-
   ...strawberryFrames,
-
   ...dirtFrames,
-
   heartImage,
-
   bubbleImage,
-
-  zzzImage,
-
-  ...new Set(
-
-    Object
-      .values(
-        sceneBackgrounds
-      )
-      .flatMap(
-        scene => [
-          scene.day,
-          scene.night
-        ]
-      )
-
-  )
-
+  zzzImage
 ];
 
+const allScenes = [
+  ...new Set(
+    Object.values(sceneBackgrounds).flatMap(
+      (scene) => [scene.day, scene.night]
+    )
+  )
+];
 
-allAssets.forEach(
-
-  src => {
-
-    const image =
-      new Image();
-
-    image.src =
-      src;
-
+[...allSprites, ...allScenes].forEach(
+  (src) => {
+    const image = new Image();
+    image.src = src;
   }
-
 );
 
 
@@ -407,32 +241,19 @@ allAssets.forEach(
 // ======================================================
 
 const petMessages = [
-
   "Cinna gostou do carinho ♡",
-
   "Hehe ♡",
-
   "Cinna está feliz!",
-
   "Mais carinho!! ☁️",
-
   "♡ +3 felicidade"
-
 ];
 
-
 const idleMessages = [
-
   "Cinna está esperando você ♡",
-
   "Cinna está olhando pra você 👀",
-
   "Cinna quer brincar...",
-
   "Que tal um docinho? 🍰",
-
   "☁️ ♡ ☁️"
-
 ];
 
 
@@ -440,67 +261,32 @@ const idleMessages = [
 // UTILIDADES
 // ======================================================
 
-function randomMessage(
-  list
-) {
-
-  return list[
-
+function randomMessage(list) {
+  const index =
     Math.floor(
-      Math.random() *
-      list.length
-    )
+      Math.random() * list.length
+    );
 
-  ];
-
+  return list[index];
 }
 
-
-function randomBetween(
-  min,
-  max
-) {
-
+function randomBetween(min, max) {
   return (
     Math.random() *
-    (
-      max -
-      min
-    )
-    +
+    (max - min) +
     min
   );
-
 }
 
-
-function wait(
-  milliseconds
-) {
-
+function wait(milliseconds) {
   return new Promise(
-    resolve =>
+    (resolve) => {
       setTimeout(
         resolve,
         milliseconds
-      )
+      );
+    }
   );
-
-}
-
-
-function limitStatus(
-  value
-) {
-
-  return Math.max(
-    0,
-    Math.min(
-      100,
-      value
-    )
-  );
-
 }
 
 
@@ -512,39 +298,24 @@ function loadStatus(
   key,
   defaultValue
 ) {
+  const savedValue =
+    localStorage.getItem(key);
 
-  const saved =
-    localStorage.getItem(
-      key
-    );
-
-
-  if (
-    saved === null
-  ) {
-
+  if (savedValue === null) {
     return defaultValue;
-
   }
 
-
   const value =
-    Number(
-      saved
-    );
+    Number(savedValue);
 
+  if (Number.isNaN(value)) {
+    return defaultValue;
+  }
 
-  return Number.isNaN(
-    value
-  )
-    ? defaultValue
-    : value;
-
+  return value;
 }
 
-
 const cinnaStatus = {
-
   happiness:
     loadStatus(
       "cinnaHappiness",
@@ -568,8 +339,22 @@ const cinnaStatus = {
       "cinnaHygiene",
       90
     )
-
 };
+
+
+// ======================================================
+// LIMITAR STATUS ENTRE 0 E 100
+// ======================================================
+
+function limitStatus(value) {
+  return Math.max(
+    0,
+    Math.min(
+      100,
+      value
+    )
+  );
+}
 
 
 // ======================================================
@@ -577,30 +362,25 @@ const cinnaStatus = {
 // ======================================================
 
 function saveStatus() {
-
   localStorage.setItem(
     "cinnaHappiness",
     cinnaStatus.happiness
   );
-
 
   localStorage.setItem(
     "cinnaHunger",
     cinnaStatus.hunger
   );
 
-
   localStorage.setItem(
     "cinnaEnergy",
     cinnaStatus.energy
   );
 
-
   localStorage.setItem(
     "cinnaHygiene",
     cinnaStatus.hygiene
   );
-
 }
 
 
@@ -609,25 +389,19 @@ function saveStatus() {
 // ======================================================
 
 function updateStatusBars() {
-
   happinessBar.style.width =
     `${cinnaStatus.happiness}%`;
-
 
   hungerBar.style.width =
     `${cinnaStatus.hunger}%`;
 
-
   energyBar.style.width =
     `${cinnaStatus.energy}%`;
-
 
   hygieneBar.style.width =
     `${cinnaStatus.hygiene}%`;
 
-
   updateDirtState();
-
 }
 
 
@@ -636,38 +410,20 @@ function updateStatusBars() {
 // ======================================================
 
 function hasLowNeeds() {
-
   return (
-
-    cinnaStatus.happiness <
-    45
-
-    ||
-
-    cinnaStatus.hunger <
-    45
-
-    ||
-
-    cinnaStatus.energy <
-    45
-
-    ||
-
-    cinnaStatus.hygiene <
-    45
-
+    cinnaStatus.happiness < 45 ||
+    cinnaStatus.hunger < 45 ||
+    cinnaStatus.energy < 45 ||
+    cinnaStatus.hygiene < 45
   );
-
 }
 
-
 function getCurrentMood() {
+  if (hasLowNeeds()) {
+    return "sad";
+  }
 
-  return hasLowNeeds()
-    ? "sad"
-    : "idle";
-
+  return "idle";
 }
 
 
@@ -678,70 +434,47 @@ function getCurrentMood() {
 function updateCharacterSprite(
   resetStep = false
 ) {
-
-  if (
-    isSleeping
-  ) {
-
+  if (isSleeping) {
     character.src =
       sleepFrame;
 
     return;
-
   }
 
-
-  if (
-    isPlayingAction
-  ) {
-
+  if (isPlayingAction) {
     return;
-
   }
-
 
   const mood =
     getCurrentMood();
 
-
   if (
-    resetStep
-    ||
-    mood !==
-    lastMood
+    resetStep ||
+    mood !== lastMood
   ) {
-
-    animationStep =
-      0;
-
-    lastMood =
-      mood;
-
+    animationStep = 0;
+    lastMood = mood;
   }
 
-
   const frames =
-
     mood === "sad"
       ? sadFrames
       : idleFrames;
 
-
   const sequence =
-
     mood === "sad"
       ? sadSequence
       : idleSequence;
 
-
-  character.src =
-
-    frames[
-      sequence[
-        animationStep
-      ]
+  const frameIndex =
+    sequence[
+      animationStep
     ];
 
+  character.src =
+    frames[
+      frameIndex
+    ];
 }
 
 
@@ -750,69 +483,38 @@ function updateCharacterSprite(
 // ======================================================
 
 setInterval(
-
   () => {
-
     if (
-      isSleeping
-      ||
+      isSleeping ||
       isPlayingAction
     ) {
-
       return;
-
     }
-
 
     const mood =
       getCurrentMood();
 
-
     if (
-      mood !==
-      lastMood
+      mood !== lastMood
     ) {
+      animationStep = 0;
+      lastMood = mood;
+    } else {
+      const sequenceLength =
+        mood === "sad"
+          ? sadSequence.length
+          : idleSequence.length;
 
       animationStep =
-        0;
-
-      lastMood =
-        mood;
-
-    }
-
-    else {
-
-      const sequence =
-
-        mood ===
-        "sad"
-
-          ? sadSequence
-
-          : idleSequence;
-
-
-      animationStep =
-
         (
-          animationStep +
-          1
-        )
-
-        %
-
-        sequence.length;
-
+          animationStep + 1
+        ) %
+        sequenceLength;
     }
-
 
     updateCharacterSprite();
-
   },
-
   350
-
 );
 
 
@@ -821,646 +523,435 @@ setInterval(
 // ======================================================
 
 function startDirtAnimation() {
-
-  if (
-    dirtInterval
-  ) {
-
+  if (dirtInterval) {
     return;
-
   }
-
 
   dirtOverlay.hidden =
     false;
 
-
-  dirtStep =
-    0;
-
+  dirtStep = 0;
 
   dirtOverlay.src =
     dirtFrames[
       dirtStep
     ];
 
-
   dirtInterval =
-
     setInterval(
-
       () => {
-
         dirtStep =
-
           (
-            dirtStep +
-            1
-          )
-
-          %
-
+            dirtStep + 1
+          ) %
           dirtFrames.length;
 
-
         dirtOverlay.src =
-
           dirtFrames[
             dirtStep
           ];
-
       },
-
       320
-
     );
-
 }
 
-
 function stopDirtAnimation() {
-
-  if (
-    dirtInterval
-  ) {
-
+  if (dirtInterval) {
     clearInterval(
       dirtInterval
     );
 
-    dirtInterval =
-      null;
-
+    dirtInterval = null;
   }
 
-
-  dirtStep =
-    0;
-
+  dirtStep = 0;
 
   dirtOverlay.src =
-    dirtFrames[
-      0
-    ];
-
+    dirtFrames[0];
 
   dirtOverlay.hidden =
     true;
-
 }
-
 
 function updateDirtState() {
-
   if (
-    cinnaStatus.hygiene <
-    40
+    cinnaStatus.hygiene < 40
   ) {
-
     startDirtAnimation();
-
-  }
-
-  else {
-
+  } else {
     stopDirtAnimation();
-
   }
-
 }
 
 
 // ======================================================
-// EFEITOS
+// EFEITOS VISUAIS
 // ======================================================
 
-function createEffect(
-  type
-) {
-
-  if (
-    !effectLayer
-  ) {
-
+function createEffect(type) {
+  if (!effectLayer) {
     return;
-
   }
 
-
   const effect =
-
     document.createElement(
       "img"
     );
-
 
   effect.classList.add(
     "effect"
   );
 
-
-  if (
-    type ===
-    "heart"
-  ) {
-
+  // CORAÇÃO
+  if (type === "heart") {
     effect.src =
       heartImage;
-
 
     effect.classList.add(
       "effect-heart"
     );
 
-
     effect.style.setProperty(
       "--effect-left",
-      `${randomBetween(
-        27,
-        73
-      )}%`
+      `${randomBetween(27, 73)}%`
     );
-
 
     effect.style.setProperty(
       "--effect-bottom",
-      `${randomBetween(
-        18,
-        42
-      )}%`
+      `${randomBetween(18, 42)}%`
     );
-
 
     effect.style.setProperty(
       "--effect-size",
-      `${randomBetween(
-        26,
-        45
-      )}px`
+      `${randomBetween(26, 45)}px`
     );
-
 
     effect.style.setProperty(
       "--effect-drift",
-      `${randomBetween(
-        -50,
-        50
-      )}px`
+      `${randomBetween(-50, 50)}px`
     );
-
 
     effect.style.setProperty(
       "--effect-duration",
-      `${randomBetween(
-        1.05,
-        1.55
-      )}s`
+      `${randomBetween(1.05, 1.55)}s`
     );
-
   }
 
-
-  if (
-    type ===
-    "bubble"
-  ) {
-
+  // BOLHA
+  if (type === "bubble") {
     effect.src =
       bubbleImage;
-
 
     effect.classList.add(
       "effect-bubble"
     );
 
-
     effect.style.setProperty(
       "--effect-left",
-      `${randomBetween(
-        13,
-        87
-      )}%`
+      `${randomBetween(13, 87)}%`
     );
-
 
     effect.style.setProperty(
       "--effect-bottom",
-      `${randomBetween(
-        3,
-        35
-      )}%`
+      `${randomBetween(3, 35)}%`
     );
-
 
     effect.style.setProperty(
       "--effect-size",
-      `${randomBetween(
-        17,
-        45
-      )}px`
+      `${randomBetween(17, 45)}px`
     );
-
 
     effect.style.setProperty(
       "--effect-drift",
-      `${randomBetween(
-        -55,
-        55
-      )}px`
+      `${randomBetween(-55, 55)}px`
     );
-
 
     effect.style.setProperty(
       "--effect-duration",
-      `${randomBetween(
-        1.3,
-        2
-      )}s`
+      `${randomBetween(1.3, 2)}s`
     );
-
   }
 
-
-  if (
-    type ===
-    "zzz"
-  ) {
-
+  // ZZZ
+  if (type === "zzz") {
     effect.src =
       zzzImage;
-
 
     effect.classList.add(
       "effect-zzz"
     );
 
-
     effect.style.setProperty(
       "--effect-left",
-      `${randomBetween(
-        65,
-        77
-      )}%`
+      `${randomBetween(65, 77)}%`
     );
-
 
     effect.style.setProperty(
       "--effect-bottom",
-      `${randomBetween(
-        54,
-        67
-      )}%`
+      `${randomBetween(54, 67)}%`
     );
-
 
     effect.style.setProperty(
       "--effect-size",
-      `${randomBetween(
-        35,
-        55
-      )}px`
+      `${randomBetween(35, 55)}px`
     );
-
 
     effect.style.setProperty(
       "--effect-duration",
-      `${randomBetween(
-        1.7,
-        2.2
-      )}s`
+      `${randomBetween(1.7, 2.2)}s`
     );
-
   }
-
 
   effectLayer.appendChild(
     effect
   );
 
-
   effect.addEventListener(
-
     "animationend",
-
     () => {
-
       effect.remove();
-
     }
-
   );
-
 }
 
 
-function spawnHeart() {
+// ======================================================
+// CORAÇÃO
+// ======================================================
 
+function spawnHeart() {
   createEffect(
     "heart"
   );
-
 }
 
+
+// ======================================================
+// BOLHAS
+// ======================================================
 
 function spawnBubbles(
   amount = 8
 ) {
-
   for (
     let i = 0;
     i < amount;
     i++
   ) {
-
     setTimeout(
-
       () => {
-
         createEffect(
           "bubble"
         );
-
       },
-
-      i *
-      100
-
+      i * 100
     );
-
   }
-
 }
 
 
-function spawnZzz() {
+// ======================================================
+// ZZZ
+// ======================================================
 
+function spawnZzz() {
   createEffect(
     "zzz"
   );
-
 }
 
-
 function startSleepEffects() {
-
   stopSleepEffects();
-
 
   spawnZzz();
 
-
   sleepEffectInterval =
-
     setInterval(
-
       () => {
-
-        if (
-          isSleeping
-        ) {
-
+        if (isSleeping) {
           spawnZzz();
-
         }
-
       },
-
       1100
-
     );
-
 }
 
-
 function stopSleepEffects() {
-
-  if (
-    sleepEffectInterval
-  ) {
-
+  if (sleepEffectInterval) {
     clearInterval(
       sleepEffectInterval
     );
 
-
     sleepEffectInterval =
       null;
-
   }
-
 }
 
 
 // ======================================================
-// BLOQUEAR CONTROLES
+// BLOQUEAR CONTROLES DURANTE AÇÕES
 // ======================================================
 
-function lockControls(
-  locked
-) {
-
+function lockControls(locked) {
   foodItems.forEach(
-    button =>
+    (button) => {
       button.disabled =
-        locked
+        locked;
+    }
   );
-
 
   bathItems.forEach(
-    button =>
+    (button) => {
       button.disabled =
-        locked
+        locked;
+    }
   );
-
 
   menuButtons.forEach(
-    button =>
+    (button) => {
       button.disabled =
-        locked
+        locked;
+    }
   );
 
-
-  if (
-    sleepButton
-  ) {
-
+  if (sleepButton) {
     sleepButton.disabled =
       locked;
-
   }
-
 }
 
 
 // ======================================================
-// ANIMAÇÕES DE AÇÃO
+// ANIMAÇÃO DE UMA AÇÃO
 // ======================================================
 
 async function playActionAnimation(
   frames,
   afterAction
 ) {
-
   if (
-    isPlayingAction
-    ||
+    isPlayingAction ||
     isSleeping
   ) {
-
     return;
-
   }
 
-
-  isPlayingAction =
-    true;
-
+  isPlayingAction = true;
 
   lockControls(
     true
   );
-
 
   character.classList.add(
     "action-playing"
   );
 
+  let sequence;
 
-  const sequence =
-
-    frames.length ===
-    2
-
-      ? [
-          0,
-          1,
-          0,
-          1
-        ]
-
-      : frames.map(
-          (
-            _,
-            index
-          ) =>
-            index
-        );
-
+  // Leite possui 2 sprites:
+  // 1 → 2 → 1 → 2
+  if (
+    frames.length === 2
+  ) {
+    sequence = [
+      0,
+      1,
+      0,
+      1
+    ];
+  } else {
+    sequence =
+      frames.map(
+        (_, index) =>
+          index
+      );
+  }
 
   for (
     const index
     of sequence
   ) {
-
     character.src =
-      frames[
-        index
-      ];
-
+      frames[index];
 
     await wait(
       250
     );
-
   }
-
 
   await wait(
     100
   );
 
-
   if (
     typeof afterAction ===
     "function"
   ) {
-
     afterAction();
-
   }
-
 
   isPlayingAction =
     false;
-
 
   lockControls(
     false
   );
 
-
   character.classList.remove(
     "action-playing"
   );
 
-
   updateCharacterSprite(
     true
   );
-
 }
 
 
 // ======================================================
-// QUEDA DOS STATUS
+// DIMINUIÇÃO DOS STATUS
 // ======================================================
+
+const NEEDS_DECAY_AMOUNT = 2;
+
+const NEEDS_DECAY_INTERVAL =
+  5 * 60 * 1000;
 
 function decreaseStatus() {
-
   cinnaStatus.happiness =
-
     limitStatus(
       cinnaStatus.happiness -
-      1
+      NEEDS_DECAY_AMOUNT
     );
-
 
   cinnaStatus.hunger =
-
     limitStatus(
       cinnaStatus.hunger -
-      2
+      NEEDS_DECAY_AMOUNT
     );
-
 
   cinnaStatus.hygiene =
-
     limitStatus(
       cinnaStatus.hygiene -
-      2
+      NEEDS_DECAY_AMOUNT
     );
 
-
-  if (
-    !isSleeping
-  ) {
-
+  if (!isSleeping) {
     cinnaStatus.energy =
-
       limitStatus(
         cinnaStatus.energy -
-        1
+        NEEDS_DECAY_AMOUNT
       );
-
   }
 
-
   saveStatus();
-
-
   updateStatusBars();
-
-
   updateCharacterSprite();
-
 }
 
-
-// Continua rápido enquanto estamos testando.
-
+// Necessidades caem 2% a cada 5 minutos.
 setInterval(
   decreaseStatus,
-  10000
+  NEEDS_DECAY_INTERVAL
 );
 
 
@@ -1469,79 +960,49 @@ setInterval(
 // ======================================================
 
 let pets =
-
   Number(
     localStorage.getItem(
       "cinnaPets"
     )
-  )
-
-  ||
-
-  0;
-
+  ) || 0;
 
 function petCinna() {
-
-  if (
-    isSleeping
-  ) {
-
+  if (isSleeping) {
     message.textContent =
       "Shhh... Cinna está dormindo 😴";
 
-
     return;
-
   }
 
-
-  if (
-    isPlayingAction
-  ) {
-
+  if (isPlayingAction) {
     return;
-
   }
-
 
   pets++;
-
 
   localStorage.setItem(
     "cinnaPets",
     pets
   );
 
-
   cinnaStatus.happiness =
-
     limitStatus(
       cinnaStatus.happiness +
       3
     );
 
-
   saveStatus();
-
-
   updateStatusBars();
-
 
   spawnHeart();
 
-
   message.textContent =
-
     randomMessage(
       petMessages
     );
 
-
   character.animate(
-
     [
-
       {
         transform:
           "scale(1)"
@@ -1556,26 +1017,15 @@ function petCinna() {
         transform:
           "scale(1)"
       }
-
     ],
-
     {
-
-      duration:
-        260,
-
-      easing:
-        "ease-out"
-
+      duration: 260,
+      easing: "ease-out"
     }
-
   );
 
-
   updateCharacterSprite();
-
 }
-
 
 character.addEventListener(
   "click",
@@ -1584,56 +1034,37 @@ character.addEventListener(
 
 
 // ======================================================
-// BOTÃO DE SONO
+// BOTÃO DORMIR / ACORDAR
 // ======================================================
 
 function updateSleepButton() {
-
-  if (
-    !sleepButton
-  ) {
-
+  if (!sleepButton) {
     return;
-
   }
-
 
   const icon =
     sleepButton.querySelector(
       "span"
     );
 
-
   const label =
     sleepButton.querySelector(
       "small"
     );
 
-
-  if (
-    isSleeping
-  ) {
-
+  if (isSleeping) {
     icon.textContent =
       "☀️";
 
-
     label.textContent =
       "Acordar";
-
-  }
-
-  else {
-
+  } else {
     icon.textContent =
       "💡";
 
-
     label.textContent =
       "Dormir";
-
   }
-
 }
 
 
@@ -1642,95 +1073,63 @@ function updateSleepButton() {
 // ======================================================
 
 function startSleeping() {
-
-  if (
-    isPlayingAction
-  ) {
-
+  if (isPlayingAction) {
     return;
-
   }
-
 
   if (
     cinnaStatus.energy >=
     100
   ) {
-
     message.textContent =
       "Cinna já está cheio de energia! ⚡";
 
-
     return;
-
   }
 
-
-  isSleeping =
-    true;
-
+  isSleeping = true;
 
   character.src =
     sleepFrame;
-
 
   room.classList.add(
     "sleeping"
   );
 
-
   updateSleepButton();
-
 
   message.textContent =
     "Boa noite, Cinna... 😴💤";
 
-
   startSleepEffects();
-
 
   clearInterval(
     sleepInterval
   );
 
-
   sleepInterval =
-
     setInterval(
-
       () => {
-
         cinnaStatus.energy =
-
           limitStatus(
             cinnaStatus.energy +
             5
           );
 
-
         saveStatus();
-
-
         updateStatusBars();
-
 
         if (
           cinnaStatus.energy >=
           100
         ) {
-
           stopSleeping(
             true
           );
-
         }
-
       },
-
       5000
-
     );
-
 }
 
 
@@ -1741,353 +1140,277 @@ function startSleeping() {
 function stopSleeping(
   fullyRested = false
 ) {
+  isSleeping = false;
 
-  isSleeping =
-    false;
-
-
-  if (
+  clearInterval(
     sleepInterval
-  ) {
+  );
 
-    clearInterval(
-      sleepInterval
-    );
-
-
-    sleepInterval =
-      null;
-
-  }
-
+  sleepInterval = null;
 
   stopSleepEffects();
-
 
   room.classList.remove(
     "sleeping"
   );
 
-
   updateSleepButton();
-
 
   updateCharacterSprite(
     true
   );
 
+  if (fullyRested) {
+    message.textContent =
+      "Cinna acordou descansado! ☀️⚡";
+  } else {
+    message.textContent =
+      "Bom dia, Cinna! ☀️";
+  }
+}
 
-  message.textContent =
+if (sleepButton) {
+  sleepButton.addEventListener(
+    "click",
+    () => {
+      if (isPlayingAction) {
+        return;
+      }
 
-    fullyRested
-
-      ? "Cinna acordou descansado! ☀️⚡"
-
-      : "Bom dia, Cinna! ☀️";
-
+      if (isSleeping) {
+        stopSleeping();
+      } else {
+        startSleeping();
+      }
+    }
+  );
 }
 
 
-sleepButton.addEventListener(
+// ======================================================
+// CÔMODO INICIAL
+// ======================================================
 
-  "click",
-
-  () => {
-
-    if (
-      isPlayingAction
-    ) {
-
-      return;
-
-    }
-
-
-    if (
-      isSleeping
-    ) {
-
-      stopSleeping();
-
-    }
-
-    else {
-
-      startSleeping();
-
-    }
-
-  }
-
-);
+room.dataset.room =
+  room.dataset.room ||
+  "home";
 
 
 // ======================================================
 // TROCA DE CÔMODO
 // ======================================================
 
-function setRoom(
-  selectedRoom
-) {
-
-  if (
-    isPlayingAction
-  ) {
-
-    return;
-
-  }
-
-
-  if (
-    isSleeping
-    &&
-    selectedRoom !==
-    "bedroom"
-  ) {
-
-    stopSleeping();
-
-  }
-
-
-  menuButtons.forEach(
-
-    button => {
-
-      button.classList.toggle(
-
-        "active",
-
-        button.dataset.room ===
-        selectedRoom
-
-      );
-
-    }
-
-  );
-
-
-  room.dataset.room =
-    selectedRoom;
-
-
-  // TROCA O CENÁRIO
-  updateRoomBackground();
-
-
-  // BANDEJAS
-
-  foodTray.hidden =
-    selectedRoom !==
-    "kitchen";
-
-
-  bathTray.hidden =
-    selectedRoom !==
-    "bathroom";
-
-
-  sleepTray.hidden =
-    selectedRoom !==
-    "bedroom";
-
-
-  // MENSAGENS
-
-  const messages = {
-
-    home:
-      "Cinna está esperando você ♡",
-
-    kitchen:
-      "O que vamos comer? 🍰",
-
-    bathroom:
-      "Hora do banho! 🫧",
-
-    bedroom:
-
-      isSleeping
-
-        ? "Zzz... 😴💤"
-
-        : "Cinna está ficando com soninho... 🌙",
-
-    games:
-      "Vamos brincar? 🎮"
-
-  };
-
-
-  message.textContent =
-
-    messages[
-      selectedRoom
-    ]
-
-    ||
-
-    "Cinna está aqui ♡";
-
-}
-
-
 menuButtons.forEach(
-
-  button => {
-
+  (button) => {
     button.addEventListener(
-
       "click",
+      () => {
+        if (isPlayingAction) {
+          return;
+        }
 
-      () =>
-        setRoom(
-          button.dataset.room
-        )
+        const selectedRoom =
+          button.dataset.room;
 
+        // Saiu do quarto enquanto dormia?
+        if (
+          isSleeping &&
+          selectedRoom !==
+            "bedroom"
+        ) {
+          stopSleeping();
+        }
+
+        menuButtons.forEach(
+          (btn) => {
+            btn.classList.remove(
+              "active"
+            );
+          }
+        );
+
+        button.classList.add(
+          "active"
+        );
+
+        room.dataset.room =
+          selectedRoom;
+
+        // Atualiza o cenário imediatamente
+        // ao trocar de cômodo.
+        updateRoomBackground();
+
+        // BANDEJAS
+        foodTray.hidden =
+          selectedRoom !==
+          "kitchen";
+
+        bathTray.hidden =
+          selectedRoom !==
+          "bathroom";
+
+        sleepTray.hidden =
+          selectedRoom !==
+          "bedroom";
+
+        // MENSAGENS
+        if (
+          selectedRoom ===
+          "home"
+        ) {
+          message.textContent =
+            "Cinna está esperando você ♡";
+        }
+
+        if (
+          selectedRoom ===
+          "kitchen"
+        ) {
+          message.textContent =
+            "O que vamos comer? 🍰";
+        }
+
+        if (
+          selectedRoom ===
+          "bathroom"
+        ) {
+          message.textContent =
+            "Hora do banho! 🫧";
+        }
+
+        if (
+          selectedRoom ===
+          "bedroom"
+        ) {
+          if (isSleeping) {
+            message.textContent =
+              "Zzz... 😴💤";
+          } else {
+            message.textContent =
+              "Cinna está ficando com soninho... 🌙";
+          }
+        }
+
+        if (
+          selectedRoom ===
+          "games"
+        ) {
+          message.textContent =
+            "Vamos brincar? 🎮";
+        }
+      }
     );
+  }
+);
 
+
+// ======================================================
+// ESCOLHER SPRITES DA COMIDA
+// ======================================================
+
+function getFoodFrames(
+  foodName
+) {
+  if (
+    foodName ===
+    "Morango"
+  ) {
+    return strawberryFrames;
   }
 
-);
+  if (
+    foodName ===
+    "Maçã"
+  ) {
+    return appleFrames;
+  }
+
+  if (
+    foodName ===
+    "Leite"
+  ) {
+    return milkFrames;
+  }
+
+  if (
+    foodName ===
+    "Bolo"
+  ) {
+    return cakeFrames;
+  }
+
+  return idleFrames;
+}
 
 
 // ======================================================
 // COMIDA
 // ======================================================
 
-function getFoodFrames(
-  foodName
-) {
-
-  const foods = {
-
-    Morango:
-      strawberryFrames,
-
-    "Maçã":
-      appleFrames,
-
-    Leite:
-      milkFrames,
-
-    Bolo:
-      cakeFrames
-
-  };
-
-
-  return (
-    foods[
-      foodName
-    ]
-
-    ||
-
-    idleFrames
-  );
-
-}
-
-
 foodItems.forEach(
-
-  food => {
-
+  (food) => {
     food.addEventListener(
-
       "click",
-
       async () => {
-
         if (
-          isPlayingAction
-          ||
+          isPlayingAction ||
           isSleeping
         ) {
-
           return;
-
         }
-
 
         const foodName =
           food.dataset.food;
-
 
         const foodValue =
           Number(
             food.dataset.value
           );
 
-
         if (
           cinnaStatus.hunger >=
           100
         ) {
-
           message.textContent =
             "Cinna já está de barriguinha cheia ♡";
 
-
           return;
-
         }
 
-
-        message.textContent =
-
-          `Cinna está comendo ${foodName.toLowerCase()}... ♡`;
-
-
-        await playActionAnimation(
-
+        const frames =
           getFoodFrames(
             foodName
-          ),
+          );
 
+        message.textContent =
+          `Cinna está comendo ${foodName.toLowerCase()}... ♡`;
+
+        await playActionAnimation(
+          frames,
           () => {
-
             const before =
               cinnaStatus.hunger;
 
-
             cinnaStatus.hunger =
-
               limitStatus(
                 cinnaStatus.hunger +
                 foodValue
               );
 
-
             const gained =
-
               cinnaStatus.hunger -
               before;
 
-
             saveStatus();
-
-
             updateStatusBars();
 
-
             message.textContent =
-
               `${foodName}, que delícia! +${gained}% 🍽️`;
-
           }
-
         );
-
       }
-
     );
-
   }
-
 );
 
 
@@ -2096,103 +1419,68 @@ foodItems.forEach(
 // ======================================================
 
 bathItems.forEach(
-
-  item => {
-
+  (item) => {
     item.addEventListener(
-
       "click",
-
       async () => {
-
         if (
-          isPlayingAction
-          ||
+          isPlayingAction ||
           isSleeping
         ) {
-
           return;
-
         }
-
 
         const careName =
           item.dataset.care;
-
 
         const careValue =
           Number(
             item.dataset.value
           );
 
-
         if (
           cinnaStatus.hygiene >=
           100
         ) {
-
           message.textContent =
             "Cinna já está limpinho! 🫧";
 
-
           return;
-
         }
-
 
         message.textContent =
           "Hora de ficar limpinho! 🫧";
-
 
         spawnBubbles(
           9
         );
 
-
         await playActionAnimation(
-
           bathFrames,
-
           () => {
-
             const before =
               cinnaStatus.hygiene;
 
-
             cinnaStatus.hygiene =
-
               limitStatus(
                 cinnaStatus.hygiene +
                 careValue
               );
 
-
             const gained =
-
               cinnaStatus.hygiene -
               before;
 
-
             saveStatus();
-
-
             updateStatusBars();
 
-
             message.textContent =
-
               `${careName}! +${gained}% higiene 🫧`;
-
           }
-
         );
-
       }
-
     );
-
   }
-
 );
 
 
@@ -2201,36 +1489,23 @@ bathItems.forEach(
 // ======================================================
 
 setInterval(
-
   () => {
+    const currentRoom =
+      room.dataset.room ||
+      "home";
 
     if (
-
-      room.dataset.room ===
-      "home"
-
-      &&
-
-      !isSleeping
-
-      &&
-
+      currentRoom === "home" &&
+      !isSleeping &&
       !isPlayingAction
-
     ) {
-
       message.textContent =
-
         randomMessage(
           idleMessages
         );
-
     }
-
   },
-
   12000
-
 );
 
 
@@ -2238,30 +1513,19 @@ setInterval(
 // INICIALIZAÇÃO
 // ======================================================
 
-room.dataset.room =
-  "home";
-
-
 updateStatusBars();
-
 
 updateCharacterSprite(
   true
 );
 
-
 updateSleepButton();
 
+// Carrega o cenário correto assim que o jogo abre.
+updateRoomBackground();
 
-setRoom(
-  "home"
-);
-
-
-// Se der 18h com o jogo aberto,
-// ele troca para a versão noturna.
-// Se der 6h, volta para a versão diurna.
-
+// Se o jogo ficar aberto durante a virada
+// de dia/noite, atualiza sozinho.
 setInterval(
   updateRoomBackground,
   60000

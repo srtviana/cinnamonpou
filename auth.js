@@ -8,7 +8,7 @@ const SUPABASE_URL =
   "https://fkyamskqmxbljkwmsgyq.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_nshDmD_5kYrpoIei7Jgsow_NFuXWWom";
+  "sb_publishable_d5wGpIEKSm7v24nJ7tSkCA_5AXBzb_d";
 
 (() => {
 

@@ -2,10 +2,13 @@
 // CINNA AUTH ☁️
 // Interface visual de login e criação de conta.
 //
-// IMPORTANTE:
-// Ainda NÃO está conectado ao Supabase.
-// Esta versão serve para criar e testar a interface.
-// ======================================================
+// CONECTADO AO Supabase:
+//
+const SUPABASE_URL =
+  "https://fkyamskqmxbljkwmsgyq.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_nshDmD_5kYrpoIei7Jgsow_NFuXWWom";
 
 (() => {
 

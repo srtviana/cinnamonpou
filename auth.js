@@ -1,45 +1,49 @@
 // ======================================================
 // CINNA AUTH ☁️
-// Supabase Auth real
+// Login e cadastro com Supabase
 // ======================================================
 
 (() => {
 
   // ====================================================
-  // CONFIGURAÇÃO
+  // CONFIGURAÇÃO DO SUPABASE
   // ====================================================
 
   const SUPABASE_URL =
-    "https://fkyamskqmxbljkwmsgyq.supabase.co";
+    "https://pfklbfnmqwcivzmigjuz.supabase.co";
 
-  const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_V_AtmtFIECvfmYWzm6Yncw_KuYcuiw0";
+
+  const SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBma2xiZm5tcXdjaXZ6bWlnanV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3MzA4MTEsImV4cCI6MjEwNjMwNjgxMX0.Bjt-sSxNRmu3aCE8ECDdvZwBJlUuy3d4xKuMhtiFNEA";
 
 
   // ====================================================
-  // VERIFICA SE A BIBLIOTECA CARREGOU
+  // VERIFICA BIBLIOTECA
   // ====================================================
 
   if (
     !window.supabase ||
-    typeof window.supabase.createClient !== "function"
+    typeof window.supabase.createClient !==
+      "function"
   ) {
+
     console.error(
       "Cinna Auth: Supabase JS não foi carregado."
     );
 
     return;
+
   }
 
 
   // ====================================================
-  // CLIENTE SUPABASE
+  // CRIA CLIENTE
   // ====================================================
 
   const supabaseClient =
     window.supabase.createClient(
       SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY,
+      SUPABASE_ANON_KEY,
       {
         auth: {
           persistSession: true,
@@ -48,6 +52,11 @@
         }
       }
     );
+
+
+  console.log(
+    "☁️ Supabase conectado ao Cinna."
+  );
 
 
   // ====================================================
@@ -59,13 +68,18 @@
       "#cinna-auth"
     );
 
-  if (oldAuth) {
+
+  if (
+    oldAuth
+  ) {
+
     oldAuth.remove();
+
   }
 
 
   // ====================================================
-  // CRIA A INTERFACE
+  // CRIA INTERFACE
   // ====================================================
 
   const authOverlay =
@@ -73,8 +87,10 @@
       "div"
     );
 
+
   authOverlay.id =
     "cinna-auth";
+
 
   authOverlay.className =
     "cinna-auth-overlay";
@@ -100,6 +116,9 @@
 
     <main class="cinna-auth-container">
 
+
+      <!-- CINNA -->
+
       <div class="cinna-auth-mascot-area">
 
         <img
@@ -111,21 +130,31 @@
       </div>
 
 
+      <!-- CARD -->
+
       <section class="cinna-auth-card">
 
+
         <h1 class="cinna-auth-logo">
+
           ᑕIᑎᑎᗩᗰOᑎᖇOᒪᒪ ☁️
+
         </h1>
+
 
         <p
           id="cinna-auth-subtitle"
           class="cinna-auth-subtitle"
         >
+
           Bem-vindo de volta ♡
+
         </p>
 
 
+        <!-- ========================================= -->
         <!-- ABAS -->
+        <!-- ========================================= -->
 
         <div
           class="cinna-auth-tabs"
@@ -137,15 +166,20 @@
             class="cinna-auth-tab active"
             type="button"
           >
+
             ENTRAR
+
           </button>
+
 
           <button
             id="cinna-register-tab"
             class="cinna-auth-tab"
             type="button"
           >
+
             CRIAR CONTA
+
           </button>
 
         </div>
@@ -169,6 +203,7 @@
             >
               E-mail
             </label>
+
 
             <div class="cinna-auth-input-wrap">
 
@@ -196,6 +231,7 @@
               Senha
             </label>
 
+
             <div class="cinna-auth-input-wrap">
 
               <input
@@ -206,6 +242,7 @@
                 placeholder="••••••••"
                 required
               >
+
 
               <button
                 class="cinna-auth-password-button"
@@ -233,7 +270,9 @@
             class="cinna-auth-submit"
             type="submit"
           >
+
             ENTRAR ☁️
+
           </button>
 
 
@@ -246,7 +285,9 @@
               type="button"
               data-open-auth="register"
             >
+
               Criar conta ♡
+
             </button>
 
           </p>
@@ -255,7 +296,7 @@
 
 
         <!-- ========================================= -->
-        <!-- CADASTRO -->
+        <!-- CRIAR CONTA -->
         <!-- ========================================= -->
 
         <form
@@ -272,6 +313,7 @@
             >
               Nome de usuário
             </label>
+
 
             <div class="cinna-auth-input-wrap">
 
@@ -300,6 +342,7 @@
               E-mail
             </label>
 
+
             <div class="cinna-auth-input-wrap">
 
               <input
@@ -326,6 +369,7 @@
               Senha
             </label>
 
+
             <div class="cinna-auth-input-wrap">
 
               <input
@@ -337,6 +381,7 @@
                 placeholder="Mínimo 6 caracteres"
                 required
               >
+
 
               <button
                 class="cinna-auth-password-button"
@@ -361,6 +406,7 @@
               Confirmar senha
             </label>
 
+
             <div class="cinna-auth-input-wrap">
 
               <input
@@ -372,6 +418,7 @@
                 placeholder="Digite novamente"
                 required
               >
+
 
               <button
                 class="cinna-auth-password-button"
@@ -399,7 +446,9 @@
             class="cinna-auth-submit"
             type="submit"
           >
+
             CRIAR CONTA ♡
+
           </button>
 
 
@@ -412,7 +461,9 @@
               type="button"
               data-open-auth="login"
             >
+
               Entrar
+
             </button>
 
           </p>
@@ -421,19 +472,24 @@
 
 
         <!-- ========================================= -->
-        <!-- TESTAR SEM CONTA -->
+        <!-- MODO TESTE -->
         <!-- ========================================= -->
 
         <div class="cinna-auth-divider">
+
           POR ENQUANTO
+
         </div>
+
 
         <button
           id="cinna-auth-test-game"
           class="cinna-auth-test-button"
           type="button"
         >
+
           Continuar testando o jogo sem conta
+
         </button>
 
       </section>
@@ -457,50 +513,60 @@
       "#cinna-login-tab"
     );
 
+
   const registerTab =
     authOverlay.querySelector(
       "#cinna-register-tab"
     );
+
 
   const loginForm =
     authOverlay.querySelector(
       "#cinna-login-form"
     );
 
+
   const registerForm =
     authOverlay.querySelector(
       "#cinna-register-form"
     );
+
 
   const subtitle =
     authOverlay.querySelector(
       "#cinna-auth-subtitle"
     );
 
+
   const loginMessage =
     authOverlay.querySelector(
       "#cinna-login-message"
     );
+
 
   const registerMessage =
     authOverlay.querySelector(
       "#cinna-register-message"
     );
 
+
   const loginButton =
     authOverlay.querySelector(
       "#cinna-login-submit"
     );
+
 
   const registerButton =
     authOverlay.querySelector(
       "#cinna-register-submit"
     );
 
+
   const testButton =
     authOverlay.querySelector(
       "#cinna-auth-test-game"
     );
+
 
   const usernameInput =
     authOverlay.querySelector(
@@ -509,7 +575,7 @@
 
 
   // ====================================================
-  // ABRIR / FECHAR
+  // ABRIR / FECHAR AUTH
   // ====================================================
 
   function openAuth() {
@@ -543,12 +609,16 @@
     element.textContent =
       text;
 
+
     element.classList.remove(
       "error",
       "success"
     );
 
-    if (type) {
+
+    if (
+      type
+    ) {
 
       element.classList.add(
         type
@@ -560,22 +630,26 @@
 
 
   // ====================================================
-  // BOTÃO CARREGANDO
+  // CARREGAMENTO
   // ====================================================
 
   function setLoading(
     button,
     loading,
-    defaultText
+    normalText
   ) {
 
     button.disabled =
       loading;
 
+
     button.textContent =
+
       loading
+
         ? "CARREGANDO... ☁️"
-        : defaultText;
+
+        : normalText;
 
   }
 
@@ -590,6 +664,7 @@
 
     const code =
       error?.code || "";
+
 
     const text =
       (
@@ -623,7 +698,9 @@
 
 
     if (
-      code === "user_already_exists" ||
+      text.includes(
+        "user already registered"
+      ) ||
       text.includes(
         "already registered"
       )
@@ -635,19 +712,46 @@
 
 
     if (
-      code === "weak_password"
+      code === "weak_password" ||
+      text.includes(
+        "password should be"
+      )
     ) {
 
-      return "Escolha uma senha mais forte ♡";
+      return "Escolha uma senha um pouco mais forte ♡";
 
     }
 
 
     if (
-      code === "over_email_send_rate_limit"
+      text.includes(
+        "rate limit"
+      )
     ) {
 
-      return "Muitos e-mails enviados. Espere um pouco e tente novamente ☁️";
+      return "Muitas tentativas. Espere um pouco e tente novamente ☁️";
+
+    }
+
+
+    if (
+      text.includes(
+        "invalid api key"
+      )
+    ) {
+
+      return "A chave do Supabase não foi aceita 🥲";
+
+    }
+
+
+    if (
+      text.includes(
+        "failed to fetch"
+      )
+    ) {
+
+      return "Não consegui alcançar o Supabase. Verifique a internet ☁️";
 
     }
 
@@ -661,7 +765,7 @@
 
 
   // ====================================================
-  // TROCAR ABA
+  // TROCAR LOGIN / CADASTRO
   // ====================================================
 
   function showAuthMode(
@@ -669,13 +773,15 @@
   ) {
 
     const isLogin =
-      mode === "login";
+      mode ===
+      "login";
 
 
     loginTab.classList.toggle(
       "active",
       isLogin
     );
+
 
     registerTab.classList.toggle(
       "active",
@@ -688,6 +794,7 @@
       isLogin
     );
 
+
     registerForm.classList.toggle(
       "active",
       !isLogin
@@ -695,8 +802,11 @@
 
 
     subtitle.textContent =
+
       isLogin
+
         ? "Bem-vindo de volta ♡"
+
         : "Crie sua conta e cuide do Cinna ♡";
 
 
@@ -704,6 +814,7 @@
       loginMessage,
       ""
     );
+
 
     setMessage(
       registerMessage,
@@ -716,9 +827,11 @@
   loginTab.addEventListener(
     "click",
     () => {
+
       showAuthMode(
         "login"
       );
+
     }
   );
 
@@ -726,9 +839,11 @@
   registerTab.addEventListener(
     "click",
     () => {
+
       showAuthMode(
         "register"
       );
+
     }
   );
 
@@ -738,6 +853,7 @@
       "[data-open-auth]"
     )
     .forEach(
+
       button => {
 
         button.addEventListener(
@@ -752,6 +868,7 @@
         );
 
       }
+
     );
 
 
@@ -764,6 +881,7 @@
       "[data-password-target]"
     )
     .forEach(
+
       button => {
 
         button.addEventListener(
@@ -778,30 +896,55 @@
               );
 
 
-            if (!input) {
+            if (
+              !input
+            ) {
+
               return;
+
             }
 
 
-            const visible =
-              input.type === "text";
+            const isVisible =
+              input.type ===
+              "text";
 
 
             input.type =
-              visible
+
+              isVisible
+
                 ? "password"
+
                 : "text";
 
 
             button.textContent =
-              visible
+
+              isVisible
+
                 ? "👁️"
+
                 : "🙈";
+
+
+            button.setAttribute(
+
+              "aria-label",
+
+              isVisible
+
+                ? "Mostrar senha"
+
+                : "Ocultar senha"
+
+            );
 
           }
         );
 
       }
+
     );
 
 
@@ -813,20 +956,28 @@
     "input",
     () => {
 
+      let value =
+        usernameInput
+          .value
+          .toLowerCase();
+
+
+      value =
+        value.replace(
+          /[^a-z0-9_.]/g,
+          ""
+        );
+
+
       usernameInput.value =
-        usernameInput.value
-          .toLowerCase()
-          .replace(
-            /[^a-z0-9_.]/g,
-            ""
-          );
+        value;
 
     }
   );
 
 
   // ====================================================
-  // LOGIN REAL
+  // LOGIN
   // ====================================================
 
   loginForm.addEventListener(
@@ -889,20 +1040,25 @@
           data,
           error
         } =
-          await supabaseClient.auth
+          await supabaseClient
+            .auth
             .signInWithPassword({
               email,
               password
             });
 
 
-        if (error) {
+        if (
+          error
+        ) {
+
           throw error;
+
         }
 
 
         if (
-          !data.session
+          !data?.session
         ) {
 
           setMessage(
@@ -929,7 +1085,7 @@
             closeAuth();
 
           },
-          300
+          350
         );
 
       }
@@ -969,7 +1125,7 @@
 
 
   // ====================================================
-  // CADASTRO REAL
+  // CRIAR CONTA
   // ====================================================
 
   registerForm.addEventListener(
@@ -1012,8 +1168,13 @@
           .value;
 
 
+      // ================================================
+      // VALIDAÇÕES
+      // ================================================
+
       if (
-        username.length < 3
+        username.length <
+        3
       ) {
 
         setMessage(
@@ -1027,7 +1188,9 @@
       }
 
 
-      if (!email) {
+      if (
+        !email
+      ) {
 
         setMessage(
           registerMessage,
@@ -1041,7 +1204,8 @@
 
 
       if (
-        password.length < 6
+        password.length <
+        6
       ) {
 
         setMessage(
@@ -1087,17 +1251,19 @@
       try {
 
         const redirectUrl =
-          window.location.origin +
-          window.location.pathname;
+          `${window.location.origin}${window.location.pathname}`;
 
 
         const {
           data,
           error
         } =
-          await supabaseClient.auth
+          await supabaseClient
+            .auth
             .signUp({
+
               email,
+
               password,
 
               options: {
@@ -1106,20 +1272,32 @@
                   redirectUrl,
 
                 data: {
-                  username
+
+                  username:
+                    username
+
                 }
 
               }
+
             });
 
 
-        if (error) {
+        if (
+          error
+        ) {
+
           throw error;
+
         }
 
 
+        // ==============================================
+        // SUPABASE CRIOU SESSÃO IMEDIATAMENTE
+        // ==============================================
+
         if (
-          data.session
+          data?.session
         ) {
 
           setMessage(
@@ -1135,8 +1313,31 @@
               closeAuth();
 
             },
-            600
+            650
           );
+
+
+          return;
+
+        }
+
+
+        // ==============================================
+        // PRECISA CONFIRMAR E-MAIL
+        // ==============================================
+
+        if (
+          data?.user
+        ) {
+
+          setMessage(
+            registerMessage,
+            `Conta criada, @${username}! Confira seu e-mail para confirmar ♡`,
+            "success"
+          );
+
+
+          registerForm.reset();
 
 
           return;
@@ -1146,8 +1347,8 @@
 
         setMessage(
           registerMessage,
-          `Conta criada, @${username}! Confira seu e-mail para confirmar ♡`,
-          "success"
+          "Não consegui finalizar o cadastro 🥲",
+          "error"
         );
 
       }
@@ -1187,7 +1388,7 @@
 
 
   // ====================================================
-  // TESTAR SEM CONTA
+  // CONTINUAR SEM CONTA
   // ====================================================
 
   testButton.addEventListener(
@@ -1212,16 +1413,20 @@
         data,
         error
       } =
-        await supabaseClient.auth
+        await supabaseClient
+          .auth
           .getSession();
 
 
-      if (error) {
+      if (
+        error
+      ) {
 
         console.warn(
           "Cinna Auth - erro ao verificar sessão:",
           error
         );
+
 
         openAuth();
 
@@ -1231,12 +1436,14 @@
 
 
       if (
-        data.session
+        data?.session
       ) {
 
         closeAuth();
 
-      } else {
+      }
+
+      else {
 
         openAuth();
 
@@ -1249,9 +1456,10 @@
     ) {
 
       console.warn(
-        "Cinna Auth - erro:",
+        "Cinna Auth - erro ao carregar sessão:",
         error
       );
+
 
       openAuth();
 
@@ -1271,8 +1479,15 @@
         session
       ) => {
 
+        console.log(
+          "Cinna Auth:",
+          event
+        );
+
+
         if (
-          event === "SIGNED_IN" &&
+          event ===
+            "SIGNED_IN" &&
           session
         ) {
 
@@ -1282,12 +1497,14 @@
 
 
         if (
-          event === "SIGNED_OUT"
+          event ===
+          "SIGNED_OUT"
         ) {
 
           showAuthMode(
             "login"
           );
+
 
           openAuth();
 
@@ -1305,7 +1522,7 @@
 
 
   // ====================================================
-  // API
+  // API PARA OS OUTROS ARQUIVOS
   // ====================================================
 
   window.CinnaAuth = {
@@ -1334,6 +1551,7 @@
         "login"
       );
 
+
       openAuth();
 
     },
@@ -1344,6 +1562,7 @@
       showAuthMode(
         "register"
       );
+
 
       openAuth();
 
@@ -1356,17 +1575,56 @@
         data,
         error
       } =
-        await supabaseClient.auth
+        await supabaseClient
+          .auth
           .getUser();
 
 
-      if (error) {
+      if (
+        error
+      ) {
+
+        console.warn(
+          "Erro ao buscar usuário:",
+          error
+        );
+
+
         return null;
+
       }
 
 
       return (
-        data.user ||
+        data?.user ||
+        null
+      );
+
+    },
+
+
+    async getSession() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (
+        error
+      ) {
+
+        return null;
+
+      }
+
+
+      return (
+        data?.session ||
         null
       );
 
@@ -1378,16 +1636,20 @@
       const {
         error
       } =
-        await supabaseClient.auth
+        await supabaseClient
+          .auth
           .signOut();
 
 
-      if (error) {
+      if (
+        error
+      ) {
 
         console.error(
           "Erro ao sair:",
           error
         );
+
 
         return false;
 
@@ -1399,5 +1661,13 @@
     }
 
   };
+
+
+  // ====================================================
+  // DEBUG
+  // ====================================================
+
+  window.CinnaSupabase =
+    supabaseClient;
 
 })();

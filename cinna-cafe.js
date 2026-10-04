@@ -1,6 +1,6 @@
 // ======================================================
 // CINNA CAFÉ ☕️🍰
-// V2 — Estrutura visual + expressões do Cinna
+// V3 — Idle fluido + piscada natural + reações
 // ======================================================
 
 (() => {
@@ -36,11 +36,39 @@
 
 
   // ====================================================
+  // PRÉ-CARREGA OS SPRITES
+  // Evita engasgo na primeira troca de imagem
+  // ====================================================
+
+  function preloadCafeAssets() {
+
+    Object.values(
+      CAFE_ASSETS
+    ).forEach(src => {
+
+      const image =
+        new Image();
+
+      image.src =
+        src;
+
+    });
+
+  }
+
+
+  preloadCafeAssets();
+
+
+  // ====================================================
   // ELEMENTOS DO JOGO PRINCIPAL
   // ====================================================
 
   const gamesRoom =
-    document.querySelector(".room");
+    document.querySelector(
+      ".room"
+    );
+
 
   const gameCards =
     document.querySelector(
@@ -63,7 +91,7 @@
 
 
   // ====================================================
-  // EVITA DUPLICAR
+  // EVITA DUPLICAR O CARD
   // ====================================================
 
   if (
@@ -123,8 +151,6 @@
 
   `;
 
-
-  // Coloca depois do Pega Estrelinhas
 
   const starCard =
     document.querySelector(
@@ -226,7 +252,9 @@
       >
 
 
+        <!-- ======================================= -->
         <!-- FUNDO -->
+        <!-- ======================================= -->
 
         <img
           class="cinna-cafe-background"
@@ -236,7 +264,9 @@
         >
 
 
+        <!-- ======================================= -->
         <!-- BALCÃO DOS CLIENTES -->
+        <!-- ======================================= -->
 
         <img
           class="cinna-cafe-client-counter"
@@ -246,7 +276,9 @@
         >
 
 
+        <!-- ======================================= -->
         <!-- ÁREA DOS CLIENTES -->
+        <!-- ======================================= -->
 
         <div class="cinna-cafe-customer-area">
 
@@ -268,7 +300,9 @@
         </div>
 
 
+        <!-- ======================================= -->
         <!-- CINNA COZINHEIRO -->
+        <!-- ======================================= -->
 
         <img
           id="cinna-cafe-chef"
@@ -279,7 +313,9 @@
         >
 
 
+        <!-- ======================================= -->
         <!-- BANCADA DE PREPARO -->
+        <!-- ======================================= -->
 
         <img
           class="cinna-cafe-prep-counter"
@@ -289,7 +325,9 @@
         >
 
 
+        <!-- ======================================= -->
         <!-- MENSAGEM TEMPORÁRIA -->
+        <!-- ======================================= -->
 
         <div class="cinna-cafe-ready-message">
 
@@ -375,6 +413,14 @@
 
 
   // ====================================================
+  // ESTADO DA RODADA
+  // ====================================================
+
+  let roundErrors =
+    0;
+
+
+  // ====================================================
   // ESTADO DO CINNA
   // ====================================================
 
@@ -382,15 +428,15 @@
     "idle";
 
 
-  let chefReactionTimeout =
-    null;
-
-
   let blinkTimeout =
     null;
 
 
   let blinkReturnTimeout =
+    null;
+
+
+  let chefReactionTimeout =
     null;
 
 
@@ -404,6 +450,7 @@
       blinkTimeout
     );
 
+
     clearTimeout(
       blinkReturnTimeout
     );
@@ -412,6 +459,7 @@
     blinkTimeout =
       null;
 
+
     blinkReturnTimeout =
       null;
 
@@ -419,7 +467,7 @@
 
 
   // ====================================================
-  // TROCA EXPRESSÃO
+  // DEFINE O SPRITE
   // ====================================================
 
   function setChefMood(
@@ -457,6 +505,7 @@
     chefMood =
       "idle";
 
+
     cafeChef.src =
       CAFE_ASSETS.cinnaIdle;
 
@@ -464,7 +513,97 @@
 
 
   // ====================================================
-  // IDLE / PISCADA
+  // FAZ UMA PISCADA
+  // ====================================================
+
+  function performBlink(
+    allowDoubleBlink = true
+  ) {
+
+    if (
+      chefMood !== "idle"
+    ) {
+
+      return;
+
+    }
+
+
+    if (
+      !cafeOverlay.classList.contains(
+        "is-open"
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    cafeChef.src =
+      CAFE_ASSETS.cinnaBlink;
+
+
+    blinkReturnTimeout =
+      setTimeout(
+        () => {
+
+          if (
+            chefMood !== "idle"
+          ) {
+
+            return;
+
+          }
+
+
+          cafeChef.src =
+            CAFE_ASSETS.cinnaIdle;
+
+
+          /*
+            Às vezes ele dá uma piscadinha dupla.
+            Fica bem mais natural e menos mecânico.
+          */
+
+          const doubleBlink =
+            allowDoubleBlink &&
+            Math.random() < 0.18;
+
+
+          if (
+            doubleBlink
+          ) {
+
+            blinkTimeout =
+              setTimeout(
+                () => {
+
+                  performBlink(
+                    false
+                  );
+
+                },
+                130
+              );
+
+          }
+
+          else {
+
+            scheduleBlink();
+
+          }
+
+        },
+        135
+      );
+
+  }
+
+
+  // ====================================================
+  // AGENDA A PRÓXIMA PISCADA
   // ====================================================
 
   function scheduleBlink() {
@@ -492,11 +631,15 @@
     }
 
 
-    // Pisca aleatoriamente
-    // entre 2,5 e 5 segundos.
+    /*
+      Tempo aleatório para não parecer robótico.
+
+      Entre aproximadamente
+      3 e 5,5 segundos.
+    */
 
     const delay =
-      2500 +
+      3000 +
       Math.random() * 2500;
 
 
@@ -504,57 +647,7 @@
       setTimeout(
         () => {
 
-          if (
-            chefMood !== "idle"
-          ) {
-
-            return;
-
-          }
-
-
-          if (
-            !cafeOverlay.classList.contains(
-              "is-open"
-            )
-          ) {
-
-            return;
-
-          }
-
-
-          // IMPORTANTE:
-          // durante a idle,
-          // só usa idle + blink.
-          // Happy NÃO entra aqui.
-
-          cafeChef.src =
-            CAFE_ASSETS.cinnaBlink;
-
-
-          blinkReturnTimeout =
-            setTimeout(
-              () => {
-
-                if (
-                  chefMood !== "idle"
-                ) {
-
-                  return;
-
-                }
-
-
-                cafeChef.src =
-                  CAFE_ASSETS.cinnaIdle;
-
-
-                scheduleBlink();
-
-              },
-              180
-            );
+          performBlink();
 
         },
         delay
@@ -581,6 +674,7 @@
       chefMood =
         "idle";
 
+
       cafeChef.src =
         CAFE_ASSETS.cinnaIdle;
 
@@ -590,7 +684,7 @@
 
 
   // ====================================================
-  // VOLTA AO IDLE
+  // VOLTA PARA O IDLE
   // ====================================================
 
   function returnChefToIdle() {
@@ -623,11 +717,12 @@
 
 
   // ====================================================
-  // CINNA FELIZ
+  // REAÇÃO FELIZ
+  // Pedido correto
   // ====================================================
 
   function showChefHappy(
-    duration = 1200
+    duration = 1100
   ) {
 
     clearTimeout(
@@ -659,11 +754,12 @@
 
 
   // ====================================================
-  // CINNA TRISTE
+  // REAÇÃO TRISTE
+  // Pedido errado
   // ====================================================
 
   function showChefSad(
-    duration = 1200
+    duration = 1000
   ) {
 
     clearTimeout(
@@ -695,16 +791,50 @@
 
 
   // ====================================================
+  // PEDIDO CERTO
+  // ====================================================
+
+  function registerCorrectOrder() {
+
+    showChefHappy(
+      1100
+    );
+
+  }
+
+
+  // ====================================================
+  // PEDIDO ERRADO
+  // ====================================================
+
+  function registerWrongOrder() {
+
+    roundErrors +=
+      1;
+
+
+    showChefSad(
+      1000
+    );
+
+  }
+
+
+  // ====================================================
   // FINAL DA RODADA
   // ====================================================
 
   function finishRound(
-    errors = 0
+    errors = roundErrors
   ) {
 
     clearTimeout(
       chefReactionTimeout
     );
+
+
+    chefReactionTimeout =
+      null;
 
 
     stopBlink(
@@ -713,16 +843,13 @@
 
 
     /*
-      REGRA:
+      REGRA DO CINNA CAFÉ:
 
       0 a 5 erros
-      → Cinna feliz
+      → feliz
 
-      MAIS DE 5 erros
-      → Cinna triste
-
-      Então:
-      6+ erros = triste
+      mais de 5 erros
+      → triste
     */
 
 
@@ -748,10 +875,14 @@
 
 
   // ====================================================
-  // NOVA RODADA / RESET
+  // RESETA A RODADA
   // ====================================================
 
-  function resetChef() {
+  function resetRound() {
+
+    roundErrors =
+      0;
+
 
     clearTimeout(
       chefReactionTimeout
@@ -786,17 +917,22 @@
 
 
   // ====================================================
-  // FALLBACK DE IMAGEM
+  // FALLBACK DOS SPRITES
   // ====================================================
 
   cafeChef.addEventListener(
     "error",
     () => {
 
+      const currentSrc =
+        cafeChef.getAttribute(
+          "src"
+        ) || "";
+
+
       if (
-        cafeChef.src.includes(
-          "cinna-chef-idle.PNG"
-        )
+        currentSrc ===
+        CAFE_ASSETS.cinnaIdle
       ) {
 
         return;
@@ -841,9 +977,7 @@
     );
 
 
-    // Sempre começa neutro.
-
-    resetChef();
+    resetRound();
 
   }
 
@@ -959,10 +1093,21 @@
     },
 
 
-    // Pedido correto
+    // ----------------------------------------------
+    // PEDIDO CORRETO
+    // ----------------------------------------------
+
+    correctOrder() {
+
+      registerCorrectOrder();
+
+    },
+
+
+    // Compatibilidade
 
     happy(
-      duration = 1200
+      duration = 1100
     ) {
 
       showChefHappy(
@@ -972,10 +1117,21 @@
     },
 
 
-    // Pedido errado
+    // ----------------------------------------------
+    // PEDIDO ERRADO
+    // ----------------------------------------------
+
+    wrongOrder() {
+
+      registerWrongOrder();
+
+    },
+
+
+    // Compatibilidade
 
     sad(
-      duration = 1200
+      duration = 1000
     ) {
 
       showChefSad(
@@ -985,33 +1141,61 @@
     },
 
 
-    // Final da rodada
+    // ----------------------------------------------
+    // FINALIZA RODADA
+    // ----------------------------------------------
 
     finishRound(
       errors
     ) {
 
-      finishRound(
-        errors
-      );
+      if (
+        typeof errors ===
+        "number"
+      ) {
+
+        finishRound(
+          errors
+        );
+
+      }
+
+      else {
+
+        finishRound(
+          roundErrors
+        );
+
+      }
 
     },
 
 
-    // Começar nova rodada
+    // ----------------------------------------------
+    // NOVA RODADA
+    // ----------------------------------------------
 
-    resetChef() {
+    resetRound() {
 
-      resetChef();
+      resetRound();
 
     },
 
 
-    // Útil pra debug
+    // ----------------------------------------------
+    // DEBUG
+    // ----------------------------------------------
 
     getMood() {
 
       return chefMood;
+
+    },
+
+
+    getErrors() {
+
+      return roundErrors;
 
     }
 

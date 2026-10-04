@@ -1,6 +1,6 @@
 // ======================================================
 // CINNA CAFÉ ☕️🍰
-// V4 — CLIENTE + PEDIDOS + HOTSPOTS + BANDEJA
+// V5 — MULTICLIENTES + TIMER + PEDIDOS INDIVIDUAIS
 // ======================================================
 
 (() => {
@@ -10,7 +10,6 @@
   // ====================================================
 
   const A = {
-
     background:
       "assets/cafe/background/cafe-background.PNG",
 
@@ -30,16 +29,41 @@
       "assets/cafe/characters/cinna-chef-happy.PNG",
 
     cinnaSad:
-      "assets/cafe/characters/cinna-chef-sad.PNG",
+      "assets/cafe/characters/cinna-chef-sad.PNG"
+  };
 
-    kuromiIdle:
-      "assets/cafe/characters/kuromi-idle.PNG",
 
-    kuromiBlink:
-      "assets/cafe/characters/kuromi-blink.PNG",
+  // ====================================================
+  // CLIENTES
+  // ====================================================
 
-    kuromiAngry:
-      "assets/cafe/characters/kuromi-angry.PNG"
+  const CHARACTERS = {
+
+    kuromi: {
+      name: "Kuromi",
+
+      idle:
+        "assets/cafe/characters/kuromi-idle.PNG",
+
+      blink:
+        "assets/cafe/characters/kuromi-blink.PNG",
+
+      angry:
+        "assets/cafe/characters/kuromi-angry.PNG"
+    },
+
+    pompompurin: {
+      name: "Pompompurin",
+
+      idle:
+        "assets/cafe/characters/pompompurin-idle.PNG",
+
+      blink:
+        "assets/cafe/characters/pompompurin-blink.PNG",
+
+      angry:
+        "assets/cafe/characters/pompompurin-angry.PNG"
+    }
 
   };
 
@@ -52,58 +76,97 @@
 
     bearLatte: {
       name: "Latte Branco",
-      src: "assets/cafe/food/coffee-bear-latte.PNG"
+      src:
+        "assets/cafe/food/coffee-bear-latte.PNG"
     },
 
     pinkLatte: {
       name: "Latte Rosa",
-      src: "assets/cafe/food/coffee-pink-latte.PNG"
+      src:
+        "assets/cafe/food/coffee-pink-latte.PNG"
     },
 
     frappe: {
       name: "Frappé de Chocolate",
-      src: "assets/cafe/food/drink-chocolate-frappe.PNG"
+      src:
+        "assets/cafe/food/drink-chocolate-frappe.PNG"
     },
 
     cupcakeChocolate: {
       name: "Cupcake de Chocolate",
-      src: "assets/cafe/food/cupcake-chocolate.PNG"
+      src:
+        "assets/cafe/food/cupcake-chocolate.PNG"
     },
 
     cupcakeStrawberry: {
       name: "Cupcake de Morango",
-      src: "assets/cafe/food/cupcake-strawberry.PNG"
+      src:
+        "assets/cafe/food/cupcake-strawberry.PNG"
     },
 
     donutChocolate: {
       name: "Donut de Chocolate",
-      src: "assets/cafe/food/donut-chocolate.PNG"
+      src:
+        "assets/cafe/food/donut-chocolate.PNG"
     },
 
     donutStrawberry: {
       name: "Donut de Morango",
-      src: "assets/cafe/food/donut-strawberry.PNG"
+      src:
+        "assets/cafe/food/donut-strawberry.PNG"
     },
 
     donutVanilla: {
       name: "Donut de Baunilha",
-      src: "assets/cafe/food/donut-vanilla.PNG"
+      src:
+        "assets/cafe/food/donut-vanilla.PNG"
     }
 
   };
 
 
   // ====================================================
+  // CONFIGURAÇÕES
+  // ====================================================
+
+  const CUSTOMER_TIME = 25;
+
+  const MAX_ERRORS = 3;
+
+  const CORRECT_REWARD = 5;
+
+  /*
+    Chance de chegar uma dupla.
+
+    0.40 = 40%
+  */
+
+  const DOUBLE_CUSTOMER_CHANCE = 0.40;
+
+
+  // ====================================================
   // PRÉ-CARREGAMENTO
   // ====================================================
 
-  [
+  const preloadAssets = [
     ...Object.values(A),
-    ...Object.values(ITEMS).map(item => item.src)
 
-  ].forEach(src => {
+    ...Object.values(CHARACTERS)
+      .flatMap(character => [
+        character.idle,
+        character.blink,
+        character.angry
+      ]),
+
+    ...Object.values(ITEMS)
+      .map(item => item.src)
+  ];
+
+
+  preloadAssets.forEach(src => {
 
     const img = new Image();
+
     img.src = src;
 
   });
@@ -117,7 +180,9 @@
     document.querySelector(".room");
 
   const gameCards =
-    document.querySelector("#game-hub .game-cards");
+    document.querySelector(
+      "#game-hub .game-cards"
+    );
 
 
   if (!gamesRoom || !gameCards) {
@@ -132,7 +197,9 @@
 
 
   if (
-    document.querySelector("#cinna-cafe-button")
+    document.querySelector(
+      "#cinna-cafe-button"
+    )
   ) {
 
     return;
@@ -155,6 +222,7 @@
 
   cafeCard.type =
     "button";
+
 
   cafeCard.innerHTML = `
 
@@ -182,7 +250,9 @@
 
 
   const starCard =
-    document.querySelector("#star-game-button");
+    document.querySelector(
+      "#star-game-button"
+    );
 
 
   if (starCard) {
@@ -194,7 +264,9 @@
 
   } else {
 
-    gameCards.appendChild(cafeCard);
+    gameCards.appendChild(
+      cafeCard
+    );
 
   }
 
@@ -275,48 +347,12 @@
         >
 
 
-        <!-- CLIENTE -->
+        <!-- CLIENTES -->
 
         <div
-          id="cafe-customer-wrap"
-          class="cafe-customer-wrap"
-        >
-
-          <img
-            id="cafe-customer"
-            class="cafe-customer"
-            src="${A.kuromiIdle}"
-            alt="Kuromi"
-            draggable="false"
-          >
-
-          <div
-            id="cafe-happy-hearts"
-            class="cafe-happy-hearts"
-          >
-            ♡ ♡
-          </div>
-
-        </div>
-
-
-        <!-- PEDIDO -->
-
-        <div
-          id="cafe-order"
-          class="cafe-order"
-        >
-
-          <span class="cafe-order-title">
-            Pedido
-          </span>
-
-          <div
-            id="cafe-order-items"
-            class="cafe-order-items"
-          ></div>
-
-        </div>
+          id="cafe-customers"
+          class="cafe-customers"
+        ></div>
 
 
         <!-- BALCÃO DO CLIENTE -->
@@ -350,9 +386,7 @@
         >
 
 
-        <!-- ===================================== -->
-        <!-- HOTSPOTS INVISÍVEIS -->
-        <!-- ===================================== -->
+        <!-- HOTSPOTS -->
 
         <div
           id="cafe-hotspots"
@@ -374,7 +408,7 @@
           <button
             class="cafe-hotspot hotspot-frappe"
             data-item="frappe"
-            aria-label="Frappé"
+            aria-label="Frappé de chocolate"
           ></button>
 
           <button
@@ -445,7 +479,9 @@
   `;
 
 
-  document.body.appendChild(cafeOverlay);
+  document.body.appendChild(
+    cafeOverlay
+  );
 
 
   // ====================================================
@@ -453,71 +489,70 @@
   // ====================================================
 
   const chef =
-    cafeOverlay.querySelector("#cinna-cafe-chef");
+    cafeOverlay.querySelector(
+      "#cinna-cafe-chef"
+    );
 
-  const customer =
-    cafeOverlay.querySelector("#cafe-customer");
-
-  const customerWrap =
-    cafeOverlay.querySelector("#cafe-customer-wrap");
-
-  const hearts =
-    cafeOverlay.querySelector("#cafe-happy-hearts");
-
-  const orderBox =
-    cafeOverlay.querySelector("#cafe-order");
-
-  const orderItems =
-    cafeOverlay.querySelector("#cafe-order-items");
+  const customersContainer =
+    cafeOverlay.querySelector(
+      "#cafe-customers"
+    );
 
   const tray =
-    cafeOverlay.querySelector("#cafe-tray-items");
+    cafeOverlay.querySelector(
+      "#cafe-tray-items"
+    );
 
   const deliverButton =
-    cafeOverlay.querySelector("#cafe-deliver");
+    cafeOverlay.querySelector(
+      "#cafe-deliver"
+    );
 
   const feedback =
-    cafeOverlay.querySelector("#cafe-feedback");
+    cafeOverlay.querySelector(
+      "#cafe-feedback"
+    );
 
   const coins =
-    cafeOverlay.querySelector("#cinna-cafe-coins-value");
+    cafeOverlay.querySelector(
+      "#cinna-cafe-coins-value"
+    );
 
   const back =
-    cafeOverlay.querySelector("#cinna-cafe-back");
+    cafeOverlay.querySelector(
+      "#cinna-cafe-back"
+    );
 
-  const hotspots =
-    [...cafeOverlay.querySelectorAll(".cafe-hotspot")];
+  const hotspots = [
+    ...cafeOverlay.querySelectorAll(
+      ".cafe-hotspot"
+    )
+  ];
 
 
   // ====================================================
   // ESTADO
   // ====================================================
 
-  let currentOrder = [];
+  let cafeRunning = false;
 
   let trayItems = [];
 
-  let roundErrors = 0;
+  let customers = [];
 
-  let orderLocked = false;
+  let selectedCustomerId = null;
 
-  let cafeRunning = false;
+  let customerSequence = 0;
 
   let chefMood = "idle";
-
-  let customerMood = "idle";
 
   let chefBlinkTimer = null;
 
   let chefBlinkReturn = null;
 
-  let customerBlinkTimer = null;
+  let nextWaveTimer = null;
 
-  let customerBlinkReturn = null;
-
-  let reactionTimer = null;
-
-  let nextCustomerTimer = null;
+  let feedbackTimer = null;
 
 
   // ====================================================
@@ -528,7 +563,8 @@
 
     if (
       window.CinnaCoins &&
-      typeof window.CinnaCoins.getBalance === "function"
+      typeof window.CinnaCoins
+        .getBalance === "function"
     ) {
 
       coins.textContent =
@@ -547,10 +583,13 @@
 
     if (
       window.CinnaCoins &&
-      typeof window.CinnaCoins.add === "function"
+      typeof window.CinnaCoins
+        .add === "function"
     ) {
 
-      window.CinnaCoins.add(amount);
+      window.CinnaCoins.add(
+        amount
+      );
 
     }
 
@@ -565,8 +604,13 @@
 
   function clearChefBlink() {
 
-    clearTimeout(chefBlinkTimer);
-    clearTimeout(chefBlinkReturn);
+    clearTimeout(
+      chefBlinkTimer
+    );
+
+    clearTimeout(
+      chefBlinkReturn
+    );
 
   }
 
@@ -575,18 +619,23 @@
 
     chefMood = mood;
 
+
     if (mood === "happy") {
 
-      chef.src = A.cinnaHappy;
+      chef.src =
+        A.cinnaHappy;
 
     } else if (mood === "sad") {
 
-      chef.src = A.cinnaSad;
+      chef.src =
+        A.cinnaSad;
 
     } else {
 
       chefMood = "idle";
-      chef.src = A.cinnaIdle;
+
+      chef.src =
+        A.cinnaIdle;
 
     }
 
@@ -596,6 +645,7 @@
   function scheduleChefBlink() {
 
     clearChefBlink();
+
 
     if (
       !cafeRunning ||
@@ -627,9 +677,14 @@
         chefBlinkReturn =
           setTimeout(() => {
 
-            if (chefMood !== "idle") {
+            if (
+              chefMood !== "idle"
+            ) {
+
               return;
+
             }
+
 
             chef.src =
               A.cinnaIdle;
@@ -638,7 +693,9 @@
 
           }, 150);
 
-      }, 2800 + Math.random() * 2600);
+      },
+      2800 +
+      Math.random() * 2600);
 
   }
 
@@ -646,153 +703,58 @@
   function chefIdle() {
 
     setChefMood("idle");
+
     scheduleChefBlink();
 
   }
 
 
-  function chefHappy() {
+  function chefHappy(
+    duration = 900
+  ) {
 
     clearChefBlink();
+
     setChefMood("happy");
 
+
+    setTimeout(() => {
+
+      if (
+        cafeRunning &&
+        chefMood === "happy"
+      ) {
+
+        chefIdle();
+
+      }
+
+    }, duration);
+
   }
 
 
-  function chefSad() {
+  function chefSad(
+    duration = 900
+  ) {
 
     clearChefBlink();
+
     setChefMood("sad");
 
-  }
 
+    setTimeout(() => {
 
-  // ====================================================
-  // KUROMI
-  // ====================================================
+      if (
+        cafeRunning &&
+        chefMood === "sad"
+      ) {
 
-  function clearCustomerBlink() {
+        chefIdle();
 
-    clearTimeout(customerBlinkTimer);
-    clearTimeout(customerBlinkReturn);
+      }
 
-  }
-
-
-  function customerIdle() {
-
-    customerMood = "idle";
-
-    customer.src =
-      A.kuromiIdle;
-
-    scheduleCustomerBlink();
-
-  }
-
-
-  function scheduleCustomerBlink() {
-
-    clearCustomerBlink();
-
-    if (
-      !cafeRunning ||
-      customerMood !== "idle"
-    ) {
-
-      return;
-
-    }
-
-
-    customerBlinkTimer =
-      setTimeout(() => {
-
-        if (
-          !cafeRunning ||
-          customerMood !== "idle"
-        ) {
-
-          return;
-
-        }
-
-
-        customer.src =
-          A.kuromiBlink;
-
-
-        customerBlinkReturn =
-          setTimeout(() => {
-
-            if (
-              customerMood !== "idle"
-            ) {
-
-              return;
-
-            }
-
-            customer.src =
-              A.kuromiIdle;
-
-            scheduleCustomerBlink();
-
-          }, 150);
-
-      }, 2400 + Math.random() * 2600);
-
-  }
-
-
-  function customerAngry() {
-
-    clearCustomerBlink();
-
-    customerMood =
-      "angry";
-
-    customer.src =
-      A.kuromiAngry;
-
-    customerWrap.classList.add(
-      "is-angry"
-    );
-
-  }
-
-
-  function customerHappy() {
-
-    clearCustomerBlink();
-
-    customerMood =
-      "happy";
-
-    customer.src =
-      A.kuromiIdle;
-
-    customerWrap.classList.add(
-      "is-happy"
-    );
-
-    hearts.classList.add(
-      "show"
-    );
-
-  }
-
-
-  function clearCustomerReaction() {
-
-    customerWrap.classList.remove(
-      "is-happy",
-      "is-angry"
-    );
-
-    hearts.classList.remove(
-      "show"
-    );
+    }, duration);
 
   }
 
@@ -806,9 +768,11 @@
     const keys =
       Object.keys(ITEMS);
 
+
     return keys[
       Math.floor(
-        Math.random() * keys.length
+        Math.random() *
+        keys.length
       )
     ];
 
@@ -832,6 +796,7 @@
       const key =
         randomItemKey();
 
+
       if (
         !result.includes(key)
       ) {
@@ -848,106 +813,775 @@
   }
 
 
-  function renderOrder() {
+  // ====================================================
+  // CLIENTE
+  // ====================================================
 
-    orderItems.innerHTML = "";
+  function createCustomer(
+    characterKey,
+    slot,
+    total
+  ) {
+
+    const character =
+      CHARACTERS[characterKey];
 
 
-    currentOrder.forEach(key => {
+    const customer = {
 
-      const item =
-        ITEMS[key];
+      id:
+        `customer-${++customerSequence}`,
 
-      const img =
-        document.createElement("img");
+      characterKey,
 
-      img.src =
-        item.src;
+      character,
 
-      img.alt =
-        item.name;
+      slot,
 
-      img.title =
-        item.name;
+      total,
 
-      orderItems.appendChild(img);
+      order:
+        createRandomOrder(),
 
-    });
+      errors: 0,
+
+      timeLeft:
+        CUSTOMER_TIME,
+
+      state:
+        "entering",
+
+      mood:
+        "idle",
+
+      blinkTimer:
+        null,
+
+      blinkReturn:
+        null,
+
+      countdownTimer:
+        null,
+
+      reactionTimer:
+        null,
+
+      element:
+        null,
+
+      image:
+        null,
+
+      orderButton:
+        null,
+
+      timerElement:
+        null
+
+    };
+
+
+    return customer;
 
   }
 
 
   // ====================================================
-  // NOVO CLIENTE
+  // HTML DO CLIENTE
   // ====================================================
 
-  function startCustomer() {
+  function createCustomerElement(
+    customer
+  ) {
 
-    if (!cafeRunning) {
+    const wrap =
+      document.createElement("div");
+
+
+    wrap.className =
+      "cafe-customer-wrap";
+
+
+    wrap.dataset.customerId =
+      customer.id;
+
+
+    wrap.classList.add(
+      customer.total === 2
+        ? "is-double"
+        : "is-single"
+    );
+
+
+    wrap.classList.add(
+      `slot-${customer.slot}`
+    );
+
+
+    const orderHTML =
+      customer.order
+        .map(key => {
+
+          const item =
+            ITEMS[key];
+
+
+          return `
+
+            <img
+              src="${item.src}"
+              alt="${item.name}"
+              title="${item.name}"
+              draggable="false"
+            >
+
+          `;
+
+        })
+        .join("");
+
+
+    wrap.innerHTML = `
+
+      <button
+        class="cafe-order"
+        type="button"
+        aria-label="Atender pedido de ${customer.character.name}"
+      >
+
+        <span class="cafe-order-title">
+          Pedido
+        </span>
+
+        <div class="cafe-order-items">
+          ${orderHTML}
+        </div>
+
+        <span class="cafe-order-timer">
+
+          ⏱️
+
+          <strong>
+            ${customer.timeLeft}
+          </strong>s
+
+        </span>
+
+      </button>
+
+
+      <img
+        class="cafe-customer"
+        src="${customer.character.idle}"
+        alt="${customer.character.name}"
+        draggable="false"
+      >
+
+
+      <div class="cafe-happy-hearts">
+        ♡ ♡
+      </div>
+
+    `;
+
+
+    customersContainer.appendChild(
+      wrap
+    );
+
+
+    customer.element =
+      wrap;
+
+    customer.image =
+      wrap.querySelector(
+        ".cafe-customer"
+      );
+
+    customer.orderButton =
+      wrap.querySelector(
+        ".cafe-order"
+      );
+
+    customer.timerElement =
+      wrap.querySelector(
+        ".cafe-order-timer strong"
+      );
+
+
+    customer.orderButton
+      .addEventListener(
+        "click",
+        event => {
+
+          event.stopPropagation();
+
+          selectCustomer(
+            customer.id
+          );
+
+        }
+      );
+
+
+    return wrap;
+
+  }
+
+
+  // ====================================================
+  // SELEÇÃO
+  // ====================================================
+
+  function selectCustomer(id) {
+
+    const customer =
+      customers.find(
+        item =>
+          item.id === id &&
+          item.state === "waiting"
+      );
+
+
+    if (!customer) {
+
       return;
+
     }
 
 
-    clearTimeout(nextCustomerTimer);
-    clearTimeout(reactionTimer);
+    selectedCustomerId =
+      customer.id;
 
-    clearCustomerReaction();
 
-    orderLocked = true;
+    customers.forEach(item => {
+
+      if (!item.element) {
+        return;
+      }
+
+
+      item.element.classList.toggle(
+        "selected",
+        item.id ===
+          selectedCustomerId
+      );
+
+    });
+
+
+    renderTray();
+
+  }
+
+
+  function getSelectedCustomer() {
+
+    return customers.find(
+      customer =>
+        customer.id ===
+          selectedCustomerId &&
+        customer.state ===
+          "waiting"
+    ) || null;
+
+  }
+
+
+  // ====================================================
+  // PISCADA DO CLIENTE
+  // ====================================================
+
+  function clearCustomerBlink(
+    customer
+  ) {
+
+    clearTimeout(
+      customer.blinkTimer
+    );
+
+    clearTimeout(
+      customer.blinkReturn
+    );
+
+  }
+
+
+  function scheduleCustomerBlink(
+    customer
+  ) {
+
+    clearCustomerBlink(
+      customer
+    );
+
+
+    if (
+      !cafeRunning ||
+      customer.state !== "waiting" ||
+      customer.mood !== "idle"
+    ) {
+
+      return;
+
+    }
+
+
+    customer.blinkTimer =
+      setTimeout(() => {
+
+        if (
+          !cafeRunning ||
+          customer.state !== "waiting" ||
+          customer.mood !== "idle"
+        ) {
+
+          return;
+
+        }
+
+
+        customer.image.src =
+          customer.character.blink;
+
+
+        customer.blinkReturn =
+          setTimeout(() => {
+
+            if (
+              customer.state !==
+                "waiting" ||
+              customer.mood !==
+                "idle"
+            ) {
+
+              return;
+
+            }
+
+
+            customer.image.src =
+              customer.character.idle;
+
+
+            scheduleCustomerBlink(
+              customer
+            );
+
+          }, 150);
+
+      },
+      2400 +
+      Math.random() * 2600);
+
+  }
+
+
+  function customerIdle(
+    customer
+  ) {
+
+    clearCustomerBlink(
+      customer
+    );
+
+
+    customer.mood =
+      "idle";
+
+
+    customer.image.src =
+      customer.character.idle;
+
+
+    customer.element.classList.remove(
+      "is-angry",
+      "is-happy"
+    );
+
+
+    customer.element
+      .querySelector(
+        ".cafe-happy-hearts"
+      )
+      .classList.remove(
+        "show"
+      );
+
+
+    scheduleCustomerBlink(
+      customer
+    );
+
+  }
+
+
+  function customerAngry(
+    customer
+  ) {
+
+    clearCustomerBlink(
+      customer
+    );
+
+
+    customer.mood =
+      "angry";
+
+
+    customer.image.src =
+      customer.character.angry;
+
+
+    customer.element.classList.remove(
+      "is-happy"
+    );
+
+
+    customer.element.classList.add(
+      "is-angry"
+    );
+
+  }
+
+
+  function customerHappy(
+    customer
+  ) {
+
+    clearCustomerBlink(
+      customer
+    );
+
+
+    customer.mood =
+      "happy";
+
+
+    customer.image.src =
+      customer.character.idle;
+
+
+    customer.element.classList.remove(
+      "is-angry"
+    );
+
+
+    customer.element.classList.add(
+      "is-happy"
+    );
+
+
+    customer.element
+      .querySelector(
+        ".cafe-happy-hearts"
+      )
+      .classList.add(
+        "show"
+      );
+
+  }
+
+
+  // ====================================================
+  // TIMER INDIVIDUAL
+  // ====================================================
+
+  function startCustomerTimer(
+    customer
+  ) {
+
+    clearInterval(
+      customer.countdownTimer
+    );
+
+
+    customer.countdownTimer =
+      setInterval(() => {
+
+        if (
+          !cafeRunning ||
+          customer.state !== "waiting"
+        ) {
+
+          clearInterval(
+            customer.countdownTimer
+          );
+
+          return;
+
+        }
+
+
+        customer.timeLeft--;
+
+
+        if (
+          customer.timerElement
+        ) {
+
+          customer.timerElement
+            .textContent =
+              Math.max(
+                customer.timeLeft,
+                0
+              );
+
+        }
+
+
+        if (
+          customer.timeLeft <= 7
+        ) {
+
+          customer.orderButton
+            .classList.add(
+              "time-low"
+            );
+
+        }
+
+
+        if (
+          customer.timeLeft <= 0
+        ) {
+
+          clearInterval(
+            customer.countdownTimer
+          );
+
+
+          customerLeavesAngry(
+            customer,
+            "Tempo esgotado! 💢"
+          );
+
+        }
+
+      }, 1000);
+
+  }
+
+
+  // ====================================================
+  // ENTRADA
+  // ====================================================
+
+  function enterCustomer(
+    customer
+  ) {
+
+    createCustomerElement(
+      customer
+    );
+
+
+    requestAnimationFrame(() => {
+
+      requestAnimationFrame(() => {
+
+        if (
+          !cafeRunning ||
+          !customer.element
+        ) {
+
+          return;
+
+        }
+
+
+        customer.element.classList.add(
+          "arrived"
+        );
+
+      });
+
+    });
+
+
+    setTimeout(() => {
+
+      if (
+        !cafeRunning ||
+        !customer.element
+      ) {
+
+        return;
+
+      }
+
+
+      customer.state =
+        "waiting";
+
+
+      customer.orderButton
+        .classList.add(
+          "show"
+        );
+
+
+      customerIdle(
+        customer
+      );
+
+
+      startCustomerTimer(
+        customer
+      );
+
+
+      /*
+        Se só existe um cliente,
+        ele já fica selecionado.
+
+        Em dupla, o primeiro também
+        começa selecionado para evitar
+        travar a bandeja.
+      */
+
+      if (
+        !getSelectedCustomer()
+      ) {
+
+        selectCustomer(
+          customer.id
+        );
+
+      }
+
+    }, 650);
+
+  }
+
+
+  // ====================================================
+  // ONDA DE CLIENTES
+  // ====================================================
+
+  function startWave() {
+
+    if (!cafeRunning) {
+
+      return;
+
+    }
+
+
+    clearTimeout(
+      nextWaveTimer
+    );
+
+
+    selectedCustomerId =
+      null;
 
     trayItems = [];
 
     renderTray();
 
-    currentOrder = [];
 
-    orderItems.innerHTML = "";
+    /*
+      Limpa clientes antigos que
+      já terminaram.
+    */
 
-    orderBox.classList.remove("show");
-
-    deliverButton.classList.remove("show");
-
-    feedback.classList.remove(
-      "show",
-      "correct",
-      "wrong"
+    customers.forEach(
+      cleanupCustomerTimers
     );
 
 
-    customerWrap.classList.remove(
-      "arrived"
-    );
+    customers = [];
 
 
-    void customerWrap.offsetWidth;
+    customersContainer.innerHTML =
+      "";
 
 
-    customerWrap.classList.add(
-      "arrived"
-    );
+    const doubleWave =
+      Math.random() <
+        DOUBLE_CUSTOMER_CHANCE;
 
 
-    customerIdle();
+    if (doubleWave) {
+
+      const first =
+        createCustomer(
+          "kuromi",
+          1,
+          2
+        );
 
 
-    setTimeout(() => {
+      const second =
+        createCustomer(
+          "pompompurin",
+          2,
+          2
+        );
 
-      if (!cafeRunning) {
-        return;
-      }
 
-      currentOrder =
-        createRandomOrder();
-
-      renderOrder();
-
-      orderBox.classList.add(
-        "show"
+      customers.push(
+        first,
+        second
       );
 
-      orderLocked = false;
 
-    }, 750);
+      enterCustomer(
+        first
+      );
+
+
+      setTimeout(() => {
+
+        if (
+          cafeRunning &&
+          customers.includes(second)
+        ) {
+
+          enterCustomer(
+            second
+          );
+
+        }
+
+      }, 350);
+
+    } else {
+
+      const characterKeys =
+        Object.keys(
+          CHARACTERS
+        );
+
+
+      const characterKey =
+        characterKeys[
+          Math.floor(
+            Math.random() *
+            characterKeys.length
+          )
+        ];
+
+
+      const customer =
+        createCustomer(
+          characterKey,
+          1,
+          1
+        );
+
+
+      customers.push(
+        customer
+      );
+
+
+      enterCustomer(
+        customer
+      );
+
+    }
 
   }
 
@@ -958,10 +1592,16 @@
 
   function addToTray(key) {
 
-    if (
-      orderLocked ||
-      !currentOrder.length
-    ) {
+    const selected =
+      getSelectedCustomer();
+
+
+    if (!selected) {
+
+      showFeedback(
+        "Escolha um pedido primeiro ♡",
+        "wrong"
+      );
 
       return;
 
@@ -969,8 +1609,8 @@
 
 
     /*
-      Máximo de 2 itens por pedido
-      nesta primeira versão.
+      Como os pedidos desta versão
+      possuem no máximo 2 itens.
     */
 
     if (
@@ -981,34 +1621,39 @@
         "shake"
       );
 
+
       void tray.offsetWidth;
+
 
       tray.classList.add(
         "shake"
       );
+
 
       return;
 
     }
 
 
-    trayItems.push(key);
+    trayItems.push(
+      key
+    );
+
 
     renderTray();
 
   }
 
 
-  function removeFromTray(index) {
-
-    if (orderLocked) {
-      return;
-    }
+  function removeFromTray(
+    index
+  ) {
 
     trayItems.splice(
       index,
       1
     );
+
 
     renderTray();
 
@@ -1026,17 +1671,24 @@
         const item =
           ITEMS[key];
 
+
         const button =
-          document.createElement("button");
+          document.createElement(
+            "button"
+          );
+
 
         button.type =
           "button";
 
+
         button.className =
           "cafe-tray-item";
 
+
         button.title =
           `Remover ${item.name}`;
+
 
         button.innerHTML = `
 
@@ -1053,7 +1705,9 @@
           "click",
           () => {
 
-            removeFromTray(index);
+            removeFromTray(
+              index
+            );
 
           }
         );
@@ -1067,14 +1721,19 @@
     );
 
 
+    const selected =
+      getSelectedCustomer();
+
+
     if (
       trayItems.length > 0 &&
-      !orderLocked
+      selected
     ) {
 
       deliverButton.classList.add(
         "show"
       );
+
 
       deliverButton.disabled =
         false;
@@ -1085,6 +1744,7 @@
         "show"
       );
 
+
       deliverButton.disabled =
         true;
 
@@ -1094,7 +1754,7 @@
 
 
   // ====================================================
-  // COMPARAÇÃO DO PEDIDO
+  // COMPARAÇÃO
   // ====================================================
 
   function arraysMatch(a, b) {
@@ -1110,6 +1770,7 @@
 
     const first =
       [...a].sort();
+
 
     const second =
       [...b].sort();
@@ -1132,11 +1793,236 @@
     type
   ) {
 
+    clearTimeout(
+      feedbackTimer
+    );
+
+
     feedback.textContent =
       text;
 
+
     feedback.className =
       `cafe-feedback show ${type}`;
+
+
+    feedbackTimer =
+      setTimeout(() => {
+
+        feedback.classList.remove(
+          "show"
+        );
+
+      }, 1300);
+
+  }
+
+
+  // ====================================================
+  // LIMPEZA DE TIMERS
+  // ====================================================
+
+  function cleanupCustomerTimers(
+    customer
+  ) {
+
+    clearCustomerBlink(
+      customer
+    );
+
+
+    clearInterval(
+      customer.countdownTimer
+    );
+
+
+    clearTimeout(
+      customer.reactionTimer
+    );
+
+  }
+
+
+  // ====================================================
+  // CLIENTE SAI
+  // ====================================================
+
+  function removeCustomer(
+    customer
+  ) {
+
+    cleanupCustomerTimers(
+      customer
+    );
+
+
+    if (
+      selectedCustomerId ===
+        customer.id
+    ) {
+
+      selectedCustomerId =
+        null;
+
+
+      trayItems = [];
+
+
+      renderTray();
+
+    }
+
+
+    customer.state =
+      "leaving";
+
+
+    customer.orderButton
+      ?.classList.remove(
+        "show"
+      );
+
+
+    customer.element
+      ?.classList.remove(
+        "selected"
+      );
+
+
+    customer.element
+      ?.classList.add(
+        "leaving"
+      );
+
+
+    setTimeout(() => {
+
+      customer.element
+        ?.remove();
+
+
+      customers =
+        customers.filter(
+          item =>
+            item.id !==
+              customer.id
+        );
+
+
+      /*
+        Se ainda existe outro cliente,
+        selecionamos automaticamente.
+      */
+
+      const waitingCustomer =
+        customers.find(
+          item =>
+            item.state ===
+              "waiting"
+        );
+
+
+      if (
+        waitingCustomer &&
+        !getSelectedCustomer()
+      ) {
+
+        selectCustomer(
+          waitingCustomer.id
+        );
+
+      }
+
+
+      /*
+        Se todos foram embora,
+        começa outra onda.
+      */
+
+      if (
+        cafeRunning &&
+        customers.length === 0
+      ) {
+
+        nextWaveTimer =
+          setTimeout(
+            startWave,
+            700
+          );
+
+      }
+
+    }, 550);
+
+  }
+
+
+  function customerLeavesAngry(
+    customer,
+    message
+  ) {
+
+    if (
+      customer.state !== "waiting"
+    ) {
+
+      return;
+
+    }
+
+
+    customer.state =
+      "reaction";
+
+
+    clearInterval(
+      customer.countdownTimer
+    );
+
+
+    customerAngry(
+      customer
+    );
+
+
+    chefSad(
+      1000
+    );
+
+
+    showFeedback(
+      message,
+      "wrong"
+    );
+
+
+    if (
+      selectedCustomerId ===
+        customer.id
+    ) {
+
+      trayItems = [];
+
+      renderTray();
+
+    }
+
+
+    customer.reactionTimer =
+      setTimeout(() => {
+
+        if (!cafeRunning) {
+
+          return;
+
+        }
+
+
+        removeCustomer(
+          customer
+        );
+
+      }, 900);
 
   }
 
@@ -1147,8 +2033,12 @@
 
   function deliverOrder() {
 
+    const customer =
+      getSelectedCustomer();
+
+
     if (
-      orderLocked ||
+      !customer ||
       !trayItems.length
     ) {
 
@@ -1157,143 +2047,163 @@
     }
 
 
-    orderLocked = true;
-
-    deliverButton.disabled =
-      true;
-
-
     const correct =
       arraysMatch(
-        currentOrder,
+        customer.order,
         trayItems
       );
 
 
     // ==================================================
-    // ACERTOU
+    // ACERTO
     // ==================================================
 
     if (correct) {
 
-      chefHappy();
+      customer.state =
+        "reaction";
 
-      customerHappy();
+
+      clearInterval(
+        customer.countdownTimer
+      );
+
+
+      customer.orderButton
+        .classList.remove(
+          "show"
+        );
+
+
+      customerHappy(
+        customer
+      );
+
+
+      chefHappy(
+        1000
+      );
+
+
+      giveCoins(
+        CORRECT_REWARD
+      );
+
 
       showFeedback(
-        "Pedido perfeito! +5 🪙",
+        `Pedido perfeito! +${CORRECT_REWARD} 🪙`,
         "correct"
       );
 
-      giveCoins(5);
 
-      orderBox.classList.remove(
-        "show"
-      );
+      trayItems = [];
 
-      deliverButton.classList.remove(
-        "show"
-      );
+      renderTray();
 
 
-      reactionTimer =
+      customer.reactionTimer =
         setTimeout(() => {
 
           if (!cafeRunning) {
+
             return;
+
           }
 
 
-          customerWrap.classList.add(
-            "leaving"
-          );
-
-
-          setTimeout(() => {
-
-            customerWrap.classList.remove(
-              "leaving",
-              "arrived"
-            );
-
-            clearCustomerReaction();
-
-            trayItems = [];
-
-            renderTray();
-
-            chefIdle();
-
-            feedback.classList.remove(
-              "show"
-            );
-
-
-            nextCustomerTimer =
-              setTimeout(
-                startCustomer,
-                500
-              );
-
-          }, 500);
-
-        }, 1200);
-
-    }
-
-
-    // ==================================================
-    // ERROU
-    // ==================================================
-
-    else {
-
-      roundErrors++;
-
-      chefSad();
-
-      customerAngry();
-
-      showFeedback(
-        "Ops! Pedido errado 💢",
-        "wrong"
-      );
-
-
-      reactionTimer =
-        setTimeout(() => {
-
-          if (!cafeRunning) {
-            return;
-          }
-
-
-          clearCustomerReaction();
-
-          customerIdle();
-
-          chefIdle();
-
-
-          /*
-            Limpa a bandeja para tentar novamente.
-            O pedido continua o mesmo.
-          */
-
-          trayItems = [];
-
-          renderTray();
-
-          orderLocked = false;
-
-
-          feedback.classList.remove(
-            "show"
+          removeCustomer(
+            customer
           );
 
         }, 1100);
 
+
+      return;
+
     }
+
+
+    // ==================================================
+    // ERRO
+    // ==================================================
+
+    customer.errors++;
+
+
+    trayItems = [];
+
+    renderTray();
+
+
+    chefSad(
+      900
+    );
+
+
+    /*
+      3º erro:
+      cliente perde a paciência.
+    */
+
+    if (
+      customer.errors >=
+        MAX_ERRORS
+    ) {
+
+      customerLeavesAngry(
+        customer,
+        `${customer.character.name} perdeu a paciência! 💢`
+      );
+
+
+      return;
+
+    }
+
+
+    // ==================================================
+    // 1º / 2º ERRO
+    // ==================================================
+
+    customer.mood =
+      "angry";
+
+
+    customerAngry(
+      customer
+    );
+
+
+    const attemptsLeft =
+      MAX_ERRORS -
+      customer.errors;
+
+
+    showFeedback(
+      `Pedido errado! ${attemptsLeft} tentativa${attemptsLeft === 1 ? "" : "s"} restante${attemptsLeft === 1 ? "" : "s"} 💢`,
+      "wrong"
+    );
+
+
+    customer.reactionTimer =
+      setTimeout(() => {
+
+        if (
+          !cafeRunning ||
+          customer.state !==
+            "waiting"
+        ) {
+
+          return;
+
+        }
+
+
+        customerIdle(
+          customer
+        );
+
+      }, 850);
 
   }
 
@@ -1302,37 +2212,46 @@
   // HOTSPOTS
   // ====================================================
 
-  hotspots.forEach(button => {
+  hotspots.forEach(
+    button => {
 
-    button.addEventListener(
-      "click",
-      () => {
+      button.addEventListener(
+        "click",
+        () => {
 
-        const key =
-          button.dataset.item;
+          const key =
+            button.dataset.item;
 
-        if (!ITEMS[key]) {
-          return;
+
+          if (!ITEMS[key]) {
+
+            return;
+
+          }
+
+
+          button.classList.remove(
+            "clicked"
+          );
+
+
+          void button.offsetWidth;
+
+
+          button.classList.add(
+            "clicked"
+          );
+
+
+          addToTray(
+            key
+          );
+
         }
+      );
 
-
-        button.classList.remove(
-          "clicked"
-        );
-
-        void button.offsetWidth;
-
-        button.classList.add(
-          "clicked"
-        );
-
-
-        addToTray(key);
-
-      }
-    );
-
-  });
+    }
+  );
 
 
   deliverButton.addEventListener(
@@ -1347,23 +2266,41 @@
 
   function resetGame() {
 
-    roundErrors = 0;
+    clearTimeout(
+      nextWaveTimer
+    );
 
-    currentOrder = [];
+
+    clearTimeout(
+      feedbackTimer
+    );
+
+
+    customers.forEach(
+      cleanupCustomerTimers
+    );
+
+
+    customers = [];
+
+
+    selectedCustomerId =
+      null;
+
 
     trayItems = [];
 
-    orderLocked = false;
 
-    clearTimeout(reactionTimer);
-    clearTimeout(nextCustomerTimer);
+    customersContainer.innerHTML =
+      "";
 
-    clearChefBlink();
-    clearCustomerBlink();
 
-    clearCustomerReaction();
+    feedback.className =
+      "cafe-feedback";
+
 
     renderTray();
+
 
     chefIdle();
 
@@ -1378,28 +2315,35 @@
 
     updateCoins();
 
+
     cafeRunning = true;
+
 
     cafeOverlay.classList.add(
       "is-open"
     );
+
 
     cafeOverlay.setAttribute(
       "aria-hidden",
       "false"
     );
 
+
     gamesRoom.classList.add(
       "cinna-cafe-open"
     );
+
 
     document.body.classList.add(
       "cinna-cafe-body-open"
     );
 
+
     resetGame();
 
-    startCustomer();
+
+    startWave();
 
   }
 
@@ -1412,28 +2356,59 @@
 
     cafeRunning = false;
 
-    clearTimeout(reactionTimer);
-    clearTimeout(nextCustomerTimer);
+
+    clearTimeout(
+      nextWaveTimer
+    );
+
+
+    clearTimeout(
+      feedbackTimer
+    );
+
+
+    customers.forEach(
+      cleanupCustomerTimers
+    );
+
 
     clearChefBlink();
-    clearCustomerBlink();
+
+
+    customers = [];
+
+
+    selectedCustomerId =
+      null;
+
+
+    trayItems = [];
+
+
+    customersContainer.innerHTML =
+      "";
+
 
     cafeOverlay.classList.remove(
       "is-open"
     );
+
 
     cafeOverlay.setAttribute(
       "aria-hidden",
       "true"
     );
 
+
     gamesRoom.classList.remove(
       "cinna-cafe-open"
     );
 
+
     document.body.classList.remove(
       "cinna-cafe-body-open"
     );
+
 
     updateCoins();
 
@@ -1497,23 +2472,45 @@
       chefSad,
 
     newCustomer:
-      startCustomer,
+      startWave,
 
-    getErrors() {
+    getCustomers() {
 
-      return roundErrors;
+      return customers.map(
+        customer => ({
+          id:
+            customer.id,
 
-    },
+          character:
+            customer.characterKey,
 
-    getOrder() {
+          order:
+            [...customer.order],
 
-      return [...currentOrder];
+          errors:
+            customer.errors,
+
+          timeLeft:
+            customer.timeLeft,
+
+          state:
+            customer.state
+        })
+      );
 
     },
 
     getTray() {
 
-      return [...trayItems];
+      return [
+        ...trayItems
+      ];
+
+    },
+
+    getSelectedCustomer() {
+
+      return selectedCustomerId;
 
     }
 

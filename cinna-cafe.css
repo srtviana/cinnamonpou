@@ -372,8 +372,8 @@ body.cinna-cafe-body-open {
    ===================================================== */
 
 .cinna-cafe-chef {
-  left: 50%;
-  bottom: 26%;
+  left: 56%;
+  bottom: 31%;
 
   z-index: 6;
 
@@ -396,25 +396,6 @@ body.cinna-cafe-body-open {
     ease-in-out
     infinite;
 }
-
-
-@keyframes cinnaCafeIdle {
-
-  0%,
-  100% {
-    transform:
-      translateX(-50%)
-      translateY(0);
-  }
-
-  50% {
-    transform:
-      translateX(-50%)
-      translateY(-5px);
-  }
-
-}
-
 
 /* =====================================================
    BANCADA DE PREPARO

@@ -1,6 +1,7 @@
 /* =====================================================
    CINNA CAFÉ ☕🍰
-   V3 — INTERFACE + IDLE FLUTUANTE
+   V4 — CLIENTE + PEDIDOS + HOTSPOTS + BANDEJA
+   CSS ISOLADO
    ===================================================== */
 
 
@@ -10,7 +11,6 @@
 
 .cinna-cafe-screen {
   position: fixed;
-
   inset: 0;
 
   z-index: 9999;
@@ -19,7 +19,6 @@
   height: 100dvh;
 
   display: none;
-
   flex-direction: column;
 
   overflow: hidden;
@@ -31,6 +30,8 @@
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
+
+  box-sizing: border-box;
 }
 
 
@@ -51,17 +52,14 @@ body.cinna-cafe-body-open {
 .cinna-cafe-topbar {
   position: relative;
 
-  z-index: 50;
+  z-index: 100;
 
   width: 100%;
 
   min-height: 64px;
 
   padding:
-    max(
-      8px,
-      env(safe-area-inset-top)
-    )
+    max(8px, env(safe-area-inset-top))
     14px
     8px;
 
@@ -76,36 +74,20 @@ body.cinna-cafe-body-open {
 
   gap: 10px;
 
+  box-sizing: border-box;
+
   background:
-    rgba(
-      255,
-      255,
-      255,
-      0.96
-    );
+    rgba(255, 255, 255, 0.96);
 
   border-bottom:
     2px solid
-    rgba(
-      110,
-      174,
-      214,
-      0.18
-    );
-
-  box-sizing:
-    border-box;
+    rgba(110, 174, 214, 0.18);
 
   box-shadow:
     0
     5px
     18px
-    rgba(
-      80,
-      126,
-      155,
-      0.12
-    );
+    rgba(80, 126, 155, 0.12);
 }
 
 
@@ -117,6 +99,8 @@ body.cinna-cafe-body-open {
   width: 44px;
   height: 44px;
 
+  padding: 0;
+
   border: 0;
 
   border-radius: 15px;
@@ -126,44 +110,29 @@ body.cinna-cafe-body-open {
   align-items: center;
   justify-content: center;
 
-  background:
-    #e6f6ff;
+  background: #e6f6ff;
 
-  color:
-    #578daf;
+  color: #578daf;
 
-  font-size:
-    26px;
-
-  font-weight:
-    900;
+  font-size: 26px;
+  font-weight: 900;
 
   cursor: pointer;
 
-  touch-action:
-    manipulation;
+  touch-action: manipulation;
 
   box-shadow:
     0
     4px
     10px
-    rgba(
-      71,
-      120,
-      151,
-      0.1
-    );
+    rgba(71, 120, 151, 0.1);
 
-  transition:
-    transform
-    0.12s
-    ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 
 .cinna-cafe-back:active {
-  transform:
-    scale(0.92);
+  transform: scale(0.92);
 }
 
 
@@ -186,43 +155,32 @@ body.cinna-cafe-body-open {
 
 
 .cinna-cafe-topbar-title strong {
-  color:
-    #5c8aa7;
+  color: #5c8aa7;
 
   font-size:
-    clamp(
-      15px,
-      3.5vw,
-      20px
-    );
+    clamp(15px, 3.5vw, 20px);
 
-  font-weight:
-    900;
+  font-weight: 900;
 }
 
 
 .cinna-cafe-topbar-title small {
-  margin-top:
-    2px;
+  margin-top: 2px;
 
-  color:
-    #95aeba;
+  color: #95aeba;
 
-  font-size:
-    10px;
+  font-size: 10px;
 
-  font-weight:
-    700;
+  font-weight: 700;
 }
 
 
 /* =====================================================
-   MOEDAS
+   MOEDAS DO CAFÉ
    ===================================================== */
 
 .cinna-cafe-coins {
-  min-width:
-    72px;
+  min-width: 72px;
 
   padding:
     7px
@@ -235,41 +193,24 @@ body.cinna-cafe-body-open {
 
   gap: 5px;
 
-  border-radius:
-    999px;
+  border-radius: 999px;
 
-  background:
-    #fff8dc;
+  background: #fff8dc;
 
-  color:
-    #92733c;
+  color: #92733c;
 
   border:
     2px solid
-    rgba(
-      239,
-      195,
-      83,
-      0.25
-    );
+    rgba(239, 195, 83, 0.25);
 
-  box-sizing:
-    border-box;
-}
+  box-sizing: border-box;
 
-
-.cinna-cafe-coins span {
-  font-size:
-    19px;
+  font-weight: 900;
 }
 
 
 .cinna-cafe-coins strong {
-  font-size:
-    14px;
-
-  font-weight:
-    900;
+  font-size: 14px;
 }
 
 
@@ -291,15 +232,14 @@ body.cinna-cafe-body-open {
 
   padding: 8px;
 
-  box-sizing:
-    border-box;
+  box-sizing: border-box;
 
   overflow: hidden;
 }
 
 
 /* =====================================================
-   PALCO 16:9
+   PALCO
    ===================================================== */
 
 .cinna-cafe-stage {
@@ -309,89 +249,433 @@ body.cinna-cafe-body-open {
     min(
       100%,
       calc(
-        (
-          100dvh - 82px
-        ) *
+        (100dvh - 82px) *
         1.777777
       )
     );
 
-  max-width:
-    1600px;
+  max-width: 1600px;
 
-  aspect-ratio:
-    16 / 9;
+  aspect-ratio: 16 / 9;
 
   max-height:
-    calc(
-      100dvh - 82px
-    );
+    calc(100dvh - 82px);
 
   flex-shrink: 0;
 
   overflow: hidden;
 
-  border-radius:
-    22px;
+  border-radius: 22px;
 
-  background:
-    #e9f8ff;
+  background: #e9f8ff;
 
   box-shadow:
     0
     15px
     40px
-    rgba(
-      48,
-      91,
-      121,
-      0.22
-    );
+    rgba(48, 91, 121, 0.22);
 
-  isolation:
-    isolate;
+  isolation: isolate;
+
+  box-sizing: border-box;
 }
 
 
 /* =====================================================
-   TODAS AS IMAGENS DO PALCO
-   ===================================================== */
-
-.cinna-cafe-stage img {
-  position: absolute;
-
-  display: block;
-
-  user-select: none;
-
-  -webkit-user-select:
-    none;
-
-  -webkit-user-drag:
-    none;
-
-  pointer-events:
-    none;
-
-  image-rendering:
-    auto;
-}
-
-
-/* =====================================================
-   FUNDO DA CAFETERIA
+   FUNDO
    ===================================================== */
 
 .cinna-cafe-background {
+  position: absolute;
+
   inset: 0;
 
   z-index: 0;
 
+  display: block;
+
   width: 100%;
   height: 100%;
 
-  object-fit:
-    cover;
+  object-fit: cover;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+
+/* =====================================================
+   CLIENTE — KUROMI
+   ===================================================== */
+
+.cafe-customer-wrap {
+  position: absolute;
+
+  left: 24%;
+  bottom: 35%;
+
+  z-index: 3;
+
+  width: 16%;
+
+  opacity: 0;
+
+  transform:
+    translateX(-180%);
+
+  pointer-events: none;
+}
+
+
+.cafe-customer-wrap.arrived {
+  opacity: 1;
+
+  transform:
+    translateX(0);
+
+  transition:
+    transform
+    0.7s
+    cubic-bezier(0.2, 0.8, 0.25, 1),
+    opacity
+    0.3s
+    ease;
+}
+
+
+.cafe-customer-wrap.leaving {
+  opacity: 0;
+
+  transform:
+    translateX(-190%);
+
+  transition:
+    transform
+    0.5s
+    ease-in,
+    opacity
+    0.4s
+    ease;
+}
+
+
+.cafe-customer {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  object-fit: contain;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+
+  filter:
+    drop-shadow(
+      0
+      6px
+      5px
+      rgba(54, 53, 74, 0.15)
+    );
+
+  animation:
+    cafeCustomerFloat
+    2.8s
+    ease-in-out
+    infinite;
+}
+
+
+@keyframes cafeCustomerFloat {
+
+  0%,
+  100% {
+    transform:
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translateY(-5px);
+  }
+
+}
+
+
+/* =====================================================
+   KUROMI FELIZ
+   ===================================================== */
+
+.cafe-customer-wrap.is-happy
+.cafe-customer {
+  animation:
+    cafeCustomerHappy
+    0.45s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+
+@keyframes cafeCustomerHappy {
+
+  from {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+  to {
+    transform:
+      translateY(-10px)
+      scale(1.04);
+  }
+
+}
+
+
+.cafe-happy-hearts {
+  position: absolute;
+
+  top: -9%;
+  left: 50%;
+
+  z-index: 5;
+
+  opacity: 0;
+
+  transform:
+    translateX(-50%)
+    scale(0.5);
+
+  color: #ff8fb6;
+
+  font-size:
+    clamp(14px, 2.5vw, 28px);
+
+  font-weight: 900;
+
+  white-space: nowrap;
+}
+
+
+.cafe-happy-hearts.show {
+  opacity: 1;
+
+  animation:
+    cafeHearts
+    0.65s
+    ease-out
+    infinite
+    alternate;
+}
+
+
+@keyframes cafeHearts {
+
+  from {
+    transform:
+      translateX(-50%)
+      translateY(4px)
+      scale(0.8);
+  }
+
+  to {
+    transform:
+      translateX(-50%)
+      translateY(-8px)
+      scale(1.15);
+  }
+
+}
+
+
+/* =====================================================
+   KUROMI COM RAIVA
+   ===================================================== */
+
+.cafe-customer-wrap.is-angry {
+  animation:
+    cafeAngryShake
+    0.15s
+    linear
+    3;
+}
+
+
+@keyframes cafeAngryShake {
+
+  0%,
+  100% {
+    margin-left: 0;
+  }
+
+  25% {
+    margin-left: -4px;
+  }
+
+  75% {
+    margin-left: 4px;
+  }
+
+}
+
+
+/* =====================================================
+   PEDIDO
+   ===================================================== */
+
+.cafe-order {
+  position: absolute;
+
+  left: 11%;
+  top: 8%;
+
+  z-index: 30;
+
+  min-width: 12%;
+
+  padding:
+    7px
+    10px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  opacity: 0;
+
+  transform:
+    translateY(5px)
+    scale(0.8);
+
+  pointer-events: none;
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, 0.96);
+
+  border:
+    2px solid
+    rgba(164, 194, 220, 0.45);
+
+  box-shadow:
+    0
+    6px
+    15px
+    rgba(65, 91, 112, 0.14);
+
+  box-sizing: border-box;
+
+  transition:
+    opacity
+    0.2s
+    ease,
+    transform
+    0.25s
+    ease;
+}
+
+
+.cafe-order.show {
+  opacity: 1;
+
+  transform:
+    translateY(0)
+    scale(1);
+}
+
+
+.cafe-order::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  bottom: -8px;
+
+  width: 15px;
+  height: 15px;
+
+  background: white;
+
+  transform:
+    translateX(-50%)
+    rotate(45deg);
+
+  border-right:
+    2px solid
+    rgba(164, 194, 220, 0.35);
+
+  border-bottom:
+    2px solid
+    rgba(164, 194, 220, 0.35);
+}
+
+
+.cafe-order-title {
+  position: relative;
+
+  z-index: 2;
+
+  color: #718da2;
+
+  font-size:
+    clamp(8px, 1.3vw, 13px);
+
+  font-weight: 900;
+}
+
+
+.cafe-order-items {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+}
+
+
+.cafe-order-items img {
+  position: relative;
+
+  display: block;
+
+  width:
+    clamp(27px, 4.5vw, 60px);
+
+  height:
+    clamp(27px, 4.5vw, 60px);
+
+  object-fit: contain;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 }
 
 
@@ -400,131 +684,77 @@ body.cinna-cafe-body-open {
    ===================================================== */
 
 .cinna-cafe-client-counter {
-  left: 50%;
+  position: absolute;
 
+  left: 50%;
   bottom: 25%;
 
-  z-index: 3;
+  z-index: 4;
+
+  display: block;
 
   width: 48%;
-
   height: auto;
 
   transform:
     translateX(-50%);
 
-  object-fit:
-    contain;
+  object-fit: contain;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 
   filter:
     drop-shadow(
       0
       6px
       5px
-      rgba(
-        67,
-        51,
-        38,
-        0.15
-      )
+      rgba(67, 51, 38, 0.15)
     );
 }
 
 
 /* =====================================================
-   ÁREA DOS CLIENTES
-   ===================================================== */
-
-.cinna-cafe-customer-area {
-  position: absolute;
-
-  left: 50%;
-
-  bottom: 42%;
-
-  z-index: 4;
-
-  width: 58%;
-
-  height: 41%;
-
-  transform:
-    translateX(-50%);
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(
-      3,
-      1fr
-    );
-
-  gap: 3%;
-
-  align-items:
-    end;
-
-  pointer-events:
-    none;
-}
-
-
-.cinna-cafe-customer-slot {
-  position: relative;
-
-  width: 100%;
-
-  height: 100%;
-
-  display: flex;
-
-  align-items:
-    flex-end;
-
-  justify-content:
-    center;
-}
-
-
-/* =====================================================
-   CINNA COZINHEIRO
+   CINNA
    ===================================================== */
 
 .cinna-cafe-chef {
-  left: 56%;
+  position: absolute;
 
+  left: 56%;
   bottom: 31%;
 
   z-index: 6;
 
-  width: 15%;
+  display: block;
 
+  width: 15%;
   height: auto;
 
   transform-origin:
     50%
     100%;
 
-  object-fit:
-    contain;
+  object-fit: contain;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 
   filter:
     drop-shadow(
       0
       8px
       7px
-      rgba(
-        58,
-        85,
-        101,
-        0.16
-      )
+      rgba(58, 85, 101, 0.16)
     );
-
-  /*
-    O movimento nunca para.
-    O JS troca apenas o rosto/sprite.
-  */
 
   animation:
     cinnaCafeFloat
@@ -532,19 +762,13 @@ body.cinna-cafe-body-open {
     ease-in-out
     infinite;
 
-  will-change:
-    transform;
+  will-change: transform;
 }
 
-
-/* =====================================================
-   IDLE FLUTUANTE
-   ===================================================== */
 
 @keyframes cinnaCafeFloat {
 
   0% {
-
     transform:
       translate3d(
         -50%,
@@ -552,12 +776,9 @@ body.cinna-cafe-body-open {
         0
       )
       scale(1);
-
   }
 
-
   20% {
-
     transform:
       translate3d(
         -50%,
@@ -565,12 +786,9 @@ body.cinna-cafe-body-open {
         0
       )
       scale(1.004);
-
   }
 
-
   50% {
-
     transform:
       translate3d(
         -50%,
@@ -578,12 +796,9 @@ body.cinna-cafe-body-open {
         0
       )
       scale(1.012);
-
   }
 
-
   80% {
-
     transform:
       translate3d(
         -50%,
@@ -591,12 +806,9 @@ body.cinna-cafe-body-open {
         0
       )
       scale(1.004);
-
   }
 
-
   100% {
-
     transform:
       translate3d(
         -50%,
@@ -604,7 +816,6 @@ body.cinna-cafe-body-open {
         0
       )
       scale(1);
-
   }
 
 }
@@ -615,188 +826,550 @@ body.cinna-cafe-body-open {
    ===================================================== */
 
 .cinna-cafe-prep-counter {
-  left: 50%;
+  position: absolute;
 
+  left: 50%;
   bottom: -1%;
 
   z-index: 10;
 
-  width: 98%;
+  display: block;
 
+  width: 98%;
   height: auto;
 
   transform:
     translateX(-50%);
 
-  object-fit:
-    contain;
+  object-fit: contain;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 
   filter:
     drop-shadow(
       0
       8px
       6px
-      rgba(
-        65,
-        47,
-        33,
-        0.16
-      )
+      rgba(65, 47, 33, 0.16)
     );
 }
 
 
 /* =====================================================
-   MENSAGEM TEMPORÁRIA
+   HOTSPOTS
    ===================================================== */
 
-.cinna-cafe-ready-message {
+.cafe-hotspots {
   position: absolute;
 
-  top: 4%;
+  inset: 0;
 
-  left: 50%;
+  z-index: 20;
 
-  z-index: 30;
+  pointer-events: none;
+}
 
-  transform:
-    translateX(-50%);
 
-  padding:
-    8px
-    15px;
+.cafe-hotspot {
+  position: absolute;
 
-  border-radius:
-    999px;
+  padding: 0;
+
+  margin: 0;
+
+  border: 0;
+
+  outline: none;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  pointer-events: auto;
+
+  touch-action: manipulation;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+/*
+   =====================================================
+   POSIÇÃO DOS HOTSPOTS
+
+   Eles são invisíveis.
+
+   Depois que você testar no cenário,
+   se algum estiver alguns pixels fora,
+   só precisamos ajustar estes percentuais.
+   =====================================================
+*/
+
+
+/* ☕ LATTE BRANCO */
+
+.hotspot-bear-latte {
+  left: 52%;
+  top: 65%;
+
+  width: 7%;
+  height: 15%;
+}
+
+
+/* ☕ LATTE ROSA */
+
+.hotspot-pink-latte {
+  left: 59%;
+  top: 65%;
+
+  width: 7%;
+  height: 15%;
+}
+
+
+/* 🥤 FRAPPÉ */
+
+.hotspot-frappe {
+  left: 68%;
+  top: 60%;
+
+  width: 8%;
+  height: 20%;
+}
+
+
+/* 🧁 CUPCAKE CHOCOLATE */
+
+.hotspot-cupcake-chocolate {
+  left: 35%;
+  top: 69%;
+
+  width: 7%;
+  height: 12%;
+}
+
+
+/* 🧁 CUPCAKE MORANGO */
+
+.hotspot-cupcake-strawberry {
+  left: 42%;
+  top: 69%;
+
+  width: 7%;
+  height: 12%;
+}
+
+
+/* 🍩 DONUT CHOCOLATE */
+
+.hotspot-donut-chocolate {
+  left: 18%;
+  top: 65%;
+
+  width: 7%;
+  height: 11%;
+}
+
+
+/* 🍩 DONUT MORANGO */
+
+.hotspot-donut-strawberry {
+  left: 24%;
+  top: 65%;
+
+  width: 7%;
+  height: 11%;
+}
+
+
+/* 🍩 DONUT BAUNILHA */
+
+.hotspot-donut-vanilla {
+  left: 30%;
+  top: 65%;
+
+  width: 7%;
+  height: 11%;
+}
+
+
+/* =====================================================
+   EFEITO DO TOQUE
+   ===================================================== */
+
+.cafe-hotspot.clicked {
+  animation:
+    cafeHotspotTap
+    0.18s
+    ease;
+}
+
+
+@keyframes cafeHotspotTap {
+
+  50% {
+    transform:
+      scale(0.9);
+  }
+
+}
+
+
+/* =====================================================
+   BANDEJA AZUL
+   ===================================================== */
+
+.cafe-tray-items {
+  position: absolute;
+
+  left: 78%;
+  top: 66%;
+
+  z-index: 25;
+
+  width: 16%;
+  height: 15%;
 
   display: flex;
 
   align-items: center;
   justify-content: center;
 
-  gap: 6px;
+  gap: 2%;
 
-  white-space:
-    nowrap;
-
-  color:
-    #6389a2;
-
-  background:
-    rgba(
-      255,
-      255,
-      255,
-      0.91
-    );
-
-  box-shadow:
-    0
-    6px
-    16px
-    rgba(
-      65,
-      103,
-      127,
-      0.13
-    );
-
-  backdrop-filter:
-    blur(8px);
-
-  -webkit-backdrop-filter:
-    blur(8px);
-}
-
-
-.cinna-cafe-ready-message span {
-  font-size:
-    17px;
-}
-
-
-.cinna-cafe-ready-message strong {
-  font-size:
-    12px;
-
-  font-weight:
-    900;
-}
-
-
-.cinna-cafe-ready-message small {
-  font-size:
-    10px;
-
-  color:
-    #91a8b6;
-
-  font-weight:
-    700;
+  pointer-events: auto;
 }
 
 
 /* =====================================================
-   BLOQUEIA O JOGO PRINCIPAL
+   ITEM NA BANDEJA
    ===================================================== */
 
-body.cinna-cafe-body-open
-.room {
-  pointer-events:
-    none;
+.cafe-tray-item {
+  position: relative;
+
+  flex:
+    0
+    0
+    47%;
+
+  width: 47%;
+  height: 100%;
+
+  padding: 0;
+
+  margin: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  touch-action: manipulation;
+
+  -webkit-tap-highlight-color: transparent;
+
+  animation:
+    cafeTrayItemAppear
+    0.2s
+    cubic-bezier(
+      0.2,
+      0.9,
+      0.3,
+      1.3
+    );
 }
 
 
-body.cinna-cafe-body-open
-.cinna-cafe-screen {
-  pointer-events:
-    auto;
+.cafe-tray-item img {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+
+  filter:
+    drop-shadow(
+      0
+      3px
+      2px
+      rgba(62, 66, 75, 0.15)
+    );
 }
+
+
+@keyframes cafeTrayItemAppear {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(-8px)
+      scale(0.65);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+
+.cafe-tray-items.shake {
+  animation:
+    cafeTrayShake
+    0.25s
+    linear;
+}
+
+
+@keyframes cafeTrayShake {
+
+  25% {
+    transform:
+      translateX(-4px);
+  }
+
+  75% {
+    transform:
+      translateX(4px);
+  }
+
+}
+
+
+/* =====================================================
+   BOTÃO ENTREGAR
+   ===================================================== */
+
+.cafe-deliver {
+  position: absolute;
+
+  right: 5%;
+  bottom: 2%;
+
+  z-index: 40;
+
+  padding:
+    clamp(5px, 1vw, 9px)
+    clamp(9px, 1.8vw, 18px);
+
+  border: 0;
+
+  border-radius: 999px;
+
+  opacity: 0;
+
+  transform:
+    translateY(8px)
+    scale(0.9);
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffb9d2,
+      #ff94bd
+    );
+
+  color: white;
+
+  font-size:
+    clamp(8px, 1.2vw, 13px);
+
+  font-weight: 900;
+
+  letter-spacing: 0.4px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0
+    4px
+    0
+    #e879a3,
+    0
+    7px
+    12px
+    rgba(139, 70, 98, 0.18);
+
+  transition:
+    opacity
+    0.2s
+    ease,
+    transform
+    0.2s
+    ease;
+
+  touch-action: manipulation;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+.cafe-deliver.show {
+  opacity: 1;
+
+  transform:
+    translateY(0)
+    scale(1);
+
+  pointer-events: auto;
+}
+
+
+.cafe-deliver:active {
+  transform:
+    translateY(2px)
+    scale(0.96);
+
+  box-shadow:
+    0
+    2px
+    0
+    #e879a3;
+}
+
+
+/* =====================================================
+   FEEDBACK
+   ===================================================== */
+
+.cafe-feedback {
+  position: absolute;
+
+  left: 50%;
+  top: 5%;
+
+  z-index: 80;
+
+  padding:
+    7px
+    14px;
+
+  opacity: 0;
+
+  transform:
+    translateX(-50%)
+    translateY(-7px);
+
+  pointer-events: none;
+
+  border-radius: 999px;
+
+  color: #66859a;
+
+  background:
+    rgba(255, 255, 255, 0.96);
+
+  font-size:
+    clamp(9px, 1.5vw, 14px);
+
+  font-weight: 900;
+
+  white-space: nowrap;
+
+  box-shadow:
+    0
+    5px
+    15px
+    rgba(57, 91, 112, 0.15);
+
+  transition:
+    opacity
+    0.2s
+    ease,
+    transform
+    0.2s
+    ease;
+}
+
+
+.cafe-feedback.show {
+  opacity: 1;
+
+  transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+
+.cafe-feedback.correct {
+  color: #62a87a;
+}
+
+
+.cafe-feedback.wrong {
+  color: #d96d7c;
+}
+
+
+/* =====================================================
+   IMPORTANTE:
+   NÃO EXISTE MAIS NENHUMA REGRA MEXENDO NA .room.
+
+   O overlay já está acima do jogo com z-index 9999.
+   Assim o Café não interfere em:
+   - menu principal
+   - carteira
+   - loja
+   - outros minijogos
+   ===================================================== */
 
 
 /* =====================================================
    TELAS PEQUENAS
    ===================================================== */
 
-@media (
-  max-width: 650px
-) {
+@media (max-width: 650px) {
 
   .cinna-cafe-topbar {
-    min-height:
-      58px;
+    min-height: 58px;
 
     grid-template-columns:
       42px
       1fr
       auto;
 
-    padding-left:
-      8px;
-
-    padding-right:
-      8px;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
 
   .cinna-cafe-back {
-    width:
-      38px;
+    width: 38px;
+    height: 38px;
 
-    height:
-      38px;
+    border-radius: 13px;
 
-    border-radius:
-      13px;
-
-    font-size:
-      22px;
+    font-size: 22px;
   }
 
 
   .cinna-cafe-coins {
-    min-width:
-      64px;
+    min-width: 64px;
 
     padding:
       5px
@@ -804,71 +1377,48 @@ body.cinna-cafe-body-open
   }
 
 
-  .cinna-cafe-coins span {
-    font-size:
-      16px;
-  }
-
-
   .cinna-cafe-coins strong {
-    font-size:
-      12px;
-  }
-
-
-  .cinna-cafe-ready-message {
-    padding:
-      5px
-      9px;
-  }
-
-
-  .cinna-cafe-ready-message small {
-    display:
-      none;
+    font-size: 12px;
   }
 
 }
 
 
 /* =====================================================
-   CELULAR NA VERTICAL
+   VERTICAL
    ===================================================== */
 
-@media (
-  orientation: portrait
-) {
+@media (orientation: portrait) {
 
   .cinna-cafe-stage-wrapper {
-    padding:
-      6px;
+    padding: 6px;
   }
 
 
   .cinna-cafe-stage {
-    width:
-      100%;
+    width: 100%;
 
-    max-height:
-      none;
+    max-height: none;
   }
 
 
   .cinna-cafe-chef {
-    width:
-      16%;
+    width: 16%;
+  }
+
+
+  .cafe-customer-wrap {
+    width: 17%;
   }
 
 
   .cinna-cafe-client-counter {
-    width:
-      49%;
+    width: 49%;
   }
 
 
   .cinna-cafe-prep-counter {
-    width:
-      99%;
+    width: 99%;
   }
 
 }

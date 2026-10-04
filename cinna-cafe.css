@@ -1,0 +1,620 @@
+/* =====================================================
+   CINNA CAFÉ ☕🍰
+   INTERFACE DO MINIGAME
+   ===================================================== */
+
+
+/* =====================================================
+   TELA DO CAFÉ
+   ===================================================== */
+
+.cinna-cafe-screen {
+  position: fixed;
+  inset: 0;
+
+  z-index: 9999;
+
+  width: 100vw;
+  height: 100dvh;
+
+  display: none;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: #dff5ff;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+
+.cinna-cafe-screen.is-open {
+  display: flex;
+}
+
+
+body.cinna-cafe-body-open {
+  overflow: hidden;
+}
+
+
+/* =====================================================
+   TOPBAR
+   ===================================================== */
+
+.cinna-cafe-topbar {
+  position: relative;
+
+  z-index: 50;
+
+  width: 100%;
+
+  min-height: 64px;
+
+  padding:
+    max(8px, env(safe-area-inset-top))
+    14px
+    8px;
+
+  display: grid;
+
+  grid-template-columns:
+    48px
+    1fr
+    auto;
+
+  align-items: center;
+
+  gap: 10px;
+
+  background:
+    rgba(255, 255, 255, 0.96);
+
+  border-bottom:
+    2px solid
+    rgba(110, 174, 214, 0.18);
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 5px 18px
+    rgba(80, 126, 155, 0.12);
+}
+
+
+/* =====================================================
+   VOLTAR
+   ===================================================== */
+
+.cinna-cafe-back {
+  width: 44px;
+  height: 44px;
+
+  border: 0;
+
+  border-radius: 15px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #e6f6ff;
+
+  color: #578daf;
+
+  font-size: 26px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 10px
+    rgba(71, 120, 151, 0.1);
+}
+
+
+.cinna-cafe-back:active {
+  transform: scale(0.92);
+}
+
+
+/* =====================================================
+   TÍTULO
+   ===================================================== */
+
+.cinna-cafe-topbar-title {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+
+.cinna-cafe-topbar-title strong {
+  color: #5c8aa7;
+
+  font-size: clamp(
+    15px,
+    3.5vw,
+    20px
+  );
+
+  font-weight: 900;
+}
+
+
+.cinna-cafe-topbar-title small {
+  margin-top: 2px;
+
+  color: #95aeba;
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   MOEDAS
+   ===================================================== */
+
+.cinna-cafe-coins {
+  min-width: 72px;
+
+  padding: 7px 12px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  border-radius: 999px;
+
+  background: #fff8dc;
+
+  color: #92733c;
+
+  border:
+    2px solid
+    rgba(239, 195, 83, 0.25);
+
+  box-sizing: border-box;
+}
+
+
+.cinna-cafe-coins span {
+  font-size: 19px;
+}
+
+
+.cinna-cafe-coins strong {
+  font-size: 14px;
+
+  font-weight: 900;
+}
+
+
+/* =====================================================
+   CONTAINER DO PALCO
+   ===================================================== */
+
+.cinna-cafe-stage-wrapper {
+  flex: 1;
+
+  min-height: 0;
+
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+
+/* =====================================================
+   PALCO 16:9
+   ===================================================== */
+
+.cinna-cafe-stage {
+  position: relative;
+
+  width: min(
+    100%,
+    calc((100dvh - 82px) * 1.777777)
+  );
+
+  max-width: 1600px;
+
+  aspect-ratio: 16 / 9;
+
+  max-height: calc(
+    100dvh - 82px
+  );
+
+  flex-shrink: 0;
+
+  overflow: hidden;
+
+  border-radius: 22px;
+
+  background: #e9f8ff;
+
+  box-shadow:
+    0 15px 40px
+    rgba(48, 91, 121, 0.22);
+
+  isolation: isolate;
+}
+
+
+/* =====================================================
+   TODAS AS IMAGENS DO PALCO
+   ===================================================== */
+
+.cinna-cafe-stage img {
+  position: absolute;
+
+  display: block;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+
+  pointer-events: none;
+}
+
+
+/* =====================================================
+   FUNDO DA CAFETERIA
+   ===================================================== */
+
+.cinna-cafe-background {
+  inset: 0;
+
+  z-index: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+
+/* =====================================================
+   BALCÃO DOS CLIENTES
+   ===================================================== */
+
+.cinna-cafe-client-counter {
+  left: 50%;
+  bottom: 25%;
+
+  z-index: 3;
+
+  width: 48%;
+  height: auto;
+
+  transform: translateX(-50%);
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(
+      0 6px 5px
+      rgba(67, 51, 38, 0.15)
+    );
+}
+
+
+/* =====================================================
+   ÁREA DOS CLIENTES
+   ===================================================== */
+
+.cinna-cafe-customer-area {
+  position: absolute;
+
+  left: 50%;
+  bottom: 42%;
+
+  z-index: 4;
+
+  width: 58%;
+  height: 41%;
+
+  transform: translateX(-50%);
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 3%;
+
+  align-items: end;
+
+  pointer-events: none;
+}
+
+
+.cinna-cafe-customer-slot {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+
+  align-items: flex-end;
+  justify-content: center;
+}
+
+
+/* =====================================================
+   CINNA COZINHEIRO
+   ===================================================== */
+
+.cinna-cafe-chef {
+  left: 50%;
+  bottom: 26%;
+
+  z-index: 6;
+
+  width: 15%;
+  height: auto;
+
+  transform: translateX(-50%);
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(
+      0 7px 6px
+      rgba(58, 85, 101, 0.16)
+    );
+
+  animation:
+    cinnaCafeIdle
+    2.2s
+    ease-in-out
+    infinite;
+}
+
+
+@keyframes cinnaCafeIdle {
+
+  0%,
+  100% {
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translateX(-50%)
+      translateY(-5px);
+  }
+
+}
+
+
+/* =====================================================
+   BANCADA DE PREPARO
+   ===================================================== */
+
+.cinna-cafe-prep-counter {
+  left: 50%;
+  bottom: -1%;
+
+  z-index: 10;
+
+  width: 98%;
+  height: auto;
+
+  transform: translateX(-50%);
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(
+      0 8px 6px
+      rgba(65, 47, 33, 0.16)
+    );
+}
+
+
+/* =====================================================
+   MENSAGEM TEMPORÁRIA
+   ===================================================== */
+
+.cinna-cafe-ready-message {
+  position: absolute;
+
+  top: 4%;
+  left: 50%;
+
+  z-index: 30;
+
+  transform: translateX(-50%);
+
+  padding:
+    8px
+    15px;
+
+  border-radius: 999px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  white-space: nowrap;
+
+  color: #6389a2;
+
+  background:
+    rgba(255, 255, 255, 0.91);
+
+  box-shadow:
+    0 6px 16px
+    rgba(65, 103, 127, 0.13);
+
+  backdrop-filter: blur(8px);
+
+  -webkit-backdrop-filter:
+    blur(8px);
+}
+
+
+.cinna-cafe-ready-message span {
+  font-size: 17px;
+}
+
+
+.cinna-cafe-ready-message strong {
+  font-size: 12px;
+
+  font-weight: 900;
+}
+
+
+.cinna-cafe-ready-message small {
+  font-size: 10px;
+
+  color: #91a8b6;
+
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   NÃO DEIXA O JOGO PRINCIPAL APARECER POR CIMA
+   ===================================================== */
+
+body.cinna-cafe-body-open
+.room {
+  pointer-events: none;
+}
+
+
+body.cinna-cafe-body-open
+.cinna-cafe-screen {
+  pointer-events: auto;
+}
+
+
+/* =====================================================
+   TELAS PEQUENAS
+   ===================================================== */
+
+@media (max-width: 650px) {
+
+  .cinna-cafe-topbar {
+    min-height: 58px;
+
+    grid-template-columns:
+      42px
+      1fr
+      auto;
+
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+
+  .cinna-cafe-back {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 13px;
+
+    font-size: 22px;
+  }
+
+
+  .cinna-cafe-coins {
+    min-width: 64px;
+
+    padding:
+      5px
+      8px;
+  }
+
+
+  .cinna-cafe-coins span {
+    font-size: 16px;
+  }
+
+
+  .cinna-cafe-coins strong {
+    font-size: 12px;
+  }
+
+
+  .cinna-cafe-ready-message {
+    padding:
+      5px
+      9px;
+  }
+
+
+  .cinna-cafe-ready-message small {
+    display: none;
+  }
+
+}
+
+
+/* =====================================================
+   CELULAR NA VERTICAL
+   ===================================================== */
+
+@media (orientation: portrait) {
+
+  .cinna-cafe-stage-wrapper {
+    padding: 6px;
+  }
+
+
+  .cinna-cafe-stage {
+    width: 100%;
+
+    max-height: none;
+  }
+
+
+  .cinna-cafe-chef {
+    width: 16%;
+  }
+
+
+  .cinna-cafe-client-counter {
+    width: 49%;
+  }
+
+
+  .cinna-cafe-prep-counter {
+    width: 99%;
+  }
+
+}

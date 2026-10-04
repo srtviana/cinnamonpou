@@ -1,1239 +1,1712 @@
-/* =====================================================
-   CINNA CAFÉ ☕🍰
-   V4 — CLIENTE + PEDIDOS + HOTSPOTS + BANDEJA
-   ===================================================== */
+// ======================================================
+// CENTRAL DE MINIJOGOS
+// ======================================================
+
+const gamesRoom = document.querySelector(".room");
+const gamesMenuButtons = document.querySelectorAll(".menu-button");
 
 
-/* =====================================================
-   TELA
-   ===================================================== */
+// ======================================================
+// CENTRAL
+// ======================================================
 
-.cinna-cafe-screen {
-  position: fixed;
-  inset: 0;
+const gameHub = document.createElement("section");
 
-  z-index: 9999;
+gameHub.id = "game-hub";
+gameHub.className = "game-hub";
 
-  width: 100vw;
-  height: 100dvh;
+gameHub.innerHTML = `
 
-  display: none;
-  flex-direction: column;
+  <h2 class="game-hub-title">
+    🎮 Minijogos
+  </h2>
 
-  overflow: hidden;
+  <p class="game-hub-subtitle">
+    Escolha uma brincadeira!
+  </p>
 
-  background: #dff5ff;
 
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  <div class="game-cards">
+
+    <button
+      class="game-card available"
+      id="star-game-button"
+      type="button"
+    >
+
+      <span class="game-card-icon">
+        ⭐
+      </span>
+
+      <span class="game-card-info">
+
+        <strong class="game-card-name">
+          Pega Estrelinhas
+        </strong>
+
+        <small class="game-card-description">
+          Pegue o máximo de estrelas antes do tempo acabar.
+        </small>
+
+      </span>
+
+      <span class="game-card-status">
+        JOGAR
+      </span>
+
+    </button>
+
+
+    <button
+      class="game-card locked"
+      type="button"
+      disabled
+    >
+
+      <span class="game-card-icon">
+        ☁️
+      </span>
+
+      <span class="game-card-info">
+
+        <strong class="game-card-name">
+          Cloud Jump
+        </strong>
+
+        <small class="game-card-description">
+          Pule entre as nuvens sem cair.
+        </small>
+
+      </span>
+
+      <span class="game-card-status">
+        EM BREVE
+      </span>
+
+    </button>
+
+
+    <button
+      class="game-card locked"
+      type="button"
+      disabled
+    >
+
+      <span class="game-card-icon">
+        🧠
+      </span>
+
+      <span class="game-card-info">
+
+        <strong class="game-card-name">
+          Memória
+        </strong>
+
+        <small class="game-card-description">
+          Encontre todos os pares.
+        </small>
+
+      </span>
+
+      <span class="game-card-status">
+        EM BREVE
+      </span>
+
+    </button>
+
+  </div>
+
+
+  <p
+    id="game-hub-message"
+    class="game-hub-message"
+  >
+    Qual vamos jogar? ☁️
+  </p>
+
+`;
+
+gamesRoom.appendChild(gameHub);
+
+
+// ======================================================
+// PEGA ESTRELINHAS — TELA
+// ======================================================
+
+const starGameScreen =
+  document.createElement(
+    "section"
+  );
+
+starGameScreen.id =
+  "star-game-screen";
+
+starGameScreen.className =
+  "star-game-screen";
+
+
+starGameScreen.innerHTML = `
+
+  <div class="star-game-topbar">
+
+    <div class="star-stat">
+      <span>⭐</span>
+      <strong id="star-score">
+        0
+      </strong>
+    </div>
+
+
+    <div class="star-game-title">
+      Pega Estrelinhas
+    </div>
+
+
+    <div class="star-stat">
+      <span>⏱️</span>
+      <strong id="star-time">
+        30
+      </strong>
+    </div>
+
+  </div>
+
+
+  <div
+    id="star-game-board"
+    class="star-game-board"
+  >
+
+    <button
+      id="catch-star"
+      class="catch-star"
+      type="button"
+      aria-label="Pegar estrela"
+    >
+      ⭐
+    </button>
+
+
+    <!-- TELA INICIAL -->
+
+    <div
+      id="star-start-overlay"
+      class="star-game-overlay"
+    >
+
+      <div class="star-game-overlay-card">
+
+        <div class="star-big-icon">
+          ⭐
+        </div>
+
+
+        <h3>
+          Pega Estrelinhas
+        </h3>
+
+
+        <p>
+          Toque nas estrelas o mais rápido que conseguir!
+        </p>
+
+
+        <button
+          id="star-start-button"
+          class="star-primary-button"
+          type="button"
+        >
+          COMEÇAR
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- RESULTADO -->
+
+    <div
+      id="star-result-overlay"
+      class="star-game-overlay"
+      hidden
+    >
+
+      <div
+        class="star-game-overlay-card result-card"
+      >
+
+        <div class="star-big-icon">
+          🌟
+        </div>
+
+
+        <h3>
+          Fim de jogo!
+        </h3>
+
+
+        <p
+          id="star-result-text"
+          class="star-result-text"
+        ></p>
+
+
+        <p
+          id="star-reward-text"
+          class="star-reward-text"
+        ></p>
+
+
+        <div class="star-result-buttons">
+
+          <button
+            id="star-replay-button"
+            class="star-primary-button"
+            type="button"
+          >
+            JOGAR DE NOVO
+          </button>
+
+
+          <button
+            id="star-back-button"
+            class="star-secondary-button"
+            type="button"
+          >
+            VOLTAR
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <button
+    id="star-exit-button"
+    class="star-exit-button"
+    type="button"
+  >
+    ← Voltar aos jogos
+  </button>
+
+`;
+
+gamesRoom.appendChild(
+  starGameScreen
+);
+
+
+// ======================================================
+// ELEMENTOS
+// ======================================================
+
+const starGameButton =
+  document.querySelector(
+    "#star-game-button"
+  );
+
+const gameHubMessage =
+  document.querySelector(
+    "#game-hub-message"
+  );
+
+
+const starScoreElement =
+  document.querySelector(
+    "#star-score"
+  );
+
+const starTimeElement =
+  document.querySelector(
+    "#star-time"
+  );
+
+const starGameBoard =
+  document.querySelector(
+    "#star-game-board"
+  );
+
+const catchStar =
+  document.querySelector(
+    "#catch-star"
+  );
+
+
+const starStartOverlay =
+  document.querySelector(
+    "#star-start-overlay"
+  );
+
+const starResultOverlay =
+  document.querySelector(
+    "#star-result-overlay"
+  );
+
+
+const starStartButton =
+  document.querySelector(
+    "#star-start-button"
+  );
+
+const starReplayButton =
+  document.querySelector(
+    "#star-replay-button"
+  );
+
+const starBackButton =
+  document.querySelector(
+    "#star-back-button"
+  );
+
+const starExitButton =
+  document.querySelector(
+    "#star-exit-button"
+  );
+
+
+const starResultText =
+  document.querySelector(
+    "#star-result-text"
+  );
+
+const starRewardText =
+  document.querySelector(
+    "#star-reward-text"
+  );
+
+
+// ======================================================
+// ESTADO DO MINIJOGO
+// ======================================================
+
+const STAR_GAME_DURATION =
+  30;
+
+let starScore =
+  0;
+
+let starTimeLeft =
+  STAR_GAME_DURATION;
+
+let starGameRunning =
+  false;
+
+let starTimerInterval =
+  null;
+
+let starMoveInterval =
+  null;
+
+
+// ======================================================
+// CENTRAL
+// ======================================================
+
+function updateGamesHub() {
+
+  const currentRoom =
+    gamesRoom.dataset.room;
+
+
+  if (
+    currentRoom === "games"
+  ) {
+
+    gamesRoom.classList.add(
+      "games-open"
+    );
+
+  }
+
+  else {
+
+    stopStarGame(
+      false
+    );
+
+    closeStarGame();
+
+    gamesRoom.classList.remove(
+      "games-open"
+    );
+
+  }
+
 }
 
-.cinna-cafe-screen.is-open {
-  display: flex;
-}
 
-body.cinna-cafe-body-open {
-  overflow: hidden;
-}
+// ======================================================
+// ABRIR O MINIJOGO
+// ======================================================
+
+function openStarGame() {
+
+  stopStarGame(
+    false
+  );
 
 
-/* =====================================================
-   TOPBAR
-   ===================================================== */
+  starScore =
+    0;
 
-.cinna-cafe-topbar {
-  position: relative;
+  starTimeLeft =
+    STAR_GAME_DURATION;
 
-  z-index: 100;
 
-  width: 100%;
-  min-height: 64px;
+  starScoreElement.textContent =
+    starScore;
 
-  padding:
-    max(8px, env(safe-area-inset-top))
-    14px
-    8px;
+  starTimeElement.textContent =
+    starTimeLeft;
 
-  display: grid;
 
-  grid-template-columns:
-    48px
-    1fr
-    auto;
+  starResultOverlay.hidden =
+    true;
 
-  align-items: center;
+  starStartOverlay.hidden =
+    false;
 
-  gap: 10px;
+  catchStar.hidden =
+    true;
 
-  box-sizing: border-box;
 
-  background:
-    rgba(255,255,255,.96);
+  gamesRoom.classList.add(
+    "star-game-open"
+  );
 
-  border-bottom:
-    2px solid
-    rgba(110,174,214,.18);
-
-  box-shadow:
-    0 5px 18px
-    rgba(80,126,155,.12);
 }
 
 
-/* =====================================================
-   VOLTAR
-   ===================================================== */
+// ======================================================
+// FECHAR O MINIJOGO
+// ======================================================
 
-.cinna-cafe-back {
-  width: 44px;
-  height: 44px;
+function closeStarGame() {
 
-  border: 0;
-  border-radius: 15px;
+  stopStarGame(
+    false
+  );
 
-  display: flex;
 
-  align-items: center;
-  justify-content: center;
+  gamesRoom.classList.remove(
+    "star-game-open"
+  );
 
-  background: #e6f6ff;
 
-  color: #578daf;
+  starResultOverlay.hidden =
+    true;
 
-  font-size: 26px;
-  font-weight: 900;
+  starStartOverlay.hidden =
+    false;
 
-  cursor: pointer;
+  catchStar.hidden =
+    true;
 
-  touch-action: manipulation;
-
-  box-shadow:
-    0 4px 10px
-    rgba(71,120,151,.1);
-}
-
-.cinna-cafe-back:active {
-  transform: scale(.92);
 }
 
 
-/* =====================================================
-   TÍTULO
-   ===================================================== */
+// ======================================================
+// POSIÇÃO ALEATÓRIA
+// ======================================================
 
-.cinna-cafe-topbar-title {
-  min-width: 0;
+function moveStar() {
 
-  display: flex;
-  flex-direction: column;
+  if (
+    !starGameRunning
+  ) {
 
-  align-items: center;
-  justify-content: center;
+    return;
 
-  text-align: center;
-}
-
-.cinna-cafe-topbar-title strong {
-  color: #5c8aa7;
-
-  font-size:
-    clamp(15px, 3.5vw, 20px);
-
-  font-weight: 900;
-}
-
-.cinna-cafe-topbar-title small {
-  margin-top: 2px;
-
-  color: #95aeba;
-
-  font-size: 10px;
-
-  font-weight: 700;
-}
+  }
 
 
-/* =====================================================
-   MOEDAS
-   ===================================================== */
-
-.cinna-cafe-coins {
-  min-width: 72px;
-
-  padding: 7px 12px;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 5px;
-
-  border-radius: 999px;
-
-  background: #fff8dc;
-
-  color: #92733c;
-
-  border:
-    2px solid
-    rgba(239,195,83,.25);
-
-  box-sizing: border-box;
-
-  font-weight: 900;
-}
+  const boardRect =
+    starGameBoard
+      .getBoundingClientRect();
 
 
-/* =====================================================
-   WRAPPER
-   ===================================================== */
+  const starRect =
+    catchStar
+      .getBoundingClientRect();
 
-.cinna-cafe-stage-wrapper {
-  flex: 1;
 
-  min-height: 0;
+  const padding =
+    10;
 
-  width: 100%;
 
-  display: flex;
+  const maxX =
+    Math.max(
 
-  align-items: center;
-  justify-content: center;
+      padding,
 
-  padding: 8px;
+      boardRect.width -
+      starRect.width -
+      padding
 
-  box-sizing: border-box;
+    );
 
-  overflow: hidden;
+
+  const maxY =
+    Math.max(
+
+      padding,
+
+      boardRect.height -
+      starRect.height -
+      padding
+
+    );
+
+
+  const x =
+
+    padding +
+    Math.random() *
+    (
+      maxX -
+      padding
+    );
+
+
+  const y =
+
+    padding +
+    Math.random() *
+    (
+      maxY -
+      padding
+    );
+
+
+  catchStar.style.left =
+    `${x}px`;
+
+  catchStar.style.top =
+    `${y}px`;
+
 }
 
 
-/* =====================================================
-   PALCO
-   ===================================================== */
+// ======================================================
+// RECOMPENSA
+// ======================================================
 
-.cinna-cafe-stage {
-  position: relative;
+function getStarReward(
+  score
+) {
 
-  width:
-    min(
-      100%,
-      calc(
-        (100dvh - 82px) *
-        1.777777
+  if (
+    score <= 5
+  ) {
+
+    return 3;
+
+  }
+
+
+  if (
+    score <= 10
+  ) {
+
+    return 5;
+
+  }
+
+
+  if (
+    score <= 20
+  ) {
+
+    return 10;
+
+  }
+
+
+  return 15;
+
+}
+
+
+function giveStarReward(
+  reward
+) {
+
+  if (
+    typeof cinnaStatus ===
+    "undefined"
+  ) {
+
+    return;
+
+  }
+
+
+  cinnaStatus.happiness =
+
+    limitStatus(
+
+      cinnaStatus.happiness +
+      reward
+
+    );
+
+
+  saveStatus();
+
+  updateStatusBars();
+
+}
+
+
+// ======================================================
+// COMEÇAR
+// ======================================================
+
+function startStarGame() {
+
+  clearInterval(
+    starTimerInterval
+  );
+
+  clearInterval(
+    starMoveInterval
+  );
+
+
+  starScore =
+    0;
+
+  starTimeLeft =
+    STAR_GAME_DURATION;
+
+  starGameRunning =
+    true;
+
+
+  starScoreElement.textContent =
+    starScore;
+
+  starTimeElement.textContent =
+    starTimeLeft;
+
+
+  starStartOverlay.hidden =
+    true;
+
+  starResultOverlay.hidden =
+    true;
+
+  catchStar.hidden =
+    false;
+
+
+  moveStar();
+
+
+  // A estrela muda de posição
+  // mesmo se você não clicar nela.
+
+  starMoveInterval =
+
+    setInterval(
+
+      moveStar,
+
+      850
+
+    );
+
+
+  starTimerInterval =
+
+    setInterval(
+
+      () => {
+
+        starTimeLeft -=
+          1;
+
+
+        starTimeElement.textContent =
+          starTimeLeft;
+
+
+        if (
+          starTimeLeft <=
+          0
+        ) {
+
+          finishStarGame();
+
+        }
+
+      },
+
+      1000
+
+    );
+
+}
+
+
+// ======================================================
+// PEGAR ESTRELA
+// ======================================================
+
+function catchCurrentStar() {
+
+  if (
+    !starGameRunning
+  ) {
+
+    return;
+
+  }
+
+
+  starScore +=
+    1;
+
+
+  starScoreElement.textContent =
+    starScore;
+
+
+  catchStar.classList.remove(
+    "star-pop"
+  );
+
+
+  // Reinicia a animação
+
+  void catchStar.offsetWidth;
+
+
+  catchStar.classList.add(
+    "star-pop"
+  );
+
+
+  moveStar();
+
+}
+
+
+// ======================================================
+// FINALIZAR
+// ======================================================
+
+function finishStarGame() {
+
+  if (
+    !starGameRunning
+  ) {
+
+    return;
+
+  }
+
+
+  starGameRunning =
+    false;
+
+
+  clearInterval(
+    starTimerInterval
+  );
+
+  clearInterval(
+    starMoveInterval
+  );
+
+
+  starTimerInterval =
+    null;
+
+  starMoveInterval =
+    null;
+
+
+  catchStar.hidden =
+    true;
+
+
+  const reward =
+    getStarReward(
+      starScore
+    );
+
+
+  const previousBest =
+
+    Number(
+
+      localStorage.getItem(
+        "cinnaStarBest"
+      )
+
+    )
+
+    ||
+
+    0;
+
+
+  const bestScore =
+    Math.max(
+
+      previousBest,
+
+      starScore
+
+    );
+
+
+  localStorage.setItem(
+
+    "cinnaStarBest",
+
+    bestScore
+
+  );
+
+
+  giveStarReward(
+    reward
+  );
+
+
+  starResultText.textContent =
+
+    `Você pegou ${starScore} estrela${starScore === 1 ? "" : "s"}! Recorde: ${bestScore} ⭐`;
+
+
+  starRewardText.textContent =
+
+    `Cinna ganhou +${reward}% de felicidade ❤️`;
+
+
+  starResultOverlay.hidden =
+    false;
+
+}
+
+
+// ======================================================
+// PARAR
+// ======================================================
+
+function stopStarGame(
+  showStart = true
+) {
+
+  starGameRunning =
+    false;
+
+
+  clearInterval(
+    starTimerInterval
+  );
+
+  clearInterval(
+    starMoveInterval
+  );
+
+
+  starTimerInterval =
+    null;
+
+  starMoveInterval =
+    null;
+
+
+  catchStar.hidden =
+    true;
+
+
+  if (
+    showStart
+  ) {
+
+    starStartOverlay.hidden =
+      false;
+
+    starResultOverlay.hidden =
+      true;
+
+  }
+
+}
+
+
+// ======================================================
+// EVENTOS
+// ======================================================
+
+starGameButton.addEventListener(
+
+  "click",
+
+  () => {
+
+    gameHubMessage.textContent =
+      "⭐ Preparando o Pega Estrelinhas...";
+
+
+    openStarGame();
+
+  }
+
+);
+
+
+starStartButton.addEventListener(
+
+  "click",
+
+  startStarGame
+
+);
+
+
+starReplayButton.addEventListener(
+
+  "click",
+
+  startStarGame
+
+);
+
+
+starBackButton.addEventListener(
+
+  "click",
+
+  closeStarGame
+
+);
+
+
+starExitButton.addEventListener(
+
+  "click",
+
+  closeStarGame
+
+);
+
+
+catchStar.addEventListener(
+
+  "click",
+
+  catchCurrentStar
+
+);
+
+
+// ======================================================
+// OBSERVA TROCA DE CÔMODO
+// ======================================================
+
+const roomObserver =
+
+  new MutationObserver(
+
+    updateGamesHub
+
+  );
+
+
+roomObserver.observe(
+
+  gamesRoom,
+
+  {
+
+    attributes:
+      true,
+
+    attributeFilter: [
+      "data-room"
+    ]
+
+  }
+
+);
+
+
+// ======================================================
+// BOTÕES DO MENU
+// ======================================================
+
+gamesMenuButtons.forEach(
+
+  button => {
+
+    button.addEventListener(
+
+      "click",
+
+      () => {
+
+        setTimeout(
+          updateGamesHub,
+          0
+        );
+
+      }
+
+    );
+
+  }
+
+);
+
+
+// ======================================================
+// INICIALIZAÇÃO
+// ======================================================
+
+updateGamesHub();
+
+
+// ======================================================
+// CINNA COINS 🪙
+// ======================================================
+
+const CINNA_COINS_KEY =
+  "cinnaCoins";
+
+
+// ======================================================
+// CARREGAR SALDO
+// ======================================================
+
+function loadCinnaCoins() {
+
+  const saved =
+    localStorage.getItem(
+      CINNA_COINS_KEY
+    );
+
+
+  // Primeira vez jogando:
+  // começa com 50 Cinna Coins.
+
+  if (saved === null) {
+
+    localStorage.setItem(
+      CINNA_COINS_KEY,
+      "50"
+    );
+
+    return 50;
+
+  }
+
+
+  const value =
+    Number(saved);
+
+
+  if (
+    Number.isNaN(value)
+  ) {
+
+    localStorage.setItem(
+      CINNA_COINS_KEY,
+      "50"
+    );
+
+    return 50;
+
+  }
+
+
+  return value;
+
+}
+
+
+let cinnaCoins =
+  loadCinnaCoins();
+
+
+// ======================================================
+// VISUAL DO CONTADOR
+// ======================================================
+
+const coinStyles =
+  document.createElement(
+    "style"
+  );
+
+
+coinStyles.textContent = `
+
+  .cinna-coins-area {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    padding:
+      0
+      18px
+      10px;
+
+    margin-top: -5px;
+
+  }
+
+
+  .cinna-coins-wallet {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding:
+      7px
+      12px;
+
+    border-radius:
+      999px;
+
+    background:
+      rgba(
+        255,
+        255,
+        255,
+        0.9
+      );
+
+    box-shadow:
+      0
+      5px
+      15px
+      rgba(
+        84,
+        143,
+        177,
+        0.14
+      );
+
+    color:
+      #587b97;
+
+    font-weight:
+      800;
+
+    user-select:
+      none;
+
+    -webkit-user-select:
+      none;
+
+  }
+
+
+  .cinna-coins-icon {
+
+    font-size:
+      20px;
+
+    line-height:
+      1;
+
+  }
+
+
+  .cinna-coins-number {
+
+    font-size:
+      15px;
+
+    min-width:
+      20px;
+
+    text-align:
+      center;
+
+  }
+
+
+  .cinna-coins-name {
+
+    font-size:
+      10px;
+
+    color:
+      #7994a9;
+
+    font-weight:
+      700;
+
+  }
+
+
+  .cinna-coins-wallet.coin-bump {
+
+    animation:
+      cinnaCoinBump
+      0.45s
+      ease;
+
+  }
+
+
+  @keyframes cinnaCoinBump {
+
+    0% {
+
+      transform:
+        scale(1);
+
+    }
+
+
+    35% {
+
+      transform:
+        scale(1.16)
+        rotate(-3deg);
+
+    }
+
+
+    70% {
+
+      transform:
+        scale(0.96)
+        rotate(2deg);
+
+    }
+
+
+    100% {
+
+      transform:
+        scale(1)
+        rotate(0deg);
+
+    }
+
+  }
+
+
+  @media (
+    max-width: 390px
+  ) {
+
+    .cinna-coins-area {
+
+      padding:
+        0
+        16px
+        8px;
+
+    }
+
+
+    .cinna-coins-wallet {
+
+      padding:
+        6px
+        10px;
+
+    }
+
+
+    .cinna-coins-name {
+
+      font-size:
+        9px;
+
+    }
+
+  }
+
+`;
+
+
+document.head.appendChild(
+  coinStyles
+);
+
+
+// ======================================================
+// CRIA O CONTADOR
+// ======================================================
+
+const coinArea =
+  document.createElement(
+    "div"
+  );
+
+
+coinArea.className =
+  "cinna-coins-area";
+
+
+coinArea.innerHTML = `
+
+  <div
+    id="cinna-coins-wallet"
+    class="cinna-coins-wallet"
+  >
+
+    <span class="cinna-coins-icon">
+      🪙
+    </span>
+
+    <span
+      id="cinna-coins-number"
+      class="cinna-coins-number"
+    >
+      ${cinnaCoins}
+    </span>
+
+    <span class="cinna-coins-name">
+      Cinna Coins
+    </span>
+
+  </div>
+
+`;
+
+
+const statusPanel =
+  document.querySelector(
+    ".status-panel"
+  );
+
+
+statusPanel.insertAdjacentElement(
+  "beforebegin",
+  coinArea
+);
+
+
+// ======================================================
+// ATUALIZAR CONTADOR
+// ======================================================
+
+function updateCinnaCoinsDisplay(
+  animate = false
+) {
+
+  const number =
+    document.querySelector(
+      "#cinna-coins-number"
+    );
+
+
+  const wallet =
+    document.querySelector(
+      "#cinna-coins-wallet"
+    );
+
+
+  if (number) {
+
+    number.textContent =
+      cinnaCoins;
+
+  }
+
+
+  if (
+    animate &&
+    wallet
+  ) {
+
+    wallet.classList.remove(
+      "coin-bump"
+    );
+
+
+    void wallet.offsetWidth;
+
+
+    wallet.classList.add(
+      "coin-bump"
+    );
+
+  }
+
+}
+
+
+// ======================================================
+// GANHAR MOEDAS
+// ======================================================
+
+function addCinnaCoins(
+  amount
+) {
+
+  const value =
+    Math.max(
+      0,
+      Math.floor(
+        Number(amount) || 0
       )
     );
 
-  max-width: 1600px;
 
-  aspect-ratio: 16 / 9;
-
-  max-height:
-    calc(100dvh - 82px);
-
-  flex-shrink: 0;
-
-  overflow: hidden;
-
-  border-radius: 22px;
-
-  background: #e9f8ff;
-
-  box-shadow:
-    0 15px 40px
-    rgba(48,91,121,.22);
-
-  isolation: isolate;
-}
+  cinnaCoins +=
+    value;
 
 
-.cinna-cafe-stage img {
-  user-select: none;
-
-  -webkit-user-select: none;
-  -webkit-user-drag: none;
-}
+  localStorage.setItem(
+    CINNA_COINS_KEY,
+    cinnaCoins
+  );
 
 
-/* =====================================================
-   FUNDO
-   ===================================================== */
-
-.cinna-cafe-background {
-  position: absolute;
-
-  inset: 0;
-
-  z-index: 0;
-
-  width: 100%;
-  height: 100%;
-
-  object-fit: cover;
-
-  pointer-events: none;
-}
+  updateCinnaCoinsDisplay(
+    true
+  );
 
 
-/* =====================================================
-   CLIENTE
-   ===================================================== */
-
-.cafe-customer-wrap {
-  position: absolute;
-
-  left: 25%;
-  bottom: 34%;
-
-  z-index: 3;
-
-  width: 17%;
-
-  transform:
-    translateX(-180%);
-
-  opacity: 0;
-
-  pointer-events: none;
-}
-
-
-.cafe-customer-wrap.arrived {
-  transform:
-    translateX(0);
-
-  opacity: 1;
-
-  transition:
-    transform .7s
-    cubic-bezier(.2,.8,.25,1),
-    opacity .3s ease;
-}
-
-
-.cafe-customer-wrap.leaving {
-  transform:
-    translateX(-190%);
-
-  opacity: 0;
-
-  transition:
-    transform .5s ease-in,
-    opacity .4s ease;
-}
-
-
-.cafe-customer {
-  position: relative;
-
-  display: block;
-
-  width: 100%;
-  height: auto;
-
-  animation:
-    cafeCustomerFloat
-    2.8s
-    ease-in-out
-    infinite;
-
-  filter:
-    drop-shadow(
-      0 6px 5px
-      rgba(54,53,74,.15)
-    );
-}
-
-
-@keyframes cafeCustomerFloat {
-
-  0%,
-  100% {
-    transform:
-      translateY(0);
-  }
-
-  50% {
-    transform:
-      translateY(-5px);
-  }
+  return cinnaCoins;
 
 }
 
 
-/* =====================================================
-   CLIENTE FELIZ
-   ===================================================== */
-
-.cafe-customer-wrap.is-happy
-.cafe-customer {
-  animation:
-    cafeCustomerHappy
-    .45s
-    ease-in-out
-    infinite alternate;
-}
-
-
-@keyframes cafeCustomerHappy {
-
-  from {
-    transform:
-      translateY(0)
-      scale(1);
-  }
-
-  to {
-    transform:
-      translateY(-10px)
-      scale(1.04);
-  }
-
-}
-
-
-.cafe-happy-hearts {
-  position: absolute;
-
-  top: -10%;
-  left: 50%;
-
-  opacity: 0;
-
-  transform:
-    translateX(-50%)
-    scale(.5);
-
-  color: #ff8fb6;
-
-  font-size:
-    clamp(14px, 2.5vw, 28px);
-
-  font-weight: 900;
-}
-
-
-.cafe-happy-hearts.show {
-  opacity: 1;
-
-  animation:
-    cafeHearts
-    .65s
-    ease-out
-    infinite alternate;
-}
-
-
-@keyframes cafeHearts {
-
-  from {
-    transform:
-      translateX(-50%)
-      translateY(4px)
-      scale(.8);
-  }
-
-  to {
-    transform:
-      translateX(-50%)
-      translateY(-8px)
-      scale(1.15);
-  }
-
-}
-
-
-/* =====================================================
-   CLIENTE COM RAIVA
-   ===================================================== */
-
-.cafe-customer-wrap.is-angry {
-  animation:
-    cafeAngryShake
-    .15s
-    linear
-    3;
-}
-
-
-@keyframes cafeAngryShake {
-
-  0%,
-  100% {
-    margin-left: 0;
-  }
-
-  25% {
-    margin-left: -4px;
-  }
-
-  75% {
-    margin-left: 4px;
-  }
-
-}
-
-
-/* =====================================================
-   BALÃO DO PEDIDO
-   ===================================================== */
-
-.cafe-order {
-  position: absolute;
-
-  left: 10%;
-  top: 8%;
-
-  z-index: 30;
-
-  min-width: 13%;
-
-  padding:
-    7px 10px;
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  gap: 3px;
-
-  opacity: 0;
-
-  transform:
-    translateY(5px)
-    scale(.8);
-
-  pointer-events: none;
-
-  border-radius:
-    18px;
-
-  background:
-    rgba(255,255,255,.96);
-
-  border:
-    2px solid
-    rgba(164,194,220,.45);
-
-  box-shadow:
-    0 6px 15px
-    rgba(65,91,112,.14);
-
-  transition:
-    opacity .2s ease,
-    transform .25s ease;
-}
-
-
-.cafe-order.show {
-  opacity: 1;
-
-  transform:
-    translateY(0)
-    scale(1);
-}
-
-
-.cafe-order::after {
-  content: "";
-
-  position: absolute;
-
-  bottom: -8px;
-  left: 50%;
-
-  width: 15px;
-  height: 15px;
-
-  background: white;
-
-  transform:
-    translateX(-50%)
-    rotate(45deg);
-
-  border-right:
-    2px solid
-    rgba(164,194,220,.35);
-
-  border-bottom:
-    2px solid
-    rgba(164,194,220,.35);
-}
-
-
-.cafe-order-title {
-  color: #718da2;
-
-  font-size:
-    clamp(8px, 1.3vw, 13px);
-
-  font-weight: 900;
-}
-
-
-.cafe-order-items {
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 4px;
-}
-
-
-.cafe-order-items img {
-  position: relative;
-
-  width:
-    clamp(27px, 4.5vw, 60px);
-
-  height:
-    clamp(27px, 4.5vw, 60px);
-
-  object-fit: contain;
-}
-
-
-/* =====================================================
-   BALCÃO CLIENTE
-   ===================================================== */
-
-.cinna-cafe-client-counter {
-  position: absolute;
-
-  left: 50%;
-  bottom: 25%;
-
-  z-index: 4;
-
-  width: 48%;
-
-  height: auto;
-
-  transform:
-    translateX(-50%);
-
-  object-fit: contain;
-
-  pointer-events: none;
-
-  filter:
-    drop-shadow(
-      0 6px 5px
-      rgba(67,51,38,.15)
-    );
-}
-
-
-/* =====================================================
-   CINNA
-   ===================================================== */
-
-.cinna-cafe-chef {
-  position: absolute;
-
-  left: 56%;
-  bottom: 31%;
-
-  z-index: 6;
-
-  width: 15%;
-
-  height: auto;
-
-  transform-origin:
-    50% 100%;
-
-  object-fit: contain;
-
-  pointer-events: none;
-
-  filter:
-    drop-shadow(
-      0 8px 7px
-      rgba(58,85,101,.16)
+// ======================================================
+// GASTAR MOEDAS
+// ======================================================
+
+function spendCinnaCoins(
+  amount
+) {
+
+  const value =
+    Math.max(
+      0,
+      Math.floor(
+        Number(amount) || 0
+      )
     );
 
-  animation:
-    cinnaCafeFloat
-    3.1s
-    ease-in-out
-    infinite;
 
-  will-change: transform;
-}
+  if (
+    cinnaCoins <
+    value
+  ) {
 
+    return false;
 
-@keyframes cinnaCafeFloat {
-
-  0% {
-    transform:
-      translate3d(-50%,0,0)
-      scale(1);
   }
 
-  20% {
-    transform:
-      translate3d(-50%,-3px,0)
-      scale(1.004);
+
+  cinnaCoins -=
+    value;
+
+
+  localStorage.setItem(
+    CINNA_COINS_KEY,
+    cinnaCoins
+  );
+
+
+  updateCinnaCoinsDisplay(
+    true
+  );
+
+
+  return true;
+
+}
+
+
+// ======================================================
+// RECOMPENSA DO PEGA ESTRELINHAS
+// ======================================================
+
+function getStarCoinReward(
+  score
+) {
+
+  if (
+    score <= 5
+  ) {
+
+    return 5;
+
   }
 
-  50% {
-    transform:
-      translate3d(-50%,-9px,0)
-      scale(1.012);
+
+  if (
+    score <= 10
+  ) {
+
+    return 10;
+
   }
 
-  80% {
-    transform:
-      translate3d(-50%,-3px,0)
-      scale(1.004);
+
+  if (
+    score <= 20
+  ) {
+
+    return 20;
+
   }
 
-  100% {
-    transform:
-      translate3d(-50%,0,0)
-      scale(1);
+
+  if (
+    score <= 30
+  ) {
+
+    return 30;
+
   }
 
-}
 
-
-/* =====================================================
-   BANCADA DE PREPARO
-   ===================================================== */
-
-.cinna-cafe-prep-counter {
-  position: absolute;
-
-  left: 50%;
-  bottom: -1%;
-
-  z-index: 10;
-
-  width: 98%;
-
-  height: auto;
-
-  transform:
-    translateX(-50%);
-
-  object-fit: contain;
-
-  pointer-events: none;
-
-  filter:
-    drop-shadow(
-      0 8px 6px
-      rgba(65,47,33,.16)
-    );
-}
-
-
-/* =====================================================
-   HOTSPOTS
-   ===================================================== */
-
-.cafe-hotspots {
-  position: absolute;
-
-  inset: 0;
-
-  z-index: 20;
-
-  pointer-events: none;
-}
-
-
-.cafe-hotspot {
-  position: absolute;
-
-  padding: 0;
-
-  border: 0;
-
-  outline: 0;
-
-  background: transparent;
-
-  cursor: pointer;
-
-  pointer-events: auto;
-
-  touch-action: manipulation;
-
-  -webkit-tap-highlight-color:
-    transparent;
-}
-
-
-/*
-   =====================================================
-   POSIÇÕES DOS OBJETOS
-
-   São percentuais do palco inteiro.
-   Se algum botão ficar alguns pixels fora do objeto,
-   é SOMENTE aqui que vamos ajustar depois.
-   =====================================================
-*/
-
-
-/* LATTE BRANCO */
-
-.hotspot-bear-latte {
-  left: 52%;
-  top: 65%;
-
-  width: 7%;
-  height: 15%;
-}
-
-
-/* LATTE ROSA */
-
-.hotspot-pink-latte {
-  left: 59%;
-  top: 65%;
-
-  width: 7%;
-  height: 15%;
-}
-
-
-/* FRAPPÉ */
-
-.hotspot-frappe {
-  left: 68%;
-  top: 60%;
-
-  width: 8%;
-  height: 20%;
-}
-
-
-/* CUPCAKE CHOCOLATE */
-
-.hotspot-cupcake-chocolate {
-  left: 35%;
-  top: 69%;
-
-  width: 7%;
-  height: 12%;
-}
-
-
-/* CUPCAKE MORANGO */
-
-.hotspot-cupcake-strawberry {
-  left: 42%;
-  top: 69%;
-
-  width: 7%;
-  height: 12%;
-}
-
-
-/* DONUT CHOCOLATE */
-
-.hotspot-donut-chocolate {
-  left: 18%;
-  top: 65%;
-
-  width: 7%;
-  height: 11%;
-}
-
-
-/* DONUT MORANGO */
-
-.hotspot-donut-strawberry {
-  left: 24%;
-  top: 65%;
-
-  width: 7%;
-  height: 11%;
-}
-
-
-/* DONUT BAUNILHA */
-
-.hotspot-donut-vanilla {
-  left: 30%;
-  top: 65%;
-
-  width: 7%;
-  height: 11%;
-}
-
-
-/* =====================================================
-   EFEITO AO TOCAR
-   ===================================================== */
-
-.cafe-hotspot.clicked {
-  animation:
-    hotspotTap
-    .18s ease;
-}
-
-
-@keyframes hotspotTap {
-
-  50% {
-    transform:
-      scale(.9);
-  }
+  return 40;
 
 }
 
 
-/* =====================================================
-   ITENS SOBRE A BANDEJA AZUL
-   ===================================================== */
+// ======================================================
+// GUARDA A FUNÇÃO ORIGINAL DO MINIJOGO
+// ======================================================
 
-.cafe-tray-items {
-  position: absolute;
-
-  left: 79%;
-  top: 67%;
-
-  z-index: 25;
-
-  width: 15%;
-  height: 15%;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 2%;
-
-  pointer-events: auto;
-}
+const originalFinishStarGame =
+  finishStarGame;
 
 
-.cafe-tray-item {
-  position: relative;
+// ======================================================
+// NOVO FINAL DO PEGA ESTRELINHAS
+// ======================================================
 
-  width: 48%;
-  height: 100%;
+finishStarGame =
+  function () {
 
-  padding: 0;
+    if (
+      !starGameRunning
+    ) {
 
-  border: 0;
+      return;
 
-  background: transparent;
-
-  cursor: pointer;
-
-  touch-action: manipulation;
-
-  -webkit-tap-highlight-color:
-    transparent;
-
-  animation:
-    trayItemAppear
-    .2s
-    cubic-bezier(.2,.9,.3,1.3);
-}
+    }
 
 
-.cafe-tray-item img {
-  position: relative;
+    // Guardamos a pontuação
+    // antes da função original terminar.
 
-  width: 100%;
-  height: 100%;
-
-  object-fit: contain;
-
-  pointer-events: none;
-
-  filter:
-    drop-shadow(
-      0 3px 2px
-      rgba(62,66,75,.15)
-    );
-}
+    const finalScore =
+      starScore;
 
 
-@keyframes trayItemAppear {
+    // A função original continua cuidando:
+    // - cronômetro
+    // - recorde
+    // - felicidade
+    // - tela de resultado
 
-  from {
-    opacity: 0;
-
-    transform:
-      translateY(-8px)
-      scale(.65);
-  }
-
-  to {
-    opacity: 1;
-
-    transform:
-      translateY(0)
-      scale(1);
-  }
-
-}
+    originalFinishStarGame();
 
 
-.cafe-tray-items.shake {
-  animation:
-    trayShake
-    .25s linear;
-}
+    // Recompensa de moedas.
+
+    const coinReward =
+      getStarCoinReward(
+        finalScore
+      );
 
 
-@keyframes trayShake {
-
-  25% {
-    transform:
-      translateX(-4px);
-  }
-
-  75% {
-    transform:
-      translateX(4px);
-  }
-
-}
-
-
-/* =====================================================
-   BOTÃO ENTREGAR
-   ===================================================== */
-
-.cafe-deliver {
-  position: absolute;
-
-  right: 5%;
-  bottom: 2%;
-
-  z-index: 40;
-
-  padding:
-    clamp(5px,1vw,9px)
-    clamp(9px,1.8vw,18px);
-
-  border: 0;
-
-  border-radius: 999px;
-
-  opacity: 0;
-
-  transform:
-    translateY(8px)
-    scale(.9);
-
-  pointer-events: none;
-
-  background:
-    linear-gradient(
-      180deg,
-      #ffb9d2,
-      #ff94bd
+    addCinnaCoins(
+      coinReward
     );
 
-  color: white;
 
-  font-size:
-    clamp(8px,1.2vw,13px);
+    // Recompensa de felicidade
+    // que o próprio jogo já calcula.
 
-  font-weight: 900;
-
-  letter-spacing: .4px;
-
-  cursor: pointer;
-
-  box-shadow:
-    0 4px 0 #e879a3,
-    0 7px 12px
-    rgba(139,70,98,.18);
-
-  transition:
-    opacity .2s ease,
-    transform .2s ease;
-
-  touch-action: manipulation;
-}
+    const happinessReward =
+      getStarReward(
+        finalScore
+      );
 
 
-.cafe-deliver.show {
-  opacity: 1;
+    // Atualiza o texto final.
 
-  transform:
-    translateY(0)
-    scale(1);
+    starRewardText.innerHTML = `
 
-  pointer-events: auto;
-}
+      ❤️ +${happinessReward}% felicidade
 
+      <br>
 
-.cafe-deliver:active {
-  transform:
-    translateY(2px)
-    scale(.96);
+      🪙 +${coinReward} Cinna Coins
 
-  box-shadow:
-    0 2px 0 #e879a3;
-}
+      <br><br>
 
+      <small>
+        Saldo: 🪙 ${cinnaCoins}
+      </small>
 
-/* =====================================================
-   FEEDBACK
-   ===================================================== */
+    `;
 
-.cafe-feedback {
-  position: absolute;
-
-  left: 50%;
-  top: 5%;
-
-  z-index: 80;
-
-  padding:
-    7px 14px;
-
-  opacity: 0;
-
-  transform:
-    translateX(-50%)
-    translateY(-7px);
-
-  pointer-events: none;
-
-  border-radius: 999px;
-
-  color: #66859a;
-
-  background:
-    rgba(255,255,255,.96);
-
-  font-size:
-    clamp(9px,1.5vw,14px);
-
-  font-weight: 900;
-
-  box-shadow:
-    0 5px 15px
-    rgba(57,91,112,.15);
-
-  transition:
-    opacity .2s ease,
-    transform .2s ease;
-}
+  };
 
 
-.cafe-feedback.show {
-  opacity: 1;
+// ======================================================
+// API DAS CINNA COINS
+// Para nossa futura lojinha 🌝
+// ======================================================
 
-  transform:
-    translateX(-50%)
-    translateY(0);
-}
+window.CinnaCoins = {
 
+  getBalance() {
 
-.cafe-feedback.correct {
-  color: #62a87a;
-}
+    return cinnaCoins;
 
-
-.cafe-feedback.wrong {
-  color: #d96d7c;
-}
+  },
 
 
-/* =====================================================
-   BLOQUEIA HOME ATRÁS
-   ===================================================== */
+  add(amount) {
 
-body.cinna-cafe-body-open
-.room {
-  pointer-events: none;
-}
+    return addCinnaCoins(
+      amount
+    );
 
-
-body.cinna-cafe-body-open
-.cinna-cafe-screen {
-  pointer-events: auto;
-}
+  },
 
 
-/* =====================================================
-   CELULAR
-   ===================================================== */
+  spend(amount) {
 
-@media (max-width: 650px) {
+    return spendCinnaCoins(
+      amount
+    );
 
-  .cinna-cafe-topbar {
-    min-height: 58px;
+  },
 
-    grid-template-columns:
-      42px 1fr auto;
 
-    padding-left: 8px;
-    padding-right: 8px;
+  refresh() {
+
+    updateCinnaCoinsDisplay();
+
   }
 
-
-  .cinna-cafe-back {
-    width: 38px;
-    height: 38px;
-
-    border-radius: 13px;
-
-    font-size: 22px;
-  }
+};
 
 
-  .cinna-cafe-coins {
-    min-width: 64px;
+// ======================================================
+// INICIALIZAÇÃO
+// ======================================================
 
-    padding: 5px 8px;
-
-    font-size: 12px;
-  }
-
-}
-
-
-/* =====================================================
-   VERTICAL
-   ===================================================== */
-
-@media (orientation: portrait) {
-
-  .cinna-cafe-stage-wrapper {
-    padding: 6px;
-  }
-
-
-  .cinna-cafe-stage {
-    width: 100%;
-
-    max-height: none;
-  }
-
-
-  .cinna-cafe-chef {
-    width: 16%;
-  }
-
-
-  .cinna-cafe-client-counter {
-    width: 49%;
-  }
-
-
-  .cinna-cafe-prep-counter {
-    width: 99%;
-  }
-
-}
+updateCinnaCoinsDisplay();

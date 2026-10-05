@@ -1,6 +1,6 @@
 // ======================================================
 // CINNA CAFÉ ☕️🍰
-// V5 — MULTICLIENTES + TIMER + PEDIDOS INDIVIDUAIS
+// V7 — PARTIDA + RESULTADO + MULTICLIENTES
 // ======================================================
 
 (() => {
@@ -129,18 +129,19 @@
   // CONFIGURAÇÕES
   // ====================================================
 
+  // 2 minutos
+  const ROUND_TIME = 120;
+
+  // Tempo individual do cliente
   const CUSTOMER_TIME = 25;
 
+  // 3º erro = cliente vai embora
   const MAX_ERRORS = 3;
 
+  // Moedas por pedido correto
   const CORRECT_REWARD = 5;
 
-  /*
-    Chance de chegar uma dupla.
-
-    0.40 = 40%
-  */
-
+  // 40% de chance de dupla
   const DOUBLE_CUSTOMER_CHANCE = 0.40;
 
 
@@ -149,6 +150,7 @@
   // ====================================================
 
   const preloadAssets = [
+
     ...Object.values(A),
 
     ...Object.values(CHARACTERS)
@@ -160,6 +162,7 @@
 
     ...Object.values(ITEMS)
       .map(item => item.src)
+
   ];
 
 
@@ -316,13 +319,29 @@
       </div>
 
 
-      <div class="cinna-cafe-coins">
+      <div class="cinna-cafe-topbar-right">
 
-        🪙
+        <div
+          id="cinna-cafe-round-timer"
+          class="cinna-cafe-round-timer"
+        >
+          ⏱️
 
-        <strong id="cinna-cafe-coins-value">
-          0
-        </strong>
+          <strong id="cinna-cafe-round-time">
+            2:00
+          </strong>
+        </div>
+
+
+        <div class="cinna-cafe-coins">
+
+          🪙
+
+          <strong id="cinna-cafe-coins-value">
+            0
+          </strong>
+
+        </div>
 
       </div>
 
@@ -472,6 +491,144 @@
         ></div>
 
 
+        <!-- ========================================= -->
+        <!-- RESULTADO DA PARTIDA -->
+        <!-- ========================================= -->
+
+        <div
+          id="cafe-results"
+          class="cafe-results"
+          aria-hidden="true"
+        >
+
+          <div class="cafe-results-card">
+
+            <div class="cafe-results-icon">
+              ☕
+            </div>
+
+            <h2>
+              Café fechado!
+            </h2>
+
+            <p class="cafe-results-subtitle">
+              Como foi o turno do Cinna?
+            </p>
+
+
+            <div
+              id="cafe-results-stars"
+              class="cafe-results-stars"
+            >
+              ⭐⭐⭐
+            </div>
+
+
+            <div class="cafe-results-stats">
+
+              <div class="cafe-result-stat">
+
+                <span>
+                  🍰 Pedidos
+                </span>
+
+                <strong
+                  id="cafe-result-orders"
+                >
+                  0
+                </strong>
+
+              </div>
+
+
+              <div class="cafe-result-stat">
+
+                <span>
+                  😊 Atendidos
+                </span>
+
+                <strong
+                  id="cafe-result-served"
+                >
+                  0
+                </strong>
+
+              </div>
+
+
+              <div class="cafe-result-stat">
+
+                <span>
+                  😡 Perdidos
+                </span>
+
+                <strong
+                  id="cafe-result-lost"
+                >
+                  0
+                </strong>
+
+              </div>
+
+
+              <div class="cafe-result-stat">
+
+                <span>
+                  💢 Erros
+                </span>
+
+                <strong
+                  id="cafe-result-errors"
+                >
+                  0
+                </strong>
+
+              </div>
+
+
+              <div class="cafe-result-stat cafe-result-coins">
+
+                <span>
+                  🪙 Cinna Coins
+                </span>
+
+                <strong
+                  id="cafe-result-coins"
+                >
+                  +0
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <div class="cafe-results-actions">
+
+              <button
+                id="cafe-play-again"
+                class="cafe-result-button primary"
+                type="button"
+              >
+                JOGAR DE NOVO ♡
+              </button>
+
+
+              <button
+                id="cafe-result-exit"
+                class="cafe-result-button secondary"
+                type="button"
+              >
+                SAIR
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
       </div>
 
     </div>
@@ -523,6 +680,61 @@
       "#cinna-cafe-back"
     );
 
+  const roundTimerBox =
+    cafeOverlay.querySelector(
+      "#cinna-cafe-round-timer"
+    );
+
+  const roundTimeElement =
+    cafeOverlay.querySelector(
+      "#cinna-cafe-round-time"
+    );
+
+  const results =
+    cafeOverlay.querySelector(
+      "#cafe-results"
+    );
+
+  const resultsStars =
+    cafeOverlay.querySelector(
+      "#cafe-results-stars"
+    );
+
+  const resultOrders =
+    cafeOverlay.querySelector(
+      "#cafe-result-orders"
+    );
+
+  const resultServed =
+    cafeOverlay.querySelector(
+      "#cafe-result-served"
+    );
+
+  const resultLost =
+    cafeOverlay.querySelector(
+      "#cafe-result-lost"
+    );
+
+  const resultErrors =
+    cafeOverlay.querySelector(
+      "#cafe-result-errors"
+    );
+
+  const resultCoins =
+    cafeOverlay.querySelector(
+      "#cafe-result-coins"
+    );
+
+  const playAgainButton =
+    cafeOverlay.querySelector(
+      "#cafe-play-again"
+    );
+
+  const resultExitButton =
+    cafeOverlay.querySelector(
+      "#cafe-result-exit"
+    );
+
   const hotspots = [
     ...cafeOverlay.querySelectorAll(
       ".cafe-hotspot"
@@ -535,6 +747,15 @@
   // ====================================================
 
   let cafeRunning = false;
+
+  let roundActive = false;
+
+  let roundEnding = false;
+
+  let roundTimeLeft =
+    ROUND_TIME;
+
+  let roundTimer = null;
 
   let trayItems = [];
 
@@ -553,6 +774,21 @@
   let nextWaveTimer = null;
 
   let feedbackTimer = null;
+
+  let lastSoloCharacterKey = null;
+
+
+  // ====================================================
+  // ESTATÍSTICAS DA PARTIDA
+  // ====================================================
+
+  let roundStats = {
+    orders: 0,
+    served: 0,
+    lost: 0,
+    errors: 0,
+    coins: 0
+  };
 
 
   // ====================================================
@@ -592,6 +828,11 @@
       );
 
     }
+
+
+    roundStats.coins +=
+      amount;
+
 
     updateCoins();
 
@@ -688,6 +929,7 @@
 
             chef.src =
               A.cinnaIdle;
+
 
             scheduleChefBlink();
 
@@ -814,6 +1056,132 @@
 
 
   // ====================================================
+  // SORTEIO DOS PERSONAGENS
+  // ====================================================
+
+  function getCharacterKeys() {
+
+    return Object.keys(
+      CHARACTERS
+    );
+
+  }
+
+
+  function chooseSoloCharacter() {
+
+    const allKeys =
+      getCharacterKeys();
+
+
+    if (
+      allKeys.length === 0
+    ) {
+
+      return null;
+
+    }
+
+
+    if (
+      allKeys.length === 1
+    ) {
+
+      lastSoloCharacterKey =
+        allKeys[0];
+
+      return allKeys[0];
+
+    }
+
+
+    const availableKeys =
+      allKeys.filter(
+        key =>
+          key !==
+          lastSoloCharacterKey
+      );
+
+
+    const pool =
+      availableKeys.length
+        ? availableKeys
+        : allKeys;
+
+
+    const chosen =
+      pool[
+        Math.floor(
+          Math.random() *
+          pool.length
+        )
+      ];
+
+
+    lastSoloCharacterKey =
+      chosen;
+
+
+    return chosen;
+
+  }
+
+
+  function chooseDoubleCharacters() {
+
+    const allKeys =
+      getCharacterKeys();
+
+
+    if (
+      allKeys.length < 2
+    ) {
+
+      return [];
+
+    }
+
+
+    const shuffled =
+      [...allKeys];
+
+
+    for (
+      let i =
+        shuffled.length - 1;
+
+      i > 0;
+
+      i--
+    ) {
+
+      const j =
+        Math.floor(
+          Math.random() *
+          (i + 1)
+        );
+
+
+      [
+        shuffled[i],
+        shuffled[j]
+      ] = [
+        shuffled[j],
+        shuffled[i]
+      ];
+
+    }
+
+
+    return shuffled.slice(
+      0,
+      2
+    );
+
+  }
+
+
+  // ====================================================
   // CLIENTE
   // ====================================================
 
@@ -824,10 +1192,12 @@
   ) {
 
     const character =
-      CHARACTERS[characterKey];
+      CHARACTERS[
+        characterKey
+      ];
 
 
-    const customer = {
+    return {
 
       id:
         `customer-${++customerSequence}`,
@@ -880,9 +1250,6 @@
 
     };
 
-
-    return customer;
-
   }
 
 
@@ -895,7 +1262,9 @@
   ) {
 
     const wrap =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
 
     wrap.className =
@@ -1016,6 +1385,7 @@
 
           event.stopPropagation();
 
+
           selectCustomer(
             customer.id
           );
@@ -1039,7 +1409,8 @@
       customers.find(
         item =>
           item.id === id &&
-          item.state === "waiting"
+          item.state ===
+            "waiting"
       );
 
 
@@ -1054,20 +1425,24 @@
       customer.id;
 
 
-    customers.forEach(item => {
+    customers.forEach(
+      item => {
 
-      if (!item.element) {
-        return;
+        if (!item.element) {
+
+          return;
+
+        }
+
+
+        item.element.classList.toggle(
+          "selected",
+          item.id ===
+            selectedCustomerId
+        );
+
       }
-
-
-      item.element.classList.toggle(
-        "selected",
-        item.id ===
-          selectedCustomerId
-      );
-
-    });
+    );
 
 
     renderTray();
@@ -1077,13 +1452,15 @@
 
   function getSelectedCustomer() {
 
-    return customers.find(
-      customer =>
-        customer.id ===
-          selectedCustomerId &&
-        customer.state ===
-          "waiting"
-    ) || null;
+    return (
+      customers.find(
+        customer =>
+          customer.id ===
+            selectedCustomerId &&
+          customer.state ===
+            "waiting"
+      ) || null
+    );
 
   }
 
@@ -1118,8 +1495,10 @@
 
     if (
       !cafeRunning ||
-      customer.state !== "waiting" ||
-      customer.mood !== "idle"
+      customer.state !==
+        "waiting" ||
+      customer.mood !==
+        "idle"
     ) {
 
       return;
@@ -1132,8 +1511,10 @@
 
         if (
           !cafeRunning ||
-          customer.state !== "waiting" ||
-          customer.mood !== "idle"
+          customer.state !==
+            "waiting" ||
+          customer.mood !==
+            "idle"
         ) {
 
           return;
@@ -1142,7 +1523,8 @@
 
 
         customer.image.src =
-          customer.character.blink;
+          customer.character
+            .blink;
 
 
         customer.blinkReturn =
@@ -1161,7 +1543,8 @@
 
 
             customer.image.src =
-              customer.character.idle;
+              customer.character
+                .idle;
 
 
             scheduleCustomerBlink(
@@ -1191,13 +1574,15 @@
 
 
     customer.image.src =
-      customer.character.idle;
+      customer.character
+        .idle;
 
 
-    customer.element.classList.remove(
-      "is-angry",
-      "is-happy"
-    );
+    customer.element
+      .classList.remove(
+        "is-angry",
+        "is-happy"
+      );
 
 
     customer.element
@@ -1230,17 +1615,20 @@
 
 
     customer.image.src =
-      customer.character.angry;
+      customer.character
+        .angry;
 
 
-    customer.element.classList.remove(
-      "is-happy"
-    );
+    customer.element
+      .classList.remove(
+        "is-happy"
+      );
 
 
-    customer.element.classList.add(
-      "is-angry"
-    );
+    customer.element
+      .classList.add(
+        "is-angry"
+      );
 
   }
 
@@ -1259,17 +1647,20 @@
 
 
     customer.image.src =
-      customer.character.idle;
+      customer.character
+        .idle;
 
 
-    customer.element.classList.remove(
-      "is-angry"
-    );
+    customer.element
+      .classList.remove(
+        "is-angry"
+      );
 
 
-    customer.element.classList.add(
-      "is-happy"
-    );
+    customer.element
+      .classList.add(
+        "is-happy"
+      );
 
 
     customer.element
@@ -1301,7 +1692,8 @@
 
         if (
           !cafeRunning ||
-          customer.state !== "waiting"
+          customer.state !==
+            "waiting"
         ) {
 
           clearInterval(
@@ -1390,9 +1782,10 @@
         }
 
 
-        customer.element.classList.add(
-          "arrived"
-        );
+        customer.element
+          .classList.add(
+            "arrived"
+          );
 
       });
 
@@ -1431,15 +1824,6 @@
       );
 
 
-      /*
-        Se só existe um cliente,
-        ele já fica selecionado.
-
-        Em dupla, o primeiro também
-        começa selecionado para evitar
-        travar a bandeja.
-      */
-
       if (
         !getSelectedCustomer()
       ) {
@@ -1461,7 +1845,17 @@
 
   function startWave() {
 
-    if (!cafeRunning) {
+    /*
+      Se o tempo geral acabou,
+      nenhum cliente novo entra.
+    */
+
+    if (
+      !cafeRunning ||
+      !roundActive
+    ) {
+
+      checkRoundFinished();
 
       return;
 
@@ -1476,15 +1870,12 @@
     selectedCustomerId =
       null;
 
+
     trayItems = [];
+
 
     renderTray();
 
-
-    /*
-      Limpa clientes antigos que
-      já terminaram.
-    */
 
     customers.forEach(
       cleanupCustomerTimers
@@ -1498,16 +1889,42 @@
       "";
 
 
+    const characterKeys =
+      getCharacterKeys();
+
+
+    if (
+      characterKeys.length === 0
+    ) {
+
+      return;
+
+    }
+
+
+    const canHaveDouble =
+      characterKeys.length >= 2;
+
+
     const doubleWave =
+      canHaveDouble &&
       Math.random() <
         DOUBLE_CUSTOMER_CHANCE;
 
 
+    // ==================================================
+    // DUPLA
+    // ==================================================
+
     if (doubleWave) {
+
+      const chosen =
+        chooseDoubleCharacters();
+
 
       const first =
         createCustomer(
-          "kuromi",
+          chosen[0],
           1,
           2
         );
@@ -1515,7 +1932,7 @@
 
       const second =
         createCustomer(
-          "pompompurin",
+          chosen[1],
           2,
           2
         );
@@ -1527,996 +1944,13 @@
       );
 
 
-      enterCustomer(
-        first
-      );
+      /*
+        Cada cliente que entra conta
+        como um pedido criado.
+      */
 
-
-      setTimeout(() => {
-
-        if (
-          cafeRunning &&
-          customers.includes(second)
-        ) {
-
-          enterCustomer(
-            second
-          );
-
-        }
-
-      }, 350);
-
-    } else {
-
-      const characterKeys =
-        Object.keys(
-          CHARACTERS
-        );
-
-
-      const characterKey =
-        characterKeys[
-          Math.floor(
-            Math.random() *
-            characterKeys.length
-          )
-        ];
-
-
-      const customer =
-        createCustomer(
-          characterKey,
-          1,
-          1
-        );
-
-
-      customers.push(
-        customer
-      );
+      roundStats.orders += 2;
 
 
       enterCustomer(
-        customer
-      );
-
-    }
-
-  }
-
-
-  // ====================================================
-  // BANDEJA
-  // ====================================================
-
-  function addToTray(key) {
-
-    const selected =
-      getSelectedCustomer();
-
-
-    if (!selected) {
-
-      showFeedback(
-        "Escolha um pedido primeiro ♡",
-        "wrong"
-      );
-
-      return;
-
-    }
-
-
-    /*
-      Como os pedidos desta versão
-      possuem no máximo 2 itens.
-    */
-
-    if (
-      trayItems.length >= 2
-    ) {
-
-      tray.classList.remove(
-        "shake"
-      );
-
-
-      void tray.offsetWidth;
-
-
-      tray.classList.add(
-        "shake"
-      );
-
-
-      return;
-
-    }
-
-
-    trayItems.push(
-      key
-    );
-
-
-    renderTray();
-
-  }
-
-
-  function removeFromTray(
-    index
-  ) {
-
-    trayItems.splice(
-      index,
-      1
-    );
-
-
-    renderTray();
-
-  }
-
-
-  function renderTray() {
-
-    tray.innerHTML = "";
-
-
-    trayItems.forEach(
-      (key, index) => {
-
-        const item =
-          ITEMS[key];
-
-
-        const button =
-          document.createElement(
-            "button"
-          );
-
-
-        button.type =
-          "button";
-
-
-        button.className =
-          "cafe-tray-item";
-
-
-        button.title =
-          `Remover ${item.name}`;
-
-
-        button.innerHTML = `
-
-          <img
-            src="${item.src}"
-            alt="${item.name}"
-            draggable="false"
-          >
-
-        `;
-
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            removeFromTray(
-              index
-            );
-
-          }
-        );
-
-
-        tray.appendChild(
-          button
-        );
-
-      }
-    );
-
-
-    const selected =
-      getSelectedCustomer();
-
-
-    if (
-      trayItems.length > 0 &&
-      selected
-    ) {
-
-      deliverButton.classList.add(
-        "show"
-      );
-
-
-      deliverButton.disabled =
-        false;
-
-    } else {
-
-      deliverButton.classList.remove(
-        "show"
-      );
-
-
-      deliverButton.disabled =
-        true;
-
-    }
-
-  }
-
-
-  // ====================================================
-  // COMPARAÇÃO
-  // ====================================================
-
-  function arraysMatch(a, b) {
-
-    if (
-      a.length !== b.length
-    ) {
-
-      return false;
-
-    }
-
-
-    const first =
-      [...a].sort();
-
-
-    const second =
-      [...b].sort();
-
-
-    return first.every(
-      (value, index) =>
-        value === second[index]
-    );
-
-  }
-
-
-  // ====================================================
-  // FEEDBACK
-  // ====================================================
-
-  function showFeedback(
-    text,
-    type
-  ) {
-
-    clearTimeout(
-      feedbackTimer
-    );
-
-
-    feedback.textContent =
-      text;
-
-
-    feedback.className =
-      `cafe-feedback show ${type}`;
-
-
-    feedbackTimer =
-      setTimeout(() => {
-
-        feedback.classList.remove(
-          "show"
-        );
-
-      }, 1300);
-
-  }
-
-
-  // ====================================================
-  // LIMPEZA DE TIMERS
-  // ====================================================
-
-  function cleanupCustomerTimers(
-    customer
-  ) {
-
-    clearCustomerBlink(
-      customer
-    );
-
-
-    clearInterval(
-      customer.countdownTimer
-    );
-
-
-    clearTimeout(
-      customer.reactionTimer
-    );
-
-  }
-
-
-  // ====================================================
-  // CLIENTE SAI
-  // ====================================================
-
-  function removeCustomer(
-    customer
-  ) {
-
-    cleanupCustomerTimers(
-      customer
-    );
-
-
-    if (
-      selectedCustomerId ===
-        customer.id
-    ) {
-
-      selectedCustomerId =
-        null;
-
-
-      trayItems = [];
-
-
-      renderTray();
-
-    }
-
-
-    customer.state =
-      "leaving";
-
-
-    customer.orderButton
-      ?.classList.remove(
-        "show"
-      );
-
-
-    customer.element
-      ?.classList.remove(
-        "selected"
-      );
-
-
-    customer.element
-      ?.classList.add(
-        "leaving"
-      );
-
-
-    setTimeout(() => {
-
-      customer.element
-        ?.remove();
-
-
-      customers =
-        customers.filter(
-          item =>
-            item.id !==
-              customer.id
-        );
-
-
-      /*
-        Se ainda existe outro cliente,
-        selecionamos automaticamente.
-      */
-
-      const waitingCustomer =
-        customers.find(
-          item =>
-            item.state ===
-              "waiting"
-        );
-
-
-      if (
-        waitingCustomer &&
-        !getSelectedCustomer()
-      ) {
-
-        selectCustomer(
-          waitingCustomer.id
-        );
-
-      }
-
-
-      /*
-        Se todos foram embora,
-        começa outra onda.
-      */
-
-      if (
-        cafeRunning &&
-        customers.length === 0
-      ) {
-
-        nextWaveTimer =
-          setTimeout(
-            startWave,
-            700
-          );
-
-      }
-
-    }, 550);
-
-  }
-
-
-  function customerLeavesAngry(
-    customer,
-    message
-  ) {
-
-    if (
-      customer.state !== "waiting"
-    ) {
-
-      return;
-
-    }
-
-
-    customer.state =
-      "reaction";
-
-
-    clearInterval(
-      customer.countdownTimer
-    );
-
-
-    customerAngry(
-      customer
-    );
-
-
-    chefSad(
-      1000
-    );
-
-
-    showFeedback(
-      message,
-      "wrong"
-    );
-
-
-    if (
-      selectedCustomerId ===
-        customer.id
-    ) {
-
-      trayItems = [];
-
-      renderTray();
-
-    }
-
-
-    customer.reactionTimer =
-      setTimeout(() => {
-
-        if (!cafeRunning) {
-
-          return;
-
-        }
-
-
-        removeCustomer(
-          customer
-        );
-
-      }, 900);
-
-  }
-
-
-  // ====================================================
-  // ENTREGA
-  // ====================================================
-
-  function deliverOrder() {
-
-    const customer =
-      getSelectedCustomer();
-
-
-    if (
-      !customer ||
-      !trayItems.length
-    ) {
-
-      return;
-
-    }
-
-
-    const correct =
-      arraysMatch(
-        customer.order,
-        trayItems
-      );
-
-
-    // ==================================================
-    // ACERTO
-    // ==================================================
-
-    if (correct) {
-
-      customer.state =
-        "reaction";
-
-
-      clearInterval(
-        customer.countdownTimer
-      );
-
-
-      customer.orderButton
-        .classList.remove(
-          "show"
-        );
-
-
-      customerHappy(
-        customer
-      );
-
-
-      chefHappy(
-        1000
-      );
-
-
-      giveCoins(
-        CORRECT_REWARD
-      );
-
-
-      showFeedback(
-        `Pedido perfeito! +${CORRECT_REWARD} 🪙`,
-        "correct"
-      );
-
-
-      trayItems = [];
-
-      renderTray();
-
-
-      customer.reactionTimer =
-        setTimeout(() => {
-
-          if (!cafeRunning) {
-
-            return;
-
-          }
-
-
-          removeCustomer(
-            customer
-          );
-
-        }, 1100);
-
-
-      return;
-
-    }
-
-
-    // ==================================================
-    // ERRO
-    // ==================================================
-
-    customer.errors++;
-
-
-    trayItems = [];
-
-    renderTray();
-
-
-    chefSad(
-      900
-    );
-
-
-    /*
-      3º erro:
-      cliente perde a paciência.
-    */
-
-    if (
-      customer.errors >=
-        MAX_ERRORS
-    ) {
-
-      customerLeavesAngry(
-        customer,
-        `${customer.character.name} perdeu a paciência! 💢`
-      );
-
-
-      return;
-
-    }
-
-
-    // ==================================================
-    // 1º / 2º ERRO
-    // ==================================================
-
-    customer.mood =
-      "angry";
-
-
-    customerAngry(
-      customer
-    );
-
-
-    const attemptsLeft =
-      MAX_ERRORS -
-      customer.errors;
-
-
-    showFeedback(
-      `Pedido errado! ${attemptsLeft} tentativa${attemptsLeft === 1 ? "" : "s"} restante${attemptsLeft === 1 ? "" : "s"} 💢`,
-      "wrong"
-    );
-
-
-    customer.reactionTimer =
-      setTimeout(() => {
-
-        if (
-          !cafeRunning ||
-          customer.state !==
-            "waiting"
-        ) {
-
-          return;
-
-        }
-
-
-        customerIdle(
-          customer
-        );
-
-      }, 850);
-
-  }
-
-
-  // ====================================================
-  // HOTSPOTS
-  // ====================================================
-
-  hotspots.forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          const key =
-            button.dataset.item;
-
-
-          if (!ITEMS[key]) {
-
-            return;
-
-          }
-
-
-          button.classList.remove(
-            "clicked"
-          );
-
-
-          void button.offsetWidth;
-
-
-          button.classList.add(
-            "clicked"
-          );
-
-
-          addToTray(
-            key
-          );
-
-        }
-      );
-
-    }
-  );
-
-
-  deliverButton.addEventListener(
-    "click",
-    deliverOrder
-  );
-
-
-  // ====================================================
-  // RESET
-  // ====================================================
-
-  function resetGame() {
-
-    clearTimeout(
-      nextWaveTimer
-    );
-
-
-    clearTimeout(
-      feedbackTimer
-    );
-
-
-    customers.forEach(
-      cleanupCustomerTimers
-    );
-
-
-    customers = [];
-
-
-    selectedCustomerId =
-      null;
-
-
-    trayItems = [];
-
-
-    customersContainer.innerHTML =
-      "";
-
-
-    feedback.className =
-      "cafe-feedback";
-
-
-    renderTray();
-
-
-    chefIdle();
-
-  }
-
-
-  // ====================================================
-  // ABRIR
-  // ====================================================
-
-  function openCafe() {
-
-    updateCoins();
-
-
-    cafeRunning = true;
-
-
-    cafeOverlay.classList.add(
-      "is-open"
-    );
-
-
-    cafeOverlay.setAttribute(
-      "aria-hidden",
-      "false"
-    );
-
-
-    gamesRoom.classList.add(
-      "cinna-cafe-open"
-    );
-
-
-    document.body.classList.add(
-      "cinna-cafe-body-open"
-    );
-
-
-    resetGame();
-
-
-    startWave();
-
-  }
-
-
-  // ====================================================
-  // FECHAR
-  // ====================================================
-
-  function closeCafe() {
-
-    cafeRunning = false;
-
-
-    clearTimeout(
-      nextWaveTimer
-    );
-
-
-    clearTimeout(
-      feedbackTimer
-    );
-
-
-    customers.forEach(
-      cleanupCustomerTimers
-    );
-
-
-    clearChefBlink();
-
-
-    customers = [];
-
-
-    selectedCustomerId =
-      null;
-
-
-    trayItems = [];
-
-
-    customersContainer.innerHTML =
-      "";
-
-
-    cafeOverlay.classList.remove(
-      "is-open"
-    );
-
-
-    cafeOverlay.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-
-    gamesRoom.classList.remove(
-      "cinna-cafe-open"
-    );
-
-
-    document.body.classList.remove(
-      "cinna-cafe-body-open"
-    );
-
-
-    updateCoins();
-
-  }
-
-
-  // ====================================================
-  // EVENTOS
-  // ====================================================
-
-  cafeCard.addEventListener(
-    "click",
-    openCafe
-  );
-
-
-  back.addEventListener(
-    "click",
-    closeCafe
-  );
-
-
-  document.addEventListener(
-    "keydown",
-    event => {
-
-      if (
-        event.key === "Escape" &&
-        cafeOverlay.classList.contains(
-          "is-open"
-        )
-      ) {
-
-        closeCafe();
-
-      }
-
-    }
-  );
-
-
-  // ====================================================
-  // API
-  // ====================================================
-
-  window.CinnaCafe = {
-
-    open:
-      openCafe,
-
-    close:
-      closeCafe,
-
-    refreshCoins:
-      updateCoins,
-
-    happy:
-      chefHappy,
-
-    sad:
-      chefSad,
-
-    newCustomer:
-      startWave,
-
-    getCustomers() {
-
-      return customers.map(
-        customer => ({
-          id:
-            customer.id,
-
-          character:
-            customer.characterKey,
-
-          order:
-            [...customer.order],
-
-          errors:
-            customer.errors,
-
-          timeLeft:
-            customer.timeLeft,
-
-          state:
-            customer.state
-        })
-      );
-
-    },
-
-    getTray() {
-
-      return [
-        ...trayItems
-      ];
-
-    },
-
-    getSelectedCustomer() {
-
-      return selectedCustomerId;
-
-    }
-
-  };
-
-
-  updateCoins();
-
-})();
+        first

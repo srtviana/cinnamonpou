@@ -1,6 +1,6 @@
 // ======================================================
 // CINNA CAFÉ ☕️🍰
-// V7 — PARTIDA + RESULTADO + MULTICLIENTES
+// V7 — PARTIDA DE 2 MIN + RESULTADO + CLIENTES INDEPENDENTES
 // ======================================================
 
 (() => {
@@ -129,19 +129,14 @@
   // CONFIGURAÇÕES
   // ====================================================
 
-  // 2 minutos
   const ROUND_TIME = 120;
 
-  // Tempo individual do cliente
   const CUSTOMER_TIME = 25;
 
-  // 3º erro = cliente vai embora
   const MAX_ERRORS = 3;
 
-  // Moedas por pedido correto
   const CORRECT_REWARD = 5;
 
-  // 40% de chance de dupla
   const DOUBLE_CUSTOMER_CHANCE = 0.40;
 
 
@@ -150,7 +145,6 @@
   // ====================================================
 
   const preloadAssets = [
-
     ...Object.values(A),
 
     ...Object.values(CHARACTERS)
@@ -162,7 +156,6 @@
 
     ...Object.values(ITEMS)
       .map(item => item.src)
-
   ];
 
 
@@ -319,29 +312,25 @@
       </div>
 
 
-      <div class="cinna-cafe-topbar-right">
+      <div
+        class="cinna-cafe-round-timer"
+        id="cinna-cafe-round-timer"
+      >
+        ⏱️
 
-        <div
-          id="cinna-cafe-round-timer"
-          class="cinna-cafe-round-timer"
-        >
-          ⏱️
-
-          <strong id="cinna-cafe-round-time">
-            2:00
-          </strong>
-        </div>
+        <strong id="cinna-cafe-round-time">
+          2:00
+        </strong>
+      </div>
 
 
-        <div class="cinna-cafe-coins">
+      <div class="cinna-cafe-coins">
 
-          🪙
+        🪙
 
-          <strong id="cinna-cafe-coins-value">
-            0
-          </strong>
-
-        </div>
+        <strong id="cinna-cafe-coins-value">
+          0
+        </strong>
 
       </div>
 
@@ -491,19 +480,16 @@
         ></div>
 
 
-        <!-- ========================================= -->
-        <!-- RESULTADO DA PARTIDA -->
-        <!-- ========================================= -->
+        <!-- RESULTADO -->
 
         <div
-          id="cafe-results"
-          class="cafe-results"
-          aria-hidden="true"
+          id="cinna-cafe-results"
+          class="cinna-cafe-results"
         >
 
-          <div class="cafe-results-card">
+          <div class="cinna-cafe-results-card">
 
-            <div class="cafe-results-icon">
+            <div class="cinna-cafe-results-icon">
               ☕
             </div>
 
@@ -511,90 +497,71 @@
               Café fechado!
             </h2>
 
-            <p class="cafe-results-subtitle">
-              Como foi o turno do Cinna?
+            <p>
+              Resultado do turno do Cinna ♡
             </p>
 
-
             <div
-              id="cafe-results-stars"
-              class="cafe-results-stars"
+              id="cinna-cafe-results-stars"
+              class="cinna-cafe-results-stars"
             >
               ⭐⭐⭐
             </div>
 
 
-            <div class="cafe-results-stats">
+            <div class="cinna-cafe-results-grid">
 
-              <div class="cafe-result-stat">
-
+              <div>
                 <span>
                   🍰 Pedidos
                 </span>
 
-                <strong
-                  id="cafe-result-orders"
-                >
+                <strong id="cinna-cafe-result-orders">
                   0
                 </strong>
-
               </div>
 
 
-              <div class="cafe-result-stat">
-
+              <div>
                 <span>
                   😊 Atendidos
                 </span>
 
-                <strong
-                  id="cafe-result-served"
-                >
+                <strong id="cinna-cafe-result-served">
                   0
                 </strong>
-
               </div>
 
 
-              <div class="cafe-result-stat">
-
+              <div>
                 <span>
                   😡 Perdidos
                 </span>
 
-                <strong
-                  id="cafe-result-lost"
-                >
+                <strong id="cinna-cafe-result-lost">
                   0
                 </strong>
-
               </div>
 
 
-              <div class="cafe-result-stat">
-
+              <div>
                 <span>
                   💢 Erros
                 </span>
 
-                <strong
-                  id="cafe-result-errors"
-                >
+                <strong id="cinna-cafe-result-errors">
                   0
                 </strong>
-
               </div>
 
 
-              <div class="cafe-result-stat cafe-result-coins">
+              <div class="coins">
 
                 <span>
                   🪙 Cinna Coins
                 </span>
 
-                <strong
-                  id="cafe-result-coins"
-                >
+                <strong id="cinna-cafe-result-coins">
                   +0
                 </strong>
 
@@ -603,20 +570,17 @@
             </div>
 
 
-            <div class="cafe-results-actions">
+            <div class="cinna-cafe-results-buttons">
 
               <button
-                id="cafe-play-again"
-                class="cafe-result-button primary"
+                id="cinna-cafe-play-again"
                 type="button"
               >
                 JOGAR DE NOVO ♡
               </button>
 
-
               <button
-                id="cafe-result-exit"
-                class="cafe-result-button secondary"
+                id="cinna-cafe-result-exit"
                 type="button"
               >
                 SAIR
@@ -685,54 +649,54 @@
       "#cinna-cafe-round-timer"
     );
 
-  const roundTimeElement =
+  const roundTimeText =
     cafeOverlay.querySelector(
       "#cinna-cafe-round-time"
     );
 
-  const results =
+  const resultsScreen =
     cafeOverlay.querySelector(
-      "#cafe-results"
+      "#cinna-cafe-results"
     );
 
-  const resultsStars =
+  const resultStars =
     cafeOverlay.querySelector(
-      "#cafe-results-stars"
+      "#cinna-cafe-results-stars"
     );
 
   const resultOrders =
     cafeOverlay.querySelector(
-      "#cafe-result-orders"
+      "#cinna-cafe-result-orders"
     );
 
   const resultServed =
     cafeOverlay.querySelector(
-      "#cafe-result-served"
+      "#cinna-cafe-result-served"
     );
 
   const resultLost =
     cafeOverlay.querySelector(
-      "#cafe-result-lost"
+      "#cinna-cafe-result-lost"
     );
 
   const resultErrors =
     cafeOverlay.querySelector(
-      "#cafe-result-errors"
+      "#cinna-cafe-result-errors"
     );
 
   const resultCoins =
     cafeOverlay.querySelector(
-      "#cafe-result-coins"
+      "#cinna-cafe-result-coins"
     );
 
   const playAgainButton =
     cafeOverlay.querySelector(
-      "#cafe-play-again"
+      "#cinna-cafe-play-again"
     );
 
   const resultExitButton =
     cafeOverlay.querySelector(
-      "#cafe-result-exit"
+      "#cinna-cafe-result-exit"
     );
 
   const hotspots = [
@@ -747,15 +711,6 @@
   // ====================================================
 
   let cafeRunning = false;
-
-  let roundActive = false;
-
-  let roundEnding = false;
-
-  let roundTimeLeft =
-    ROUND_TIME;
-
-  let roundTimer = null;
 
   let trayItems = [];
 
@@ -775,12 +730,17 @@
 
   let feedbackTimer = null;
 
+  let roundActive = false;
+
+  let roundFinished = false;
+
+  let roundTimeLeft =
+    ROUND_TIME;
+
+  let roundTimer = null;
+
   let lastSoloCharacterKey = null;
 
-
-  // ====================================================
-  // ESTATÍSTICAS DA PARTIDA
-  // ====================================================
 
   let roundStats = {
     orders: 0,
@@ -830,8 +790,18 @@
     }
 
 
-    roundStats.coins +=
-      amount;
+    if (
+      roundActive ||
+      (
+        !roundActive &&
+        !roundFinished
+      )
+    ) {
+
+      roundStats.coins +=
+        amount;
+
+    }
 
 
     updateCoins();
@@ -1056,132 +1026,6 @@
 
 
   // ====================================================
-  // SORTEIO DOS PERSONAGENS
-  // ====================================================
-
-  function getCharacterKeys() {
-
-    return Object.keys(
-      CHARACTERS
-    );
-
-  }
-
-
-  function chooseSoloCharacter() {
-
-    const allKeys =
-      getCharacterKeys();
-
-
-    if (
-      allKeys.length === 0
-    ) {
-
-      return null;
-
-    }
-
-
-    if (
-      allKeys.length === 1
-    ) {
-
-      lastSoloCharacterKey =
-        allKeys[0];
-
-      return allKeys[0];
-
-    }
-
-
-    const availableKeys =
-      allKeys.filter(
-        key =>
-          key !==
-          lastSoloCharacterKey
-      );
-
-
-    const pool =
-      availableKeys.length
-        ? availableKeys
-        : allKeys;
-
-
-    const chosen =
-      pool[
-        Math.floor(
-          Math.random() *
-          pool.length
-        )
-      ];
-
-
-    lastSoloCharacterKey =
-      chosen;
-
-
-    return chosen;
-
-  }
-
-
-  function chooseDoubleCharacters() {
-
-    const allKeys =
-      getCharacterKeys();
-
-
-    if (
-      allKeys.length < 2
-    ) {
-
-      return [];
-
-    }
-
-
-    const shuffled =
-      [...allKeys];
-
-
-    for (
-      let i =
-        shuffled.length - 1;
-
-      i > 0;
-
-      i--
-    ) {
-
-      const j =
-        Math.floor(
-          Math.random() *
-          (i + 1)
-        );
-
-
-      [
-        shuffled[i],
-        shuffled[j]
-      ] = [
-        shuffled[j],
-        shuffled[i]
-      ];
-
-    }
-
-
-    return shuffled.slice(
-      0,
-      2
-    );
-
-  }
-
-
-  // ====================================================
   // CLIENTE
   // ====================================================
 
@@ -1192,12 +1036,10 @@
   ) {
 
     const character =
-      CHARACTERS[
-        characterKey
-      ];
+      CHARACTERS[characterKey];
 
 
-    return {
+    const customer = {
 
       id:
         `customer-${++customerSequence}`,
@@ -1250,6 +1092,9 @@
 
     };
 
+
+    return customer;
+
   }
 
 
@@ -1262,9 +1107,7 @@
   ) {
 
     const wrap =
-      document.createElement(
-        "div"
-      );
+      document.createElement("div");
 
 
     wrap.className =
@@ -1409,8 +1252,7 @@
       customers.find(
         item =>
           item.id === id &&
-          item.state ===
-            "waiting"
+          item.state === "waiting"
       );
 
 
@@ -1425,24 +1267,22 @@
       customer.id;
 
 
-    customers.forEach(
-      item => {
+    customers.forEach(item => {
 
-        if (!item.element) {
+      if (!item.element) {
 
-          return;
-
-        }
-
-
-        item.element.classList.toggle(
-          "selected",
-          item.id ===
-            selectedCustomerId
-        );
+        return;
 
       }
-    );
+
+
+      item.element.classList.toggle(
+        "selected",
+        item.id ===
+          selectedCustomerId
+      );
+
+    });
 
 
     renderTray();
@@ -1452,21 +1292,19 @@
 
   function getSelectedCustomer() {
 
-    return (
-      customers.find(
-        customer =>
-          customer.id ===
-            selectedCustomerId &&
-          customer.state ===
-            "waiting"
-      ) || null
-    );
+    return customers.find(
+      customer =>
+        customer.id ===
+          selectedCustomerId &&
+        customer.state ===
+          "waiting"
+    ) || null;
 
   }
 
 
   // ====================================================
-  // PISCADA DO CLIENTE
+  // PISCADA
   // ====================================================
 
   function clearCustomerBlink(
@@ -1495,10 +1333,8 @@
 
     if (
       !cafeRunning ||
-      customer.state !==
-        "waiting" ||
-      customer.mood !==
-        "idle"
+      customer.state !== "waiting" ||
+      customer.mood !== "idle"
     ) {
 
       return;
@@ -1511,10 +1347,8 @@
 
         if (
           !cafeRunning ||
-          customer.state !==
-            "waiting" ||
-          customer.mood !==
-            "idle"
+          customer.state !== "waiting" ||
+          customer.mood !== "idle"
         ) {
 
           return;
@@ -1523,8 +1357,7 @@
 
 
         customer.image.src =
-          customer.character
-            .blink;
+          customer.character.blink;
 
 
         customer.blinkReturn =
@@ -1543,8 +1376,7 @@
 
 
             customer.image.src =
-              customer.character
-                .idle;
+              customer.character.idle;
 
 
             scheduleCustomerBlink(
@@ -1574,15 +1406,13 @@
 
 
     customer.image.src =
-      customer.character
-        .idle;
+      customer.character.idle;
 
 
-    customer.element
-      .classList.remove(
-        "is-angry",
-        "is-happy"
-      );
+    customer.element.classList.remove(
+      "is-angry",
+      "is-happy"
+    );
 
 
     customer.element
@@ -1615,20 +1445,17 @@
 
 
     customer.image.src =
-      customer.character
-        .angry;
+      customer.character.angry;
 
 
-    customer.element
-      .classList.remove(
-        "is-happy"
-      );
+    customer.element.classList.remove(
+      "is-happy"
+    );
 
 
-    customer.element
-      .classList.add(
-        "is-angry"
-      );
+    customer.element.classList.add(
+      "is-angry"
+    );
 
   }
 
@@ -1647,20 +1474,17 @@
 
 
     customer.image.src =
-      customer.character
-        .idle;
+      customer.character.idle;
 
 
-    customer.element
-      .classList.remove(
-        "is-angry"
-      );
+    customer.element.classList.remove(
+      "is-angry"
+    );
 
 
-    customer.element
-      .classList.add(
-        "is-happy"
-      );
+    customer.element.classList.add(
+      "is-happy"
+    );
 
 
     customer.element
@@ -1692,8 +1516,7 @@
 
         if (
           !cafeRunning ||
-          customer.state !==
-            "waiting"
+          customer.state !== "waiting"
         ) {
 
           clearInterval(
@@ -1782,10 +1605,9 @@
         }
 
 
-        customer.element
-          .classList.add(
-            "arrived"
-          );
+        customer.element.classList.add(
+          "arrived"
+        );
 
       });
 
@@ -1840,22 +1662,120 @@
 
 
   // ====================================================
-  // ONDA DE CLIENTES
+  // CLIENTES INDEPENDENTES
+  // ====================================================
+
+  function getCharacterKeys() {
+
+    return Object.keys(
+      CHARACTERS
+    );
+
+  }
+
+
+  function chooseSoloCharacter() {
+
+    const keys =
+      getCharacterKeys();
+
+
+    if (!keys.length) {
+
+      return null;
+
+    }
+
+
+    if (keys.length === 1) {
+
+      lastSoloCharacterKey =
+        keys[0];
+
+      return keys[0];
+
+    }
+
+
+    const pool =
+      keys.filter(
+        key =>
+          key !==
+          lastSoloCharacterKey
+      );
+
+
+    const chosen =
+      pool[
+        Math.floor(
+          Math.random() *
+          pool.length
+        )
+      ];
+
+
+    lastSoloCharacterKey =
+      chosen;
+
+
+    return chosen;
+
+  }
+
+
+  function chooseDoubleCharacters() {
+
+    const keys =
+      [...getCharacterKeys()];
+
+
+    for (
+      let i =
+        keys.length - 1;
+
+      i > 0;
+
+      i--
+    ) {
+
+      const j =
+        Math.floor(
+          Math.random() *
+          (i + 1)
+        );
+
+
+      [
+        keys[i],
+        keys[j]
+      ] = [
+        keys[j],
+        keys[i]
+      ];
+
+    }
+
+
+    return keys.slice(
+      0,
+      2
+    );
+
+  }
+
+
+  // ====================================================
+  // ONDA
   // ====================================================
 
   function startWave() {
-
-    /*
-      Se o tempo geral acabou,
-      nenhum cliente novo entra.
-    */
 
     if (
       !cafeRunning ||
       !roundActive
     ) {
 
-      checkRoundFinished();
+      checkRoundEnd();
 
       return;
 
@@ -1894,7 +1814,7 @@
 
 
     if (
-      characterKeys.length === 0
+      !characterKeys.length
     ) {
 
       return;
@@ -1902,19 +1822,11 @@
     }
 
 
-    const canHaveDouble =
-      characterKeys.length >= 2;
-
-
     const doubleWave =
-      canHaveDouble &&
+      characterKeys.length >= 2 &&
       Math.random() <
         DOUBLE_CUSTOMER_CHANCE;
 
-
-    // ==================================================
-    // DUPLA
-    // ==================================================
 
     if (doubleWave) {
 
@@ -1944,13 +1856,1351 @@
       );
 
 
-      /*
-        Cada cliente que entra conta
-        como um pedido criado.
-      */
-
       roundStats.orders += 2;
 
 
       enterCustomer(
         first
+      );
+
+
+      setTimeout(() => {
+
+        if (
+          cafeRunning &&
+          customers.includes(second)
+        ) {
+
+          enterCustomer(
+            second
+          );
+
+        }
+
+      }, 350);
+
+
+      return;
+
+    }
+
+
+    const characterKey =
+      chooseSoloCharacter();
+
+
+    if (!characterKey) {
+
+      return;
+
+    }
+
+
+    const customer =
+      createCustomer(
+        characterKey,
+        1,
+        1
+      );
+
+
+    customers.push(
+      customer
+    );
+
+
+    roundStats.orders++;
+
+
+    enterCustomer(
+      customer
+    );
+
+  }
+
+
+  // ====================================================
+  // BANDEJA
+  // ====================================================
+
+  function addToTray(key) {
+
+    const selected =
+      getSelectedCustomer();
+
+
+    if (!selected) {
+
+      showFeedback(
+        "Escolha um pedido primeiro ♡",
+        "wrong"
+      );
+
+      return;
+
+    }
+
+
+    if (
+      trayItems.length >= 2
+    ) {
+
+      tray.classList.remove(
+        "shake"
+      );
+
+
+      void tray.offsetWidth;
+
+
+      tray.classList.add(
+        "shake"
+      );
+
+
+      return;
+
+    }
+
+
+    trayItems.push(
+      key
+    );
+
+
+    renderTray();
+
+  }
+
+
+  function removeFromTray(
+    index
+  ) {
+
+    trayItems.splice(
+      index,
+      1
+    );
+
+
+    renderTray();
+
+  }
+
+
+  function renderTray() {
+
+    tray.innerHTML = "";
+
+
+    trayItems.forEach(
+      (key, index) => {
+
+        const item =
+          ITEMS[key];
+
+
+        const button =
+          document.createElement(
+            "button"
+          );
+
+
+        button.type =
+          "button";
+
+
+        button.className =
+          "cafe-tray-item";
+
+
+        button.title =
+          `Remover ${item.name}`;
+
+
+        button.innerHTML = `
+
+          <img
+            src="${item.src}"
+            alt="${item.name}"
+            draggable="false"
+          >
+
+        `;
+
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            removeFromTray(
+              index
+            );
+
+          }
+        );
+
+
+        tray.appendChild(
+          button
+        );
+
+      }
+    );
+
+
+    const selected =
+      getSelectedCustomer();
+
+
+    if (
+      trayItems.length > 0 &&
+      selected
+    ) {
+
+      deliverButton.classList.add(
+        "show"
+      );
+
+
+      deliverButton.disabled =
+        false;
+
+    } else {
+
+      deliverButton.classList.remove(
+        "show"
+      );
+
+
+      deliverButton.disabled =
+        true;
+
+    }
+
+  }
+
+
+  // ====================================================
+  // COMPARAÇÃO
+  // ====================================================
+
+  function arraysMatch(a, b) {
+
+    if (
+      a.length !== b.length
+    ) {
+
+      return false;
+
+    }
+
+
+    const first =
+      [...a].sort();
+
+
+    const second =
+      [...b].sort();
+
+
+    return first.every(
+      (value, index) =>
+        value === second[index]
+    );
+
+  }
+
+
+  // ====================================================
+  // FEEDBACK
+  // ====================================================
+
+  function showFeedback(
+    text,
+    type
+  ) {
+
+    clearTimeout(
+      feedbackTimer
+    );
+
+
+    feedback.textContent =
+      text;
+
+
+    feedback.className =
+      `cafe-feedback show ${type}`;
+
+
+    feedbackTimer =
+      setTimeout(() => {
+
+        feedback.classList.remove(
+          "show"
+        );
+
+      }, 1300);
+
+  }
+
+
+  // ====================================================
+  // LIMPEZA DE TIMERS
+  // ====================================================
+
+  function cleanupCustomerTimers(
+    customer
+  ) {
+
+    clearCustomerBlink(
+      customer
+    );
+
+
+    clearInterval(
+      customer.countdownTimer
+    );
+
+
+    clearTimeout(
+      customer.reactionTimer
+    );
+
+  }
+
+
+  // ====================================================
+  // CLIENTE SAI
+  // ====================================================
+
+  function removeCustomer(
+    customer
+  ) {
+
+    cleanupCustomerTimers(
+      customer
+    );
+
+
+    if (
+      selectedCustomerId ===
+        customer.id
+    ) {
+
+      selectedCustomerId =
+        null;
+
+
+      trayItems = [];
+
+
+      renderTray();
+
+    }
+
+
+    customer.state =
+      "leaving";
+
+
+    customer.orderButton
+      ?.classList.remove(
+        "show"
+      );
+
+
+    customer.element
+      ?.classList.remove(
+        "selected"
+      );
+
+
+    customer.element
+      ?.classList.add(
+        "leaving"
+      );
+
+
+    setTimeout(() => {
+
+      customer.element
+        ?.remove();
+
+
+      customers =
+        customers.filter(
+          item =>
+            item.id !==
+              customer.id
+        );
+
+
+      const waitingCustomer =
+        customers.find(
+          item =>
+            item.state ===
+              "waiting"
+        );
+
+
+      if (
+        waitingCustomer &&
+        !getSelectedCustomer()
+      ) {
+
+        selectCustomer(
+          waitingCustomer.id
+        );
+
+      }
+
+
+      if (
+        cafeRunning &&
+        customers.length === 0
+      ) {
+
+        if (roundActive) {
+
+          nextWaveTimer =
+            setTimeout(
+              startWave,
+              700
+            );
+
+        } else {
+
+          checkRoundEnd();
+
+        }
+
+      }
+
+    }, 550);
+
+  }
+
+
+  function customerLeavesAngry(
+    customer,
+    message
+  ) {
+
+    if (
+      customer.state !== "waiting"
+    ) {
+
+      return;
+
+    }
+
+
+    customer.state =
+      "reaction";
+
+
+    clearInterval(
+      customer.countdownTimer
+    );
+
+
+    roundStats.lost++;
+
+
+    customerAngry(
+      customer
+    );
+
+
+    chefSad(
+      1000
+    );
+
+
+    showFeedback(
+      message,
+      "wrong"
+    );
+
+
+    if (
+      selectedCustomerId ===
+        customer.id
+    ) {
+
+      trayItems = [];
+
+
+      renderTray();
+
+    }
+
+
+    customer.reactionTimer =
+      setTimeout(() => {
+
+        if (!cafeRunning) {
+
+          return;
+
+        }
+
+
+        removeCustomer(
+          customer
+        );
+
+      }, 900);
+
+  }
+
+
+  // ====================================================
+  // ENTREGA
+  // ====================================================
+
+  function deliverOrder() {
+
+    const customer =
+      getSelectedCustomer();
+
+
+    if (
+      !customer ||
+      !trayItems.length
+    ) {
+
+      return;
+
+    }
+
+
+    const correct =
+      arraysMatch(
+        customer.order,
+        trayItems
+      );
+
+
+    // ==================================================
+    // ACERTO
+    // ==================================================
+
+    if (correct) {
+
+      customer.state =
+        "reaction";
+
+
+      clearInterval(
+        customer.countdownTimer
+      );
+
+
+      customer.orderButton
+        .classList.remove(
+          "show"
+        );
+
+
+      roundStats.served++;
+
+
+      customerHappy(
+        customer
+      );
+
+
+      chefHappy(
+        1000
+      );
+
+
+      giveCoins(
+        CORRECT_REWARD
+      );
+
+
+      showFeedback(
+        `Pedido perfeito! +${CORRECT_REWARD} 🪙`,
+        "correct"
+      );
+
+
+      trayItems = [];
+
+
+      renderTray();
+
+
+      customer.reactionTimer =
+        setTimeout(() => {
+
+          if (!cafeRunning) {
+
+            return;
+
+          }
+
+
+          removeCustomer(
+            customer
+          );
+
+        }, 1100);
+
+
+      return;
+
+    }
+
+
+    // ==================================================
+    // ERRO
+    // ==================================================
+
+    customer.errors++;
+
+
+    roundStats.errors++;
+
+
+    trayItems = [];
+
+
+    renderTray();
+
+
+    chefSad(
+      900
+    );
+
+
+    if (
+      customer.errors >=
+        MAX_ERRORS
+    ) {
+
+      customerLeavesAngry(
+        customer,
+        `${customer.character.name} perdeu a paciência! 💢`
+      );
+
+
+      return;
+
+    }
+
+
+    customerAngry(
+      customer
+    );
+
+
+    const attemptsLeft =
+      MAX_ERRORS -
+      customer.errors;
+
+
+    showFeedback(
+      `Pedido errado! ${attemptsLeft} tentativa${attemptsLeft === 1 ? "" : "s"} restante${attemptsLeft === 1 ? "" : "s"} 💢`,
+      "wrong"
+    );
+
+
+    customer.reactionTimer =
+      setTimeout(() => {
+
+        if (
+          !cafeRunning ||
+          customer.state !==
+            "waiting"
+        ) {
+
+          return;
+
+        }
+
+
+        customerIdle(
+          customer
+        );
+
+      }, 850);
+
+  }
+
+
+  // ====================================================
+  // HOTSPOTS
+  // ====================================================
+
+  hotspots.forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const key =
+            button.dataset.item;
+
+
+          if (!ITEMS[key]) {
+
+            return;
+
+          }
+
+
+          button.classList.remove(
+            "clicked"
+          );
+
+
+          void button.offsetWidth;
+
+
+          button.classList.add(
+            "clicked"
+          );
+
+
+          addToTray(
+            key
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+  deliverButton.addEventListener(
+    "click",
+    deliverOrder
+  );
+
+
+  // ====================================================
+  // PARTIDA
+  // ====================================================
+
+  function formatRoundTime(
+    seconds
+  ) {
+
+    const minutes =
+      Math.floor(
+        seconds / 60
+      );
+
+
+    const secs =
+      seconds % 60;
+
+
+    return (
+      `${minutes}:` +
+      `${String(secs).padStart(2, "0")}`
+    );
+
+  }
+
+
+  function renderRoundTime() {
+
+    roundTimeText.textContent =
+      formatRoundTime(
+        Math.max(
+          roundTimeLeft,
+          0
+        )
+      );
+
+
+    roundTimerBox
+      .classList.toggle(
+        "time-low",
+        roundTimeLeft <= 15 &&
+        roundTimeLeft > 0
+      );
+
+  }
+
+
+  function startRoundTimer() {
+
+    clearInterval(
+      roundTimer
+    );
+
+
+    roundTimeLeft =
+      ROUND_TIME;
+
+
+    roundActive = true;
+
+    roundFinished = false;
+
+
+    renderRoundTime();
+
+
+    roundTimer =
+      setInterval(() => {
+
+        if (
+          !cafeRunning ||
+          !roundActive
+        ) {
+
+          clearInterval(
+            roundTimer
+          );
+
+          return;
+
+        }
+
+
+        roundTimeLeft--;
+
+
+        renderRoundTime();
+
+
+        if (
+          roundTimeLeft <= 0
+        ) {
+
+          roundTimeLeft = 0;
+
+          roundActive = false;
+
+
+          clearInterval(
+            roundTimer
+          );
+
+
+          clearTimeout(
+            nextWaveTimer
+          );
+
+
+          renderRoundTime();
+
+
+          showFeedback(
+            "Café fechando! Termine os pedidos ☕",
+            "correct"
+          );
+
+
+          checkRoundEnd();
+
+        }
+
+      }, 1000);
+
+  }
+
+
+  // ====================================================
+  // ESTRELAS
+  // ====================================================
+
+  function calculateStars() {
+
+    if (
+      roundStats.served > 0 &&
+      roundStats.lost === 0 &&
+      roundStats.errors <= 2
+    ) {
+
+      return 3;
+
+    }
+
+
+    if (
+      roundStats.served > 0 &&
+      roundStats.lost <= 1
+    ) {
+
+      return 2;
+
+    }
+
+
+    return 1;
+
+  }
+
+
+  // ====================================================
+  // FIM DA PARTIDA
+  // ====================================================
+
+  function checkRoundEnd() {
+
+    if (
+      roundActive ||
+      roundFinished ||
+      !cafeRunning ||
+      customers.length > 0
+    ) {
+
+      return;
+
+    }
+
+
+    finishRound();
+
+  }
+
+
+  function finishRound() {
+
+    if (
+      roundFinished ||
+      !cafeRunning
+    ) {
+
+      return;
+
+    }
+
+
+    roundFinished = true;
+
+
+    clearInterval(
+      roundTimer
+    );
+
+
+    clearTimeout(
+      nextWaveTimer
+    );
+
+
+    selectedCustomerId =
+      null;
+
+
+    trayItems = [];
+
+
+    renderTray();
+
+
+    const stars =
+      calculateStars();
+
+
+    resultStars.textContent =
+      "⭐".repeat(stars) +
+      "☆".repeat(
+        3 - stars
+      );
+
+
+    resultOrders.textContent =
+      roundStats.orders;
+
+
+    resultServed.textContent =
+      roundStats.served;
+
+
+    resultLost.textContent =
+      roundStats.lost;
+
+
+    resultErrors.textContent =
+      roundStats.errors;
+
+
+    resultCoins.textContent =
+      `+${roundStats.coins}`;
+
+
+    resultsScreen.classList.add(
+      "show"
+    );
+
+
+    if (
+      stars === 3
+    ) {
+
+      setChefMood(
+        "happy"
+      );
+
+    } else if (
+      stars === 1
+    ) {
+
+      setChefMood(
+        "sad"
+      );
+
+    } else {
+
+      setChefMood(
+        "idle"
+      );
+
+    }
+
+  }
+
+
+  // ====================================================
+  // NOVA PARTIDA
+  // ====================================================
+
+  function startNewRound() {
+
+    resetGame();
+
+
+    roundStats = {
+      orders: 0,
+      served: 0,
+      lost: 0,
+      errors: 0,
+      coins: 0
+    };
+
+
+    resultsScreen.classList.remove(
+      "show"
+    );
+
+
+    startRoundTimer();
+
+
+    startWave();
+
+  }
+
+
+  // ====================================================
+  // RESET
+  // ====================================================
+
+  function resetGame() {
+
+    clearInterval(
+      roundTimer
+    );
+
+
+    clearTimeout(
+      nextWaveTimer
+    );
+
+
+    clearTimeout(
+      feedbackTimer
+    );
+
+
+    customers.forEach(
+      cleanupCustomerTimers
+    );
+
+
+    customers = [];
+
+
+    selectedCustomerId =
+      null;
+
+
+    trayItems = [];
+
+
+    customersContainer.innerHTML =
+      "";
+
+
+    feedback.className =
+      "cafe-feedback";
+
+
+    renderTray();
+
+
+    chefIdle();
+
+  }
+
+
+  // ====================================================
+  // ABRIR
+  // ====================================================
+
+  function openCafe() {
+
+    updateCoins();
+
+
+    cafeRunning = true;
+
+
+    cafeOverlay.classList.add(
+      "is-open"
+    );
+
+
+    cafeOverlay.setAttribute(
+      "aria-hidden",
+      "false"
+    );
+
+
+    gamesRoom.classList.add(
+      "cinna-cafe-open"
+    );
+
+
+    document.body.classList.add(
+      "cinna-cafe-body-open"
+    );
+
+
+    startNewRound();
+
+  }
+
+
+  // ====================================================
+  // FECHAR
+  // ====================================================
+
+  function closeCafe() {
+
+    cafeRunning = false;
+
+    roundActive = false;
+
+    roundFinished = false;
+
+
+    clearInterval(
+      roundTimer
+    );
+
+
+    clearTimeout(
+      nextWaveTimer
+    );
+
+
+    clearTimeout(
+      feedbackTimer
+    );
+
+
+    customers.forEach(
+      cleanupCustomerTimers
+    );
+
+
+    clearChefBlink();
+
+
+    customers = [];
+
+
+    selectedCustomerId =
+      null;
+
+
+    trayItems = [];
+
+
+    customersContainer.innerHTML =
+      "";
+
+
+    resultsScreen.classList.remove(
+      "show"
+    );
+
+
+    cafeOverlay.classList.remove(
+      "is-open"
+    );
+
+
+    cafeOverlay.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+
+    gamesRoom.classList.remove(
+      "cinna-cafe-open"
+    );
+
+
+    document.body.classList.remove(
+      "cinna-cafe-body-open"
+    );
+
+
+    updateCoins();
+
+  }
+
+
+  // ====================================================
+  // EVENTOS
+  // ====================================================
+
+  cafeCard.addEventListener(
+    "click",
+    openCafe
+  );
+
+
+  back.addEventListener(
+    "click",
+    closeCafe
+  );
+
+
+  playAgainButton.addEventListener(
+    "click",
+    startNewRound
+  );
+
+
+  resultExitButton.addEventListener(
+    "click",
+    closeCafe
+  );
+
+
+  document.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Escape" &&
+        cafeOverlay.classList.contains(
+          "is-open"
+        )
+      ) {
+
+        closeCafe();
+
+      }
+
+    }
+  );
+
+
+  // ====================================================
+  // API
+  // ====================================================
+
+  window.CinnaCafe = {
+
+    open:
+      openCafe,
+
+    close:
+      closeCafe,
+
+    refreshCoins:
+      updateCoins,
+
+    happy:
+      chefHappy,
+
+    sad:
+      chefSad,
+
+    newCustomer:
+      startWave,
+
+
+    getCustomers() {
+
+      return customers.map(
+        customer => ({
+
+          id:
+            customer.id,
+
+          character:
+            customer.characterKey,
+
+          order:
+            [...customer.order],
+
+          errors:
+            customer.errors,
+
+          timeLeft:
+            customer.timeLeft,
+
+          state:
+            customer.state
+
+        })
+      );
+
+    },
+
+
+    getTray() {
+
+      return [
+        ...trayItems
+      ];
+
+    },
+
+
+    getSelectedCustomer() {
+
+      return selectedCustomerId;
+
+    },
+
+
+    getRoundTime() {
+
+      return roundTimeLeft;
+
+    },
+
+
+    getRoundStats() {
+
+      return {
+        ...roundStats
+      };
+
+    }
+
+  };
+
+
+  updateCoins();
+
+})();

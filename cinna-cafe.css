@@ -1,6 +1,6 @@
 /* =====================================================
    CINNA CAFÉ ☕🍰
-   V7 — PARTIDA + RESULTADO
+   V7 — POSICIONAMENTO + PARTIDA + RESULTADO
    ===================================================== */
 
 
@@ -62,6 +62,7 @@ body.cinna-cafe-body-open {
   grid-template-columns:
     48px
     1fr
+    auto
     auto;
 
   align-items: center;
@@ -161,73 +162,56 @@ body.cinna-cafe-body-open {
 
 
 /* =====================================================
-   LADO DIREITO DA TOPBAR
-   ===================================================== */
-
-.cinna-cafe-topbar-right {
-  display: flex;
-
-  align-items: center;
-  justify-content: flex-end;
-
-  gap: 7px;
-}
-
-
-/* =====================================================
    TIMER DA PARTIDA
    ===================================================== */
 
 .cinna-cafe-round-timer {
-  min-width: 70px;
+  min-width: 72px;
 
-  padding: 7px 10px;
+  padding: 7px 12px;
 
   display: flex;
 
   align-items: center;
   justify-content: center;
 
-  gap: 4px;
+  gap: 5px;
 
   border-radius: 999px;
 
   background: #edf8ff;
 
+  color: #668da7;
+
   border:
     2px solid
     rgba(109, 177, 220, 0.22);
 
-  color: #668da7;
-
   box-sizing: border-box;
 
-  font-size: 13px;
   font-weight: 900;
 
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.cinna-cafe-round-timer strong {
+  font-size: 14px;
 }
 
 .cinna-cafe-round-timer.time-low {
   background: #fff0f2;
 
-  border-color:
-    rgba(220, 105, 125, 0.22);
-
   color: #d66575;
 
   animation:
-    cafeRoundTimerPulse
+    cinnaCafeRoundPulse
     0.7s
     ease-in-out
     infinite
     alternate;
 }
 
-@keyframes cafeRoundTimerPulse {
+@keyframes cinnaCafeRoundPulse {
 
   from {
     transform: scale(1);
@@ -236,6 +220,7 @@ body.cinna-cafe-body-open {
   to {
     transform: scale(1.05);
   }
+
 }
 
 
@@ -338,6 +323,7 @@ body.cinna-cafe-body-open {
 
 .cinna-cafe-background {
   position: absolute;
+
   inset: 0;
 
   z-index: 0;
@@ -354,6 +340,7 @@ body.cinna-cafe-body-open {
   user-select: none;
 
   -webkit-user-select: none;
+
   -webkit-user-drag: none;
 }
 
@@ -361,16 +348,6 @@ body.cinna-cafe-body-open {
 /* =====================================================
    CLIENTES
    ===================================================== */
-
-.cafe-customers {
-  position: absolute;
-
-  inset: 0;
-
-  z-index: 3;
-
-  pointer-events: none;
-}
 
 .cafe-customer-wrap {
   position: absolute;
@@ -388,22 +365,21 @@ body.cinna-cafe-body-open {
     translateX(-180%);
 
   pointer-events: none;
-
-  transition:
-    left 0.35s ease,
-    transform 0.7s
-    cubic-bezier(
-      0.2,
-      0.8,
-      0.25,
-      1
-    ),
-    opacity 0.3s ease;
 }
+
+
+/* =====================================================
+   CLIENTE ÚNICO
+   ===================================================== */
 
 .cafe-customer-wrap.is-single {
   left: 24%;
 }
+
+
+/* =====================================================
+   DOIS CLIENTES
+   ===================================================== */
 
 .cafe-customer-wrap.is-double {
   width: 14%;
@@ -417,11 +393,22 @@ body.cinna-cafe-body-open {
   left: 33%;
 }
 
+
 .cafe-customer-wrap.arrived {
   opacity: 1;
 
   transform:
     translateX(0);
+
+  transition:
+    transform 0.7s
+    cubic-bezier(
+      0.2,
+      0.8,
+      0.25,
+      1
+    ),
+    opacity 0.3s ease;
 }
 
 .cafe-customer-wrap.leaving {
@@ -431,7 +418,7 @@ body.cinna-cafe-body-open {
     translateX(-190%);
 
   transition:
-    transform 0.55s ease-in,
+    transform 0.5s ease-in,
     opacity 0.4s ease;
 }
 
@@ -442,8 +429,6 @@ body.cinna-cafe-body-open {
 
 .cafe-customer {
   position: relative;
-
-  z-index: 1;
 
   display: block;
 
@@ -457,6 +442,7 @@ body.cinna-cafe-body-open {
   user-select: none;
 
   -webkit-user-select: none;
+
   -webkit-user-drag: none;
 
   filter:
@@ -484,259 +470,7 @@ body.cinna-cafe-body-open {
     transform:
       translateY(-5px);
   }
-}
 
-
-/* =====================================================
-   BALÃO DO PEDIDO
-   ===================================================== */
-
-.cafe-order {
-  position: absolute;
-
-  left: 50%;
-  bottom: 92%;
-
-  z-index: 20;
-
-  min-width: 115%;
-  max-width: 155%;
-
-  padding: 6px 8px;
-
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 3px;
-
-  opacity: 0;
-
-  transform:
-    translateX(-50%)
-    translateY(6px)
-    scale(0.85);
-
-  pointer-events: none;
-
-  border:
-    2px solid
-    rgba(164, 194, 220, 0.48);
-
-  border-radius: 16px;
-
-  background:
-    rgba(255, 255, 255, 0.96);
-
-  box-shadow:
-    0 6px 15px
-    rgba(65, 91, 112, 0.15);
-
-  box-sizing: border-box;
-
-  cursor: pointer;
-
-  touch-action: manipulation;
-
-  -webkit-tap-highlight-color:
-    transparent;
-
-  transition:
-    opacity 0.2s ease,
-    transform 0.22s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.cafe-order.show {
-  opacity: 1;
-
-  transform:
-    translateX(-50%)
-    translateY(0)
-    scale(1);
-
-  pointer-events: auto;
-}
-
-.cafe-order::after {
-  content: "";
-
-  position: absolute;
-
-  left: 50%;
-  bottom: -7px;
-
-  width: 12px;
-  height: 12px;
-
-  background: white;
-
-  transform:
-    translateX(-50%)
-    rotate(45deg);
-
-  border-right:
-    2px solid
-    rgba(164, 194, 220, 0.35);
-
-  border-bottom:
-    2px solid
-    rgba(164, 194, 220, 0.35);
-}
-
-
-/* =====================================================
-   CLIENTE SELECIONADO
-   ===================================================== */
-
-.cafe-customer-wrap.selected
-.cafe-order {
-  border-color: #77bce8;
-
-  box-shadow:
-    0 0 0 3px
-    rgba(119, 188, 232, 0.22),
-    0 6px 15px
-    rgba(65, 91, 112, 0.15);
-}
-
-.cafe-customer-wrap.selected
-.cafe-order::before {
-  content: "✓";
-
-  position: absolute;
-
-  top: -8px;
-  right: -7px;
-
-  width: 19px;
-  height: 19px;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: #77bce8;
-
-  color: white;
-
-  font-size: 11px;
-  font-weight: 900;
-
-  box-shadow:
-    0 2px 5px
-    rgba(55, 102, 134, 0.2);
-}
-
-
-/* =====================================================
-   PEDIDO
-   ===================================================== */
-
-.cafe-order-title {
-  position: relative;
-
-  z-index: 2;
-
-  color: #718da2;
-
-  font-size:
-    clamp(7px, 1.05vw, 12px);
-
-  font-weight: 900;
-}
-
-.cafe-order-items {
-  position: relative;
-
-  z-index: 2;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 3px;
-}
-
-.cafe-order-items img {
-  position: relative;
-
-  display: block;
-
-  width:
-    clamp(25px, 3.7vw, 52px);
-
-  height:
-    clamp(25px, 3.7vw, 52px);
-
-  object-fit: contain;
-
-  pointer-events: none;
-
-  user-select: none;
-
-  -webkit-user-select: none;
-  -webkit-user-drag: none;
-}
-
-
-/* =====================================================
-   TIMER INDIVIDUAL
-   ===================================================== */
-
-.cafe-order-timer {
-  position: relative;
-
-  z-index: 2;
-
-  padding: 2px 6px;
-
-  border-radius: 999px;
-
-  background: #eef8ff;
-
-  color: #7293a9;
-
-  font-size:
-    clamp(7px, 0.9vw, 10px);
-
-  font-weight: 800;
-}
-
-.cafe-order-timer strong {
-  font-weight: 900;
-}
-
-.cafe-order.time-low
-.cafe-order-timer {
-  background: #fff0f1;
-
-  color: #d66575;
-
-  animation:
-    cafeTimerPulse
-    0.65s
-    ease-in-out
-    infinite
-    alternate;
-}
-
-@keyframes cafeTimerPulse {
-
-  from {
-    transform: scale(1);
-  }
-
-  to {
-    transform: scale(1.08);
-  }
 }
 
 
@@ -767,7 +501,9 @@ body.cinna-cafe-body-open {
       translateY(-10px)
       scale(1.04);
   }
+
 }
+
 
 .cafe-happy-hearts {
   position: absolute;
@@ -775,7 +511,7 @@ body.cinna-cafe-body-open {
   top: -9%;
   left: 50%;
 
-  z-index: 30;
+  z-index: 5;
 
   opacity: 0;
 
@@ -786,13 +522,15 @@ body.cinna-cafe-body-open {
   color: #ff8fb6;
 
   font-size:
-    clamp(14px, 2.5vw, 28px);
+    clamp(
+      14px,
+      2.5vw,
+      28px
+    );
 
   font-weight: 900;
 
   white-space: nowrap;
-
-  pointer-events: none;
 }
 
 .cafe-happy-hearts.show {
@@ -821,6 +559,7 @@ body.cinna-cafe-body-open {
       translateY(-8px)
       scale(1.15);
   }
+
 }
 
 
@@ -828,8 +567,7 @@ body.cinna-cafe-body-open {
    CLIENTE COM RAIVA
    ===================================================== */
 
-.cafe-customer-wrap.is-angry
-.cafe-customer {
+.cafe-customer-wrap.is-angry {
   animation:
     cafeAngryShake
     0.15s
@@ -841,19 +579,262 @@ body.cinna-cafe-body-open {
 
   0%,
   100% {
-    transform:
-      translateX(0);
+    margin-left: 0;
   }
 
   25% {
-    transform:
-      translateX(-4px);
+    margin-left: -4px;
   }
 
   75% {
-    transform:
-      translateX(4px);
+    margin-left: 4px;
   }
+
+}
+
+
+/* =====================================================
+   PEDIDO
+   ===================================================== */
+
+.cafe-order {
+  position: absolute;
+
+  left: 11%;
+  top: 8%;
+
+  z-index: 30;
+
+  min-width: 12%;
+
+  padding:
+    7px
+    10px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  opacity: 0;
+
+  transform:
+    translateY(5px)
+    scale(0.8);
+
+  pointer-events: none;
+
+  border-radius: 18px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.96
+    );
+
+  border:
+    2px solid
+    rgba(
+      164,
+      194,
+      220,
+      0.45
+    );
+
+  box-shadow:
+    0 6px 15px
+    rgba(
+      65,
+      91,
+      112,
+      0.14
+    );
+
+  box-sizing: border-box;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.25s ease;
+}
+
+.cafe-order.show {
+  opacity: 1;
+
+  transform:
+    translateY(0)
+    scale(1);
+
+  pointer-events: auto;
+}
+
+.cafe-order.selected {
+  border-color:
+    rgba(
+      255,
+      143,
+      182,
+      0.75
+    );
+}
+
+.cafe-customer-wrap.selected
+.cafe-order {
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      255,
+      143,
+      182,
+      0.22
+    ),
+    0 6px 15px
+    rgba(
+      65,
+      91,
+      112,
+      0.14
+    );
+}
+
+.cafe-order::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  bottom: -8px;
+
+  width: 15px;
+  height: 15px;
+
+  background: white;
+
+  transform:
+    translateX(-50%)
+    rotate(45deg);
+
+  border-right:
+    2px solid
+    rgba(
+      164,
+      194,
+      220,
+      0.35
+    );
+
+  border-bottom:
+    2px solid
+    rgba(
+      164,
+      194,
+      220,
+      0.35
+    );
+}
+
+
+/* =====================================================
+   TÍTULO DO PEDIDO
+   ===================================================== */
+
+.cafe-order-title {
+  position: relative;
+
+  z-index: 2;
+
+  color: #718da2;
+
+  font-size:
+    clamp(
+      8px,
+      1.3vw,
+      13px
+    );
+
+  font-weight: 900;
+}
+
+
+/* =====================================================
+   ITENS DO PEDIDO
+   ===================================================== */
+
+.cafe-order-items {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+}
+
+.cafe-order-items img {
+  position: relative;
+
+  display: block;
+
+  width:
+    clamp(
+      27px,
+      4.5vw,
+      60px
+    );
+
+  height:
+    clamp(
+      27px,
+      4.5vw,
+      60px
+    );
+
+  object-fit: contain;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+
+  -webkit-user-drag: none;
+}
+
+
+/* =====================================================
+   TIMER DO PEDIDO
+   ===================================================== */
+
+.cafe-order-timer {
+  position: relative;
+
+  z-index: 2;
+
+  color: #7896a9;
+
+  font-size:
+    clamp(
+      7px,
+      1.1vw,
+      11px
+    );
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+.cafe-order.time-low
+.cafe-order-timer {
+  color: #d96d7c;
 }
 
 
@@ -884,12 +865,18 @@ body.cinna-cafe-body-open {
   user-select: none;
 
   -webkit-user-select: none;
+
   -webkit-user-drag: none;
 
   filter:
     drop-shadow(
       0 6px 5px
-      rgba(67, 51, 38, 0.15)
+      rgba(
+        67,
+        51,
+        38,
+        0.15
+      )
     );
 }
 
@@ -912,7 +899,8 @@ body.cinna-cafe-body-open {
   height: auto;
 
   transform-origin:
-    50% 100%;
+    50%
+    100%;
 
   object-fit: contain;
 
@@ -921,12 +909,18 @@ body.cinna-cafe-body-open {
   user-select: none;
 
   -webkit-user-select: none;
+
   -webkit-user-drag: none;
 
   filter:
     drop-shadow(
       0 8px 7px
-      rgba(58, 85, 101, 0.16)
+      rgba(
+        58,
+        85,
+        101,
+        0.16
+      )
     );
 
   animation:
@@ -942,33 +936,54 @@ body.cinna-cafe-body-open {
 
   0% {
     transform:
-      translate3d(-50%, 0, 0)
+      translate3d(
+        -50%,
+        0,
+        0
+      )
       scale(1);
   }
 
   20% {
     transform:
-      translate3d(-50%, -3px, 0)
+      translate3d(
+        -50%,
+        -3px,
+        0
+      )
       scale(1.004);
   }
 
   50% {
     transform:
-      translate3d(-50%, -9px, 0)
+      translate3d(
+        -50%,
+        -9px,
+        0
+      )
       scale(1.012);
   }
 
   80% {
     transform:
-      translate3d(-50%, -3px, 0)
+      translate3d(
+        -50%,
+        -3px,
+        0
+      )
       scale(1.004);
   }
 
   100% {
     transform:
-      translate3d(-50%, 0, 0)
+      translate3d(
+        -50%,
+        0,
+        0
+      )
       scale(1);
   }
+
 }
 
 
@@ -999,19 +1014,24 @@ body.cinna-cafe-body-open {
   user-select: none;
 
   -webkit-user-select: none;
+
   -webkit-user-drag: none;
 
   filter:
     drop-shadow(
       0 8px 6px
-      rgba(65, 47, 33, 0.16)
+      rgba(
+        65,
+        47,
+        33,
+        0.16
+      )
     );
 }
 
 
 /* =====================================================
    HOTSPOTS
-   POSIÇÕES TESTADAS — NÃO ALTERAR
    ===================================================== */
 
 .cafe-hotspots {
@@ -1028,9 +1048,11 @@ body.cinna-cafe-body-open {
   position: absolute;
 
   padding: 0;
+
   margin: 0;
 
   border: 0;
+
   outline: none;
 
   background: transparent;
@@ -1046,7 +1068,9 @@ body.cinna-cafe-body-open {
 }
 
 
-/* LATTE BRANCO */
+/* =====================================================
+   HOTSPOTS — BEBIDAS
+   ===================================================== */
 
 .hotspot-bear-latte {
   left: 8.2%;
@@ -1056,9 +1080,6 @@ body.cinna-cafe-body-open {
   height: 12%;
 }
 
-
-/* FRAPPÉ */
-
 .hotspot-frappe {
   left: 14.8%;
   top: 67%;
@@ -1066,9 +1087,6 @@ body.cinna-cafe-body-open {
   width: 6%;
   height: 14%;
 }
-
-
-/* LATTE ROSA */
 
 .hotspot-pink-latte {
   left: 20.5%;
@@ -1079,7 +1097,9 @@ body.cinna-cafe-body-open {
 }
 
 
-/* CUPCAKE MORANGO */
+/* =====================================================
+   HOTSPOTS — CUPCAKES
+   ===================================================== */
 
 .hotspot-cupcake-strawberry {
   left: 32.8%;
@@ -1088,9 +1108,6 @@ body.cinna-cafe-body-open {
   width: 6%;
   height: 12%;
 }
-
-
-/* CUPCAKE CHOCOLATE */
 
 .hotspot-cupcake-chocolate {
   left: 38.4%;
@@ -1101,7 +1118,9 @@ body.cinna-cafe-body-open {
 }
 
 
-/* DONUT MORANGO */
+/* =====================================================
+   HOTSPOTS — DONUTS
+   ===================================================== */
 
 .hotspot-donut-strawberry {
   left: 7.2%;
@@ -1111,9 +1130,6 @@ body.cinna-cafe-body-open {
   height: 10%;
 }
 
-
-/* DONUT CHOCOLATE */
-
 .hotspot-donut-chocolate {
   left: 13.2%;
   top: 82%;
@@ -1121,9 +1137,6 @@ body.cinna-cafe-body-open {
   width: 7%;
   height: 10%;
 }
-
-
-/* DONUT BAUNILHA */
 
 .hotspot-donut-vanilla {
   left: 19%;
@@ -1151,6 +1164,7 @@ body.cinna-cafe-body-open {
     transform:
       scale(0.9);
   }
+
 }
 
 
@@ -1179,6 +1193,11 @@ body.cinna-cafe-body-open {
   pointer-events: auto;
 }
 
+
+/* =====================================================
+   ITEM DA BANDEJA
+   ===================================================== */
+
 .cafe-tray-item {
   position: relative;
 
@@ -1191,6 +1210,7 @@ body.cinna-cafe-body-open {
   height: 100%;
 
   padding: 0;
+
   margin: 0;
 
   border: 0;
@@ -1230,12 +1250,18 @@ body.cinna-cafe-body-open {
   user-select: none;
 
   -webkit-user-select: none;
+
   -webkit-user-drag: none;
 
   filter:
     drop-shadow(
       0 3px 2px
-      rgba(62, 66, 75, 0.15)
+      rgba(
+        62,
+        66,
+        75,
+        0.15
+      )
     );
 }
 
@@ -1256,6 +1282,7 @@ body.cinna-cafe-body-open {
       translateY(0)
       scale(1);
   }
+
 }
 
 .cafe-tray-items.shake {
@@ -1276,6 +1303,7 @@ body.cinna-cafe-body-open {
     transform:
       translateX(4px);
   }
+
 }
 
 
@@ -1292,8 +1320,16 @@ body.cinna-cafe-body-open {
   z-index: 40;
 
   padding:
-    clamp(5px, 1vw, 9px)
-    clamp(9px, 1.8vw, 18px);
+    clamp(
+      5px,
+      1vw,
+      9px
+    )
+    clamp(
+      9px,
+      1.8vw,
+      18px
+    );
 
   border: 0;
 
@@ -1317,7 +1353,11 @@ body.cinna-cafe-body-open {
   color: white;
 
   font-size:
-    clamp(8px, 1.2vw, 13px);
+    clamp(
+      8px,
+      1.2vw,
+      13px
+    );
 
   font-weight: 900;
 
@@ -1326,9 +1366,15 @@ body.cinna-cafe-body-open {
   cursor: pointer;
 
   box-shadow:
-    0 4px 0 #e879a3,
+    0 4px 0
+    #e879a3,
     0 7px 12px
-    rgba(139, 70, 98, 0.18);
+    rgba(
+      139,
+      70,
+      98,
+      0.18
+    );
 
   transition:
     opacity 0.2s ease,
@@ -1356,7 +1402,8 @@ body.cinna-cafe-body-open {
     scale(0.96);
 
   box-shadow:
-    0 2px 0 #e879a3;
+    0 2px 0
+    #e879a3;
 }
 
 
@@ -1372,7 +1419,9 @@ body.cinna-cafe-body-open {
 
   z-index: 80;
 
-  padding: 7px 14px;
+  padding:
+    7px
+    14px;
 
   opacity: 0;
 
@@ -1387,10 +1436,19 @@ body.cinna-cafe-body-open {
   color: #66859a;
 
   background:
-    rgba(255, 255, 255, 0.96);
+    rgba(
+      255,
+      255,
+      255,
+      0.96
+    );
 
   font-size:
-    clamp(9px, 1.5vw, 14px);
+    clamp(
+      9px,
+      1.5vw,
+      14px
+    );
 
   font-weight: 900;
 
@@ -1398,7 +1456,12 @@ body.cinna-cafe-body-open {
 
   box-shadow:
     0 5px 15px
-    rgba(57, 91, 112, 0.15);
+    rgba(
+      57,
+      91,
+      112,
+      0.15
+    );
 
   transition:
     opacity 0.2s ease,
@@ -1423,51 +1486,42 @@ body.cinna-cafe-body-open {
 
 
 /* =====================================================
-   TELA DE RESULTADO
+   RESULTADO
    ===================================================== */
 
-.cafe-results {
+.cinna-cafe-results {
   position: absolute;
 
   inset: 0;
 
-  z-index: 200;
+  z-index: 500;
 
-  display: flex;
+  display: none;
 
   align-items: center;
   justify-content: center;
 
   padding: 5%;
 
-  opacity: 0;
-
-  visibility: hidden;
-
-  pointer-events: none;
+  box-sizing: border-box;
 
   background:
-    rgba(96, 145, 175, 0.24);
+    rgba(
+      87,
+      128,
+      155,
+      0.28
+    );
 
   backdrop-filter:
     blur(5px);
 
   -webkit-backdrop-filter:
     blur(5px);
-
-  box-sizing: border-box;
-
-  transition:
-    opacity 0.3s ease,
-    visibility 0.3s ease;
 }
 
-.cafe-results.show {
-  opacity: 1;
-
-  visibility: visible;
-
-  pointer-events: auto;
+.cinna-cafe-results.show {
+  display: flex;
 }
 
 
@@ -1475,43 +1529,60 @@ body.cinna-cafe-body-open {
    CARD DO RESULTADO
    ===================================================== */
 
-.cafe-results-card {
-  position: relative;
-
+.cinna-cafe-results-card {
   width:
     min(
       88%,
       430px
     );
 
-  max-height: 92%;
-
   padding:
-    clamp(14px, 3vw, 26px);
-
-  overflow-y: auto;
-
-  border:
-    3px solid
-    rgba(164, 207, 231, 0.48);
-
-  border-radius:
-    clamp(20px, 4vw, 32px);
-
-  background:
-    rgba(255, 255, 255, 0.97);
-
-  box-shadow:
-    0 18px 45px
-    rgba(52, 91, 116, 0.22);
-
-  text-align: center;
+    clamp(
+      14px,
+      3vw,
+      25px
+    );
 
   box-sizing: border-box;
 
+  border-radius:
+    clamp(
+      20px,
+      4vw,
+      30px
+    );
+
+  border:
+    3px solid
+    rgba(
+      164,
+      207,
+      231,
+      0.5
+    );
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.98
+    );
+
+  box-shadow:
+    0 18px 45px
+    rgba(
+      52,
+      91,
+      116,
+      0.22
+    );
+
+  text-align: center;
+
   animation:
-    cafeResultsAppear
-    0.45s
+    cinnaCafeResultAppear
+    0.4s
     cubic-bezier(
       0.2,
       0.9,
@@ -1520,7 +1591,7 @@ body.cinna-cafe-body-open {
     );
 }
 
-@keyframes cafeResultsAppear {
+@keyframes cinnaCafeResultAppear {
 
   from {
     opacity: 0;
@@ -1537,37 +1608,52 @@ body.cinna-cafe-body-open {
       translateY(0)
       scale(1);
   }
+
 }
 
-.cafe-results-icon {
+
+/* =====================================================
+   RESULTADO — CABEÇALHO
+   ===================================================== */
+
+.cinna-cafe-results-icon {
   font-size:
-    clamp(28px, 6vw, 48px);
+    clamp(
+      25px,
+      5vw,
+      38px
+    );
 }
 
-.cafe-results-card h2 {
+.cinna-cafe-results-card h2 {
   margin:
     3px
-    0
     0;
 
   color: #5e8ba8;
 
   font-size:
-    clamp(18px, 4vw, 28px);
-
-  font-weight: 900;
+    clamp(
+      18px,
+      4vw,
+      28px
+    );
 }
 
-.cafe-results-subtitle {
+.cinna-cafe-results-card > p {
   margin:
-    3px
+    2px
     0
     8px;
 
   color: #96acba;
 
   font-size:
-    clamp(9px, 1.8vw, 13px);
+    clamp(
+      9px,
+      1.8vw,
+      13px
+    );
 
   font-weight: 700;
 }
@@ -1577,22 +1663,20 @@ body.cinna-cafe-body-open {
    ESTRELAS
    ===================================================== */
 
-.cafe-results-stars {
+.cinna-cafe-results-stars {
   margin:
-    3px
+    5px
     0
-    10px;
+    12px;
 
   font-size:
-    clamp(26px, 6vw, 44px);
-
-  letter-spacing: 4px;
-
-  filter:
-    drop-shadow(
-      0 3px 2px
-      rgba(155, 119, 39, 0.12)
+    clamp(
+      26px,
+      6vw,
+      43px
     );
+
+  letter-spacing: 3px;
 }
 
 
@@ -1600,32 +1684,20 @@ body.cinna-cafe-body-open {
    ESTATÍSTICAS
    ===================================================== */
 
-.cafe-results-stats {
+.cinna-cafe-results-grid {
   display: grid;
 
   grid-template-columns:
-    repeat(2, 1fr);
+    repeat(
+      2,
+      1fr
+    );
 
   gap: 7px;
-
-  margin-top: 6px;
 }
 
-.cafe-result-stat {
-  min-width: 0;
-
-  padding:
-    8px
-    10px;
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 2px;
+.cinna-cafe-results-grid > div {
+  padding: 8px;
 
   border-radius: 14px;
 
@@ -1633,33 +1705,45 @@ body.cinna-cafe-body-open {
 
   color: #7895a8;
 
-  box-sizing: border-box;
-}
-
-.cafe-result-stat span {
   font-size:
-    clamp(8px, 1.5vw, 11px);
+    clamp(
+      8px,
+      1.5vw,
+      11px
+    );
 
   font-weight: 800;
 }
 
-.cafe-result-stat strong {
+.cinna-cafe-results-grid span,
+.cinna-cafe-results-grid strong {
+  display: block;
+}
+
+.cinna-cafe-results-grid strong {
+  margin-top: 2px;
+
   color: #5d87a1;
 
   font-size:
-    clamp(16px, 3vw, 22px);
-
-  font-weight: 900;
+    clamp(
+      16px,
+      3vw,
+      22px
+    );
 }
 
-.cafe-result-stat.cafe-result-coins {
+.cinna-cafe-results-grid
+.coins {
   grid-column:
     1 / -1;
 
-  background: #fff8df;
+  background:
+    #fff8df;
 }
 
-.cafe-result-coins strong {
+.cinna-cafe-results-grid
+.coins strong {
   color: #b18b39;
 }
 
@@ -1668,30 +1752,31 @@ body.cinna-cafe-body-open {
    BOTÕES DO RESULTADO
    ===================================================== */
 
-.cafe-results-actions {
-  margin-top: 12px;
-
+.cinna-cafe-results-buttons {
   display: flex;
 
-  align-items: center;
-  justify-content: center;
-
   gap: 7px;
+
+  margin-top: 12px;
 }
 
-.cafe-result-button {
+.cinna-cafe-results-buttons button {
   min-height: 38px;
 
   padding:
     8px
-    14px;
+    12px;
 
   border: 0;
 
   border-radius: 999px;
 
   font-size:
-    clamp(8px, 1.5vw, 12px);
+    clamp(
+      8px,
+      1.5vw,
+      12px
+    );
 
   font-weight: 900;
 
@@ -1703,8 +1788,10 @@ body.cinna-cafe-body-open {
     transparent;
 }
 
-.cafe-result-button.primary {
+#cinna-cafe-play-again {
   flex: 1.5;
+
+  color: white;
 
   background:
     linear-gradient(
@@ -1713,27 +1800,21 @@ body.cinna-cafe-body-open {
       #ff94bd
     );
 
-  color: white;
-
   box-shadow:
-    0 4px 0 #e879a3;
+    0 4px 0
+    #e879a3;
 }
 
-.cafe-result-button.secondary {
+#cinna-cafe-result-exit {
   flex: 1;
-
-  background: #eaf7ff;
 
   color: #668da7;
 
-  box-shadow:
-    0 4px 0 #c9e6f5;
-}
+  background: #eaf7ff;
 
-.cafe-result-button:active {
-  transform:
-    translateY(2px)
-    scale(0.97);
+  box-shadow:
+    0 4px 0
+    #c9e6f5;
 }
 
 
@@ -1749,13 +1830,15 @@ body.cinna-cafe-body-open {
     grid-template-columns:
       42px
       1fr
+      auto
       auto;
+
+    gap: 5px;
 
     padding-left: 8px;
     padding-right: 8px;
-
-    gap: 5px;
   }
+
 
   .cinna-cafe-back {
     width: 38px;
@@ -1766,29 +1849,34 @@ body.cinna-cafe-body-open {
     font-size: 22px;
   }
 
-  .cinna-cafe-topbar-right {
-    gap: 4px;
-  }
-
-  .cinna-cafe-round-timer {
-    min-width: 57px;
-
-    padding: 5px 6px;
-
-    font-size: 10px;
-  }
 
   .cinna-cafe-coins {
-    min-width: 57px;
+    min-width: 64px;
 
-    padding: 5px 6px;
-
-    font-size: 10px;
+    padding:
+      5px
+      8px;
   }
+
 
   .cinna-cafe-coins strong {
+    font-size: 12px;
+  }
+
+
+  .cinna-cafe-round-timer {
+    min-width: 58px;
+
+    padding:
+      5px
+      7px;
+  }
+
+
+  .cinna-cafe-round-timer strong {
     font-size: 11px;
   }
+
 }
 
 
@@ -1802,29 +1890,36 @@ body.cinna-cafe-body-open {
     padding: 6px;
   }
 
+
   .cinna-cafe-stage {
     width: 100%;
 
     max-height: none;
   }
 
+
   .cinna-cafe-chef {
     width: 16%;
   }
 
-  .cafe-customer-wrap.is-single {
+
+  .cafe-customer-wrap {
     width: 17%;
   }
+
 
   .cafe-customer-wrap.is-double {
     width: 15%;
   }
 
+
   .cinna-cafe-client-counter {
     width: 49%;
   }
 
+
   .cinna-cafe-prep-counter {
     width: 99%;
   }
+
 }
